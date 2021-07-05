@@ -7,7 +7,7 @@ import Colors from '../constants/Colors';
 const SplashScreen = props => {
   useEffect(() => {
     setTimeout(() => {
-      props.navigation.replace('CheckIn');
+      props.navigation.replace('CheckInNav');
     }, 1000);
   }, []);
 

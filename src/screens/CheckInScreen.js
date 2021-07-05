@@ -12,11 +12,13 @@ const CheckInScreen = ({navigation}) => {
         color={Colors.red800}
         style={styles.checkinButton}
         onPress={() => {
-          navigation.navigate('IdScanner');
+          navigation.navigate('CheckInDetails');
         }}>
         Tap to Check In
       </Button>
-      <Button mode="text" onPress={() => navigation.navigate('AuthNav',{Screen: "Auth"})}>
+      <Button
+        mode="text"
+        onPress={() => navigation.navigate('AuthNav', {Screen: 'Auth'})}>
         Log In
       </Button>
     </View>
@@ -28,7 +30,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Color.accent,
+    // backgroundColor: Color.accent,
   },
   checkinButton: {
     marginTop: '80%',

@@ -7,20 +7,22 @@ import Color from '../constants/Colors';
 const CheckInScreen = ({navigation}) => {
   return (
     <View style={styles.screen}>
-      <Button
-        mode="contained"
-        color={Colors.red800}
-        style={styles.checkinButton}
-        onPress={() => {
-          navigation.navigate('CheckInDetails');
-        }}>
-        Tap to Check In
-      </Button>
-      <Button
-        mode="text"
-        onPress={() => navigation.navigate('AuthNav', {Screen: 'Auth'})}>
-        Log In
-      </Button>
+      <View style={styles.buttonContainer}>
+        <Button
+          mode="contained"
+          // color={Colors.red800}
+          style={styles.checkinButton}
+          onPress={() => {
+            navigation.navigate('CheckInDetails');
+          }}>
+          Tap to Check In
+        </Button>
+        <Button
+          mode="text"
+          onPress={() => navigation.navigate('AuthNav', {Screen: 'Auth'})}>
+          Log In
+        </Button>
+      </View>
     </View>
   );
 };
@@ -32,9 +34,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // backgroundColor: Color.accent,
   },
-  checkinButton: {
+  buttonContainer: {
     marginTop: '80%',
-    borderColor: 'rgba(2,2,2,0.61)',
+    width: '100%',
+    alignItems: 'center',
+  },
+  checkinButton: {
+    // borderColor: 'rgba(2,2,2,0.61)',
     borderWidth: 1,
     borderRadius: 20,
     width: '60%',

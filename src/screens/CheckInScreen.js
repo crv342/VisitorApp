@@ -3,8 +3,12 @@ import {View, StyleSheet} from 'react-native';
 import {Text, Button, Colors} from 'react-native-paper';
 
 import Color from '../constants/Colors';
+import {useSelector} from 'react-redux';
 
 const CheckInScreen = ({navigation}) => {
+  const token = useSelector(state => state.auth.token);
+  const userName = useSelector(state => state);
+  console.log(userName);
   return (
     <View style={styles.screen}>
       <View style={styles.buttonContainer}>
@@ -19,8 +23,14 @@ const CheckInScreen = ({navigation}) => {
         </Button>
         <Button
           mode="text"
-          onPress={() => navigation.navigate('AuthNav', {Screen: 'Auth'})}>
-          Log In
+          onPress={() => {
+            if (token) {
+              navigation.navigate('DrawerNav');
+            } else {
+              navigation.navigate('AuthNav', {Screen: 'Auth'});
+            }
+          }}>
+          {token ? ' Go to Dashboard' : 'Log In'}
         </Button>
       </View>
     </View>

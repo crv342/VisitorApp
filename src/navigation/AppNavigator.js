@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, SafeAreaView, Platform} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import {Button} from 'react-native-paper';
 import Colors from '../constants/Colors';
 import {NavigationContainer} from '@react-navigation/native';
@@ -24,6 +25,7 @@ import VisitorLogScreen from '../screens/VisitorLogScreen';
 import EmployeeList from '../screens/EmployeeList';
 import SettingScreen from '../screens/SettingScreen';
 import CheckInDetails from '../screens/CheckInDetails';
+import {logout} from '../store/actions/auth';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -90,6 +92,8 @@ const CheckInNavigator = () => {
 };
 
 const DrawerNavigator = ({navigation}) => {
+  const dispatch = useDispatch();
+  const userName = useSelector(state => state.auth.adminData.username);
   return (
     <Drawer.Navigator
       initialRouteName="Home"
@@ -106,7 +110,7 @@ const DrawerNavigator = ({navigation}) => {
             <SafeAreaView forceInset={{top: 'always', horizontal: 'never'}}>
               <View style={{backgroundColor: Colors.primary}}>
                 <DrawerItem
-                  label={'Admin'}
+                  label={userName || ''}
                   onPress={() => {
                     navigation.navigate('Settings');
                   }}
@@ -122,7 +126,7 @@ const DrawerNavigator = ({navigation}) => {
                 title="Logout"
                 // color={'black'}
                 onPress={() => {
-                  // dispatch(authActions.logout());
+                  dispatch(logout());
                   navigation.reset({
                     index: 0,
                     routes: [{name: 'CheckInNav'}],
@@ -199,19 +203,30 @@ const DrawerNavigator = ({navigation}) => {
 };
 
 const AppNavigator = () => {
+  const token = useSelector(state => state.auth.token);
+  const isLoading = useSelector(state => state.auth.isLoading);
+
+  if (isLoading) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Splash"
+            component={SplashScreen}
+            options={{
+              title: 'splash',
+              headerShown: false,
+              cardStyleInterpolator:
+                CardStyleInterpolators.forFadeFromBottomAndroid,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
-          name="Splash"
-          component={SplashScreen}
-          options={{
-            title: 'splash',
-            headerShown: false,
-            cardStyleInterpolator:
-              CardStyleInterpolators.forFadeFromBottomAndroid,
-          }}
-        />
         <Stack.Screen
           name={'CheckInNav'}
           component={CheckInNavigator}

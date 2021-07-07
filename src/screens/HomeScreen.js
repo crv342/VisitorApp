@@ -1,8 +1,10 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Text, Appbar} from 'react-native-paper';
+import {useSelector} from 'react-redux';
 
 const HomeScreen = ({navigation}) => {
+  // const userName = useSelector(state => state.auth.adminData.username);
   return (
     <View>
       <Appbar.Header>
@@ -12,6 +14,8 @@ const HomeScreen = ({navigation}) => {
         />
         <Appbar.Content title={'Dashboard'} />
       </Appbar.Header>
+
+      {/*<Text>{userName}</Text>*/}
     </View>
   );
 };

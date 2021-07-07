@@ -1,17 +1,11 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import 'react-native-gesture-handler';
 import React from 'react';
 import type {Node} from 'react';
-import { DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
+import {Provider as StoreProvider} from 'react-redux';
+import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {SafeAreaView} from 'react-native';
 
+import store from './src/store/store';
 import AppNavigator from './src/navigation/AppNavigator';
 
 const theme = {
@@ -22,16 +16,18 @@ const theme = {
     primary: '#C1403D',
     accent: '#f1c40f',
     backgroundColor: '#ffffff',
-    background: '#fff'
+    background: '#fff',
   },
 };
 
 const App: () => Node = () => {
   return (
-    <PaperProvider theme={theme}>
-      {/*<StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />*/}
-      <AppNavigator />
-    </PaperProvider>
+    <StoreProvider store={store}>
+      <PaperProvider theme={theme}>
+        {/*<StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />*/}
+        <AppNavigator />
+      </PaperProvider>
+    </StoreProvider>
   );
 };
 

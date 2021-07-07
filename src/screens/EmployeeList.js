@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Appbar, Text} from 'react-native-paper';
+import {Appbar, Text, Surface} from 'react-native-paper';
 
 const EmployeeList = ({navigation}) => {
   return (
@@ -12,6 +12,11 @@ const EmployeeList = ({navigation}) => {
         />
         <Appbar.Content title={'Employee List'} />
       </Appbar.Header>
+
+      <Surface style={styles.surface}>
+        <Text>Surface</Text>
+      </Surface>
+
     </View>
   );
 };
@@ -21,6 +26,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  surface: {
+    padding: 8,
+    height: 80,
+    width: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
   },
 });
 

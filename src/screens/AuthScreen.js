@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {
   View,
   StyleSheet,
@@ -9,17 +10,27 @@ import {Text, TextInput, Button, Appbar} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import * as loginActions from '../store/actions/auth';
 
-const formShema = yup.object({
+const formSchema = yup.object({
   username: yup.string().required('username is required').min(3),
   password: yup.string().required('password is required').min(8),
 });
 
 const AuthScreen = ({navigation}) => {
+  const dispatch = useDispatch();
   // const [username, setUsername] = useState('');
   // const [password, setPassword] = useState('');
   const [userIconColor, setUserIconColor] = useState('black');
   const [passIconColor, setPassIconColor] = useState('black');
+
+  const submitHandler = async (username, password) => {
+    const res = await dispatch(loginActions.login(username, password));
+    navigation.reset({
+      index: 0,
+      routes: [{name: 'DrawerNav'}],
+    });
+  };
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -29,8 +40,8 @@ const AuthScreen = ({navigation}) => {
         {/*</Appbar.Header>*/}
         <Formik
           initialValues={{username: '', password: ''}}
-          validationSchema={formShema}
-          onSubmit={values => console.log(values)}>
+          validationSchema={formSchema}
+          onSubmit={values => submitHandler(values.username, values.password)}>
           {({
             values,
             handleChange,

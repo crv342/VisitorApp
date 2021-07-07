@@ -1,13 +1,16 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Text} from 'react-native-paper';
 
 const CheckInDetails = () => {
-  return (
-    <View>
-      <Text>CheckIn Details</Text>
-    </View>
-  );
+  return <View style={styles.screen}></View>;
 };
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default CheckInDetails;

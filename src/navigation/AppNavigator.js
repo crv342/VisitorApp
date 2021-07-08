@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, SafeAreaView, Platform} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button} from 'react-native-paper';
+import {Button, Divider} from 'react-native-paper';
 import Colors from '../constants/Colors';
 import {NavigationContainer} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -74,7 +74,7 @@ const CheckInNavigator = () => {
         name="CheckIn"
         component={CheckInScreen}
         options={{
-          title: 'check',
+          title: 'checkIn',
           headerShown: false,
           cardStyleInterpolator:
             CardStyleInterpolators.forFadeFromBottomAndroid,
@@ -120,8 +120,9 @@ const DrawerNavigator = ({navigation}) => {
                   )}
                 />
               </View>
-
+              <Divider />
               <DrawerItemList {...props} />
+              <Divider />
               <Button
                 title="Logout"
                 // color={'black'}

@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import {View, StyleSheet, Image, Text as text} from 'react-native';
 import {Text} from 'react-native-paper';
 import * as authActions from '../store/actions/auth';
+import * as visitorActions from '../store/actions/visitor';
 
 import Colors from '../constants/Colors';
 import {useDispatch} from 'react-redux';
@@ -32,6 +33,10 @@ const SplashScreen = props => {
     };
     tryLogin();
   }, []);
+
+  useEffect(() => {
+    dispatch(visitorActions.fetchCheckedIn());
+  });
 
   // useEffect(() => {
   //   setTimeout(() => {

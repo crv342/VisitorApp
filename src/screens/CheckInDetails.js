@@ -10,6 +10,7 @@ import {Picker} from '@react-native-picker/picker';
 
 import {Divider, Menu, Button, TextInput} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
+import {checkin} from '../store/actions/visitor';
 
 const CheckInDetails = () => {
   const dispatch = useDispatch();
@@ -39,7 +40,9 @@ const CheckInDetails = () => {
     },
   ];
 
-  const submitHandler = async () => {};
+  const submitHandler = async () => {
+    dispatch(checkin('yash', new Date(), '', hostValue, purposeValue));
+  };
 
   // const openMenu = () => setVisible(true);
   //

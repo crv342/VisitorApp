@@ -2,14 +2,14 @@ import {CHECKIN, CHECKOUT, FETCH_CHECKED_IN} from '../actions/visitor';
 
 const initialState = {
   checkedInVisitors: [
-    {
-      name: 'yash',
-      checkIn: new Date(),
-    },
-    {
-      name: 'rahul',
-      checkIn: new Date(),
-    },
+    // {
+    //   name: 'yash',
+    //   checkIn: new Date(),
+    // },
+    // {
+    //   name: 'rahul',
+    //   checkIn: new Date(),
+    // },
   ],
   visitor: [],
 };
@@ -29,7 +29,19 @@ export default (state = initialState, action) => {
         visitor: state.visitor.concat(data),
       };
     case CHECKOUT:
-      return '';
+      // var index = state.checkedInVisitors.findIndex(
+      //   item => item.id == action.id,
+      // );
+      // if (index !== -1) {
+      //   state.checkedInVisitors.splice(index, 1);
+      // }
+
+      return {
+        ...state,
+        checkedInVisitors: state.checkedInVisitors.filter(
+          item => item.id !== action.id,
+        ),
+      };
     default:
       return state;
   }

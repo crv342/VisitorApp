@@ -1,4 +1,4 @@
-import URL from './auth';
+import {URL} from './auth';
 import Visitor from '../../models/visitor';
 
 export const CHECKIN = 'CHECKIN';
@@ -58,7 +58,6 @@ export const checkin = (name, checkIn, checkOut, host, purpose) => {
         body: JSON.stringify({
           name,
           checkIn,
-          checkOut,
           host,
           purpose,
         }),
@@ -85,6 +84,30 @@ export const checkin = (name, checkIn, checkOut, host, purpose) => {
 
       dispatch({type: CHECKIN, visitorData});
     } catch (e) {
+      console.log(e);
+      throw new Error(e);
+    }
+  };
+};
+
+export const checkout = id => {
+  return async dispatch => {
+    try {
+      const response = await fetch(URL + '/visitor/checkout/' + id, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+      if (!response.ok) {
+        throw new Error('something went wrong');
+      }
+
+      // const resData = await response.json();
+      dispatch({type: CHECKOUT, id});
+    } catch (e) {
+      console.log(e);
       throw new Error(e);
     }
   };

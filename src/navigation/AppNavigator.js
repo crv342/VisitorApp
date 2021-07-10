@@ -26,6 +26,7 @@ import EmployeeList from '../screens/EmployeeList';
 import SettingScreen from '../screens/SettingScreen';
 import CheckInDetails from '../screens/CheckInDetails';
 import {logout} from '../store/actions/auth';
+import CheckInSuccess from '../screens/CheckInSuccess';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -87,6 +88,11 @@ const CheckInNavigator = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen name={'CheckInDetails'} component={CheckInDetails} />
+      <Stack.Screen
+        name={'CheckInSuccess'}
+        component={CheckInSuccess}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
@@ -130,7 +136,7 @@ const DrawerNavigator = ({navigation}) => {
                   dispatch(logout());
                   navigation.reset({
                     index: 0,
-                    routes: [{name: 'CheckInNav'}],
+                    routes: [{}],
                   });
                 }}>
                 Logout <Icon name={'logout'} />

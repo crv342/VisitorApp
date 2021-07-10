@@ -1,4 +1,9 @@
-import {CHECKIN, CHECKOUT, FETCH_CHECKED_IN} from '../actions/visitor';
+import {
+  CHECKIN,
+  CHECKOUT,
+  FETCH_CHECKED_IN,
+  FETCH_VISITOR,
+} from '../actions/visitor';
 
 const initialState = {
   checkedInVisitors: [
@@ -21,6 +26,12 @@ export default (state = initialState, action) => {
         ...state,
         checkedInVisitors: action.checkedInData,
       };
+    case FETCH_VISITOR:
+      return {
+        ...state,
+        visitor: action.visitorData,
+      };
+
     case CHECKIN:
       const data = action.visitorData;
       return {

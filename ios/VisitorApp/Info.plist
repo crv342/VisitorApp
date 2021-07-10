@@ -73,5 +73,7 @@
        <string>Fontisto.ttf</string>
      </array>
 
+     <key>NSCameraUsageDescription</key>
+     <string>give camera permission</string>
 </dict>
 </plist>

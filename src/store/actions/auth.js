@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const RESTORE_TOKEN = 'RESTORE_TOKEN';
-export const URL = 'http://localhost:3000';
+export const URL = 'https://visitorapi.herokuapp.com';
 
 let timer;
 

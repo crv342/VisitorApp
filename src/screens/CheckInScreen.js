@@ -18,7 +18,7 @@ const CheckInScreen = ({navigation}) => {
           // color={Colors.red800}
           style={styles.checkinButton}
           onPress={() => {
-            navigation.navigate('CheckInDetails');
+            navigation.navigate('IdScanner');
           }}>
           Tap to Check In
         </Button>

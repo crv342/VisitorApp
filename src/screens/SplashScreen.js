@@ -35,7 +35,7 @@ const SplashScreen = props => {
   }, []);
 
   useEffect(() => {
-    dispatch(visitorActions.fetchCheckedIn());
+    dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
   });
 
   // useEffect(() => {

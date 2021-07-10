@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,16 +8,81 @@ import {
 import ItemPicker from '../components/ItemPicker';
 import {Picker} from '@react-native-picker/picker';
 
-import {Divider, Menu, Button, TextInput} from 'react-native-paper';
+import {Divider, Menu, Button, TextInput, Text} from 'react-native-paper';
 import {useDispatch} from 'react-redux';
 import {checkin} from '../store/actions/visitor';
 
-const CheckInDetails = () => {
+let vData;
+
+const CheckInDetails = props => {
   const dispatch = useDispatch();
+  const [visitorName, setVisitorName] = useState('');
   const [hostValue, setHostValue] = useState();
   const [purposeValue, setPurposeValue] = useState();
   const [visibleHost, setVisibleHost] = useState(false);
-  const [visiblePurpose, setVisiblePurpos] = useState(false);
+  const [visiblePurpose, setVisiblePurpose] = useState(false);
+
+  // Changes XML to JSON
+  function xmlToJson(xml) {
+    // Create the return object
+    var obj = {};
+
+    if (xml.nodeType == 1) {
+      // element
+      // do attributes
+      if (xml.attributes.length > 0) {
+        obj['@attributes'] = {};
+        for (var j = 0; j < xml.attributes.length; j++) {
+          var attribute = xml.attributes.item(j);
+          obj['@attributes'][attribute.nodeName] = attribute.nodeValue;
+        }
+      }
+    } else if (xml.nodeType == 3) {
+      // text
+      obj = xml.nodeValue;
+    }
+
+    // do children
+    if (xml.hasChildNodes()) {
+      for (var i = 0; i < xml.childNodes.length; i++) {
+        var item = xml.childNodes.item(i);
+        var nodeName = item.nodeName;
+        if (typeof obj[nodeName] === 'undefined') {
+          obj[nodeName] = xmlToJson(item);
+        } else {
+          if (typeof obj[nodeName].push === 'undefined') {
+            var old = obj[nodeName];
+            obj[nodeName] = [];
+            obj[nodeName].push(old);
+          }
+          obj[nodeName].push(xmlToJson(item));
+        }
+      }
+    }
+    return obj;
+  }
+
+  vData = props.route.params.data;
+  useEffect(() => {
+    if (typeof vData === 'string' && vData.startsWith('<')) {
+      if (vData.startsWith('<?xml')) {
+        vData = vData.slice(63, vData.length - 2);
+      } else if (vData.startsWith('<')) {
+        vData = vData.slice(5, vData.indexOf('a="') - 1);
+      }
+      console.log('pre' + vData);
+      // vData = vData.replace(/ /g, '?');
+      vData = vData.replace(/[=]/g, '":');
+      vData = '{"' + vData.replace(/" /g, ',"') + '}';
+      vData = vData.replace(/[,]/g, '",');
+      console.log('before parse' + vData);
+      vData = JSON.parse(vData);
+      setVisitorName('name' in vData ? vData.name : vData.n);
+    }
+  }, []);
+
+  // var jsonText = JSON.stringify(xmlToJson(vData));
+  // console.log(jsonText);
 
   const dataHost = [
     {
@@ -41,20 +106,30 @@ const CheckInDetails = () => {
   ];
 
   const submitHandler = async () => {
-    dispatch(checkin('yash', new Date(), '', hostValue, purposeValue));
+    dispatch(checkin(visitorName, new Date(), '', hostValue, purposeValue));
+    props.navigation.navigate('CheckInSuccess', {name: visitorName});
   };
 
   // const openMenu = () => setVisible(true);
   //
   const closeMenu = () => {
     setVisibleHost(false);
-    setVisiblePurpos(false);
+    setVisiblePurpose(false);
     Keyboard.dismiss();
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.screen}>
+        <Text>{vData.n}</Text>
         <View style={{height: '25%'}} />
+        <TextInput
+          style={styles.inputField}
+          label={'name'}
+          value={visitorName}
+          onChangeText={t => {
+            setVisitorName(t);
+          }}
+        />
         {/*<View style={styles.formContainer}>*/}
         {/*<TextInput value={host} onFocus={() => openMenu()} />*/}
         {/*<View style={styles.menuContainer}>*/}
@@ -106,7 +181,7 @@ const CheckInDetails = () => {
         />
         <ItemPicker
           itemData={dataPurpose}
-          onFocus={() => setVisiblePurpos(true)}
+          onFocus={() => setVisiblePurpose(true)}
           value={purposeValue}
           setValue={setPurposeValue}
           visible={visiblePurpose}
@@ -145,6 +220,10 @@ const styles = StyleSheet.create({
   button: {
     width: 100,
     marginTop: 30,
+  },
+  inputField: {
+    width: 300,
+    alignSelf: 'center',
   },
   // inputShow: {
   //   // marginTop: 30,

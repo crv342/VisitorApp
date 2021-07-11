@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet,Text,Image} from 'react-native';
 import { List, IconButton, Title } from "react-native-paper";
 import {useDispatch, useSelector} from 'react-redux';
 import Colors from '../constants/Colors';
@@ -9,14 +9,19 @@ const CheckOutScreen = () => {
   const dispatch = useDispatch();
 
   const visitorList = useSelector(state => state.visitor.checkedInVisitors);
-  const [visitors, setVisitors] = useState(visitorList);
+  // const [visitors, setVisitors] = useState(visitorList);
 
-  useEffect(() => {
-    setVisitors(visitorList);
-  }, [visitorList, dispatch]);
+  // useEffect(() => {
+  //   setVisitors(visitorList);
+  // }, [visitorList, dispatch]);
   const checkOutHandler = id => {
     dispatch(checkout(id));
   };
+  if(visitorList.length === 0){
+    return (
+      <View style={styles.screen} ><Title style={{alignSelf:'center'}}>No Visitors to Check Out!</Title></View>
+    )
+  }
 
   return (
     <View style={styles.screen}>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {Appbar, Text, DataTable, ActivityIndicator} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchvisitor} from '../store/actions/visitor';
@@ -34,6 +34,7 @@ const VisitorLogScreen = ({navigation}) => {
         />
         <Appbar.Content title={'History'} />
       </Appbar.Header>
+      <ScrollView>
       {isLoading ? (
         <ActivityIndicator />
       ) : (
@@ -45,7 +46,7 @@ const VisitorLogScreen = ({navigation}) => {
           </DataTable.Header>
 
           {visitorData.map(item => (
-            <DataTable.Row>
+            <DataTable.Row key={item.id}>
               <DataTable.Cell>{item.name}</DataTable.Cell>
               <DataTable.Cell numeric>
                 <View>
@@ -74,6 +75,7 @@ const VisitorLogScreen = ({navigation}) => {
           />
         </DataTable>
       )}
+      </ScrollView>
     </View>
   );
 };

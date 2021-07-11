@@ -61,25 +61,44 @@ const CheckInDetails = props => {
     }
     return obj;
   }
-
-  vData = props.route.params.data;
-  useEffect(() => {
-    if (typeof vData === 'string' && vData.startsWith('<')) {
-      if (vData.startsWith('<?xml')) {
-        vData = vData.slice(63, vData.length - 2);
-      } else if (vData.startsWith('<')) {
-        vData = vData.slice(5, vData.indexOf('a="') - 1);
+  if (props.route.params) {
+    vData = props.route.params.data;
+    useEffect(() => {
+      if (typeof vData === 'string' && vData.startsWith('<')) {
+        if (vData.startsWith('<?xml')) {
+          vData = vData.slice(63, vData.length - 2).trim();
+        } else if (vData.startsWith('<')) {
+          vData = vData.slice(5, vData.indexOf('a="') - 1).trim();
+        }
+        console.log('pre' + vData);
+        // vData = vData.replace(/ /g, '?');
+        vData = vData.replace(/[=]/g, '":');
+        vData = '{"' + vData.replace(/" /g, ',"') + '}';
+        vData = vData.replace(/[,]/g, '",');
+        console.log('before parse' + vData);
+        vData = JSON.parse(vData);
+        setVisitorName('name' in vData ? vData.name : vData.n);
       }
-      console.log('pre' + vData);
-      // vData = vData.replace(/ /g, '?');
-      vData = vData.replace(/[=]/g, '":');
-      vData = '{"' + vData.replace(/" /g, ',"') + '}';
-      vData = vData.replace(/[,]/g, '",');
-      console.log('before parse' + vData);
-      vData = JSON.parse(vData);
-      setVisitorName('name' in vData ? vData.name : vData.n);
-    }
-  }, []);
+    }, [vData]);
+  }
+  // vData = props.route.params.data;
+  // useEffect(() => {
+  //   if (typeof vData === 'string' && vData.startsWith('<')) {
+  //     if (vData.startsWith('<?xml')) {
+  //       vData = vData.slice(63, vData.length - 2).trim();
+  //     } else if (vData.startsWith('<')) {
+  //       vData = vData.slice(5, vData.indexOf('a="') - 1).trim();
+  //     }
+  //     console.log('pre' + vData);
+  //     // vData = vData.replace(/ /g, '?');
+  //     vData = vData.replace(/[=]/g, '":');
+  //     vData = '{"' + vData.replace(/" /g, ',"') + '}';
+  //     vData = vData.replace(/[,]/g, '",');
+  //     console.log('before parse' + vData);
+  //     vData = JSON.parse(vData);
+  //     setVisitorName('name' in vData ? vData.name : vData.n);
+  //   }
+  // }, []);
 
   // var jsonText = JSON.stringify(xmlToJson(vData));
   // console.log(jsonText);
@@ -120,7 +139,6 @@ const CheckInDetails = props => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.screen}>
-        <Text>{vData.n}</Text>
         <View style={{height: '25%'}} />
         <TextInput
           style={styles.inputField}

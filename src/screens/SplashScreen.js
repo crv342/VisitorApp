@@ -32,11 +32,12 @@ const SplashScreen = props => {
       dispatch(authActions.restoreToken(token, adminData));
     };
     tryLogin();
-  }, []);
-
-  useEffect(() => {
     dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
-  });
+  }, [dispatch]);
+
+  // useEffect(() => {
+  //   dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
+  // },[dispatch]);
 
   // useEffect(() => {
   //   setTimeout(() => {

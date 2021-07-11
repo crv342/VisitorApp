@@ -1,10 +1,9 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
-import {Text, Button, Colors, Divider} from 'react-native-paper';
+import {View, StyleSheet, Dimensions, StatusBar} from 'react-native';
+import {Text, Button, Divider} from 'react-native-paper';
 
 import Color from '../constants/Colors';
 import {useSelector} from 'react-redux';
-import {Icon} from 'react-native-vector-icons/MaterialIcons';
 
 const CheckInScreen = ({navigation}) => {
   const token = useSelector(state => state.auth.token);
@@ -12,6 +11,7 @@ const CheckInScreen = ({navigation}) => {
   console.log(userName);
   return (
     <View style={styles.screen}>
+      {/* <StatusBar translucent={true} /> */}
       <View style={styles.buttonContainer}>
         <Button
           mode="contained"
@@ -42,7 +42,7 @@ const CheckInScreen = ({navigation}) => {
               navigation.navigate('AuthNav', {Screen: 'Auth'});
             }
           }}>
-          {token ? ' Go to Dashboard' : 'Log In'}
+          {token ? 'Dashboard' : 'Log In'}
         </Button>
       </View>
     </View>
@@ -57,11 +57,11 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
     borderColor: 'black',
     borderWidth: 2,
-    backgroundColor: Color.accent,
+    // backgroundColor: Color.accent,
   },
   buttonContainer: {
     alignSelf: 'center',
-    marginTop: '80%',
+    marginTop: '60%',
     width: '100%',
     alignItems: 'center',
   },

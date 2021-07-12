@@ -1,17 +1,31 @@
-import React from 'react';
-import {View, StyleSheet, Dimensions, StatusBar} from 'react-native';
-import {Text, Button, Divider} from 'react-native-paper';
+import React, {useEffect} from 'react';
+import {View, StyleSheet, Dimensions, StatusBar, Image} from 'react-native';
+import {Text, Button, Divider, Title} from 'react-native-paper';
 
 import Color from '../constants/Colors';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import * as visitorActions from '../store/actions/visitor';
 
 const CheckInScreen = ({navigation}) => {
+  const dispatch = useDispatch();
   const token = useSelector(state => state.auth.token);
   const userName = useSelector(state => state);
   console.log(userName);
+  useEffect(() => {
+    dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
+  }, [dispatch]);
   return (
     <View style={styles.screen}>
       {/* <StatusBar translucent={true} /> */}
+      <View style={styles.logoContainer}>
+        <Image
+          resizeMode={'center'}
+          // style={styles.logoStyle}
+          source={require('../Image/logo.png')}
+        />
+        {/*<Title>VISITOR</Title>*/}
+      </View>
+
       <View style={styles.buttonContainer}>
         <Button
           mode="contained"
@@ -37,7 +51,10 @@ const CheckInScreen = ({navigation}) => {
           mode="text"
           onPress={() => {
             if (token) {
-              navigation.navigate('DrawerNav');
+              navigation.reset({
+                index: 0,
+                routes: [{name: 'DrawerNav'}],
+              });
             } else {
               navigation.navigate('AuthNav', {Screen: 'Auth'});
             }
@@ -59,6 +76,16 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     // backgroundColor: Color.accent,
   },
+  logoContainer: {
+    width: '60%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // logoStle: {
+  //   width: 50,
+  //   height: 200,
+  //   resizeMode: 'stretch',
+  // },
   buttonContainer: {
     alignSelf: 'center',
     marginTop: '60%',

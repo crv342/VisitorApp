@@ -22,7 +22,7 @@ export default (state = initialState, action) => {
         ...state,
         token: action.token,
         isLoading: false,
-        userData: action.adminData,
+        adminData: action.adminData,
       };
     default:
       return state;

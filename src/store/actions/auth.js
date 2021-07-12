@@ -26,7 +26,7 @@ export const login = (username, password) => {
       if (!response.ok) {
         const resData = await response.json();
         let message = 'Something went wrong!';
-        if (resData.e === 'Invalid username or password') {
+        if (resData.e == 'Invalid username or password') {
           message = resData.e;
         }
         throw new Error(message);
@@ -48,7 +48,8 @@ export const login = (username, password) => {
       dispatch(setLogoutTimer(parseInt(expiresIn) * 1000));
       dispatch({type: LOGIN, token: resData.token, adminData});
     } catch (e) {
-      throw new Error(e);
+      // console.log(e.message);
+      throw new Error(e.message);
     }
   };
 };

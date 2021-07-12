@@ -32,7 +32,6 @@ const SplashScreen = props => {
       dispatch(authActions.restoreToken(token, adminData));
     };
     tryLogin();
-    dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
   }, [dispatch]);
 
   // useEffect(() => {

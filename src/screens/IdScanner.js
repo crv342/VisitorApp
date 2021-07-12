@@ -49,7 +49,7 @@ const IdScanner = ({navigation}) => {
       topContent={<Text style={styles.centerText} />}
       bottomContent={
         <View style={styles.bottomContainer}>
-          <View style={styles.bottomButtomLeft} >
+          <View style={styles.bottomButtomLeft}>
             <Button onPress={() => navigation.goBack()}>
               <Icon size={24} name={'navigate-before'} />
             </Button>
@@ -57,7 +57,7 @@ const IdScanner = ({navigation}) => {
           <View style={styles.bottomText}>
             <Text style={styles.buttonText}>Scan Id Card</Text>
           </View>
-          <View style={styles.bottomButtomRight} >
+          <View style={styles.bottomButtomRight}>
             <Button onPress={() => navigation.navigate('CheckInDetails')}>
               <Icon size={24} name={'navigate-next'} />
             </Button>
@@ -86,28 +86,28 @@ const styles = StyleSheet.create({
   },
   bottomText: {
     padding: 5,
-    alignSelf:'center'
+    alignSelf: 'center',
   },
   bottomContainer: {
-    width:'100%',
-    height:70,
-    marginBottom:-60,
-    flexDirection:'row',
-    padding:5,
+    width: '100%',
+    height: 70,
+    marginBottom: -60,
+    flexDirection: 'row',
+    padding: 5,
     justifyContent: 'space-around',
   },
   bottomButtomLeft: {
-marginLeft:2,
-borderColor: Colors.primary,
-borderWidth:2,
-justifyContent:'center'
+    marginLeft: 2,
+    borderColor: Colors.primary,
+    borderWidth: 2,
+    justifyContent: 'center',
   },
   bottomButtomRight: {
-marginRight:0,
-borderColor: Colors.primary,
-borderWidth:2,
-alignItems: 'center',
-justifyContent:'center'
+    marginRight: 0,
+    borderColor: Colors.primary,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

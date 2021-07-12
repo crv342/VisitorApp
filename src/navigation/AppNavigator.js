@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, SafeAreaView, Platform} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Divider} from 'react-native-paper';
@@ -99,7 +99,12 @@ const CheckInNavigator = () => {
 
 const DrawerNavigator = ({navigation}) => {
   const dispatch = useDispatch();
+  const [username, setUsername] = useState('');
   const userName = useSelector(state => state.auth.adminData.username);
+  useEffect(() => {
+    setUsername(userName);
+  }, [navigation]);
+
   return (
     <Drawer.Navigator
       initialRouteName="Home"

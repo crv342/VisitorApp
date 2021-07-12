@@ -6,11 +6,20 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import {Text, TextInput, Button, Appbar} from 'react-native-paper';
+import {
+  Text,
+  TextInput,
+  Button,
+  Appbar,
+  ActivityIndicator,
+  HelperText,
+  IconButton,
+} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import * as loginActions from '../store/actions/auth';
+import Colors from '../constants/Colors';
 
 const formSchema = yup.object({
   username: yup.string().required('username is required').min(3),
@@ -21,15 +30,25 @@ const AuthScreen = ({navigation}) => {
   const dispatch = useDispatch();
   // const [username, setUsername] = useState('');
   // const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [userIconColor, setUserIconColor] = useState('black');
   const [passIconColor, setPassIconColor] = useState('black');
 
   const submitHandler = async (username, password) => {
-    const res = await dispatch(loginActions.login(username, password));
-    navigation.reset({
-      index: 0,
-      routes: [{name: 'DrawerNav'}],
-    });
+    try {
+      Keyboard.dismiss();
+      setIsLoading(true);
+      await dispatch(loginActions.login(username, password));
+      setIsLoading(false);
+      navigation.reset({
+        index: 0,
+        routes: [{name: 'DrawerNav'}],
+      });
+    } catch (e) {
+      setIsLoading(false);
+      setError(e.message);
+    }
   };
 
   return (
@@ -38,6 +57,7 @@ const AuthScreen = ({navigation}) => {
         {/*<Appbar.Header>*/}
         {/*  <Appbar.Action icon={'arrow-left'} />*/}
         {/*</Appbar.Header>*/}
+
         <Formik
           initialValues={{username: '', password: ''}}
           validationSchema={formSchema}
@@ -51,10 +71,35 @@ const AuthScreen = ({navigation}) => {
             touched,
             isValid,
             handleSubmit,
+            isSubmitting,
+            isValidating,
           }) => (
             <View style={styles.screen}>
               <Icon name={'admin-panel-settings'} size={34} />
+              {error && (
+                <View style={styles.errorContainer}>
+                  <View style={styles.errorText}>
+                    <HelperText
+                      style={styles.errorText}
+                      type="error"
+                      visible={error ? true : false}>
+                      {error}
+                    </HelperText>
+                  </View>
+                  <View style={styles.errorCloseButton}>
+                    <IconButton
+                      icon={'close'}
+                      size={13}
+                      color={Colors.primary}
+                      onPress={() => setError(false)}
+                    />
+                  </View>
+                </View>
+              )}
+
               <TextInput
+                autoCapitalize={'none'}
+                autoCorrect={false}
                 left={<TextInput.Icon name="account" color={userIconColor} />}
                 // mode='outlined'
                 placeholder="username"
@@ -97,19 +142,25 @@ const AuthScreen = ({navigation}) => {
                   {errors.password}
                 </Text>
               )}
-              <Button
-                mode="contained"
-                raised
-                theme={{roundness: 5}}
-                onPress={handleSubmit}
-                // onPress={() =>
-                // navigation.reset({
-                //   index: 0,
-                //   routes: [{name: 'DrawerNav'}],
-                // })}
-              >
-                LogIn
-              </Button>
+              {isLoading ? (
+                <Button mode={'text'}>
+                  <ActivityIndicator />
+                </Button>
+              ) : (
+                <Button
+                  mode="contained"
+                  raised
+                  theme={{roundness: 5}}
+                  onPress={handleSubmit}
+                  // onPress={() =>
+                  // navigation.reset({
+                  //   index: 0,
+                  //   routes: [{name: 'DrawerNav'}],
+                  // })}
+                >
+                  LogIn
+                </Button>
+              )}
             </View>
           )}
         </Formik>
@@ -129,6 +180,28 @@ const styles = StyleSheet.create({
     width: '80%',
     marginBottom: 10,
     backgroundColor: '#fff',
+  },
+  errorText: {
+    // backgroundColor: '#fff',
+    alignSelf: 'center',
+    fontSize: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '90%',
+  },
+  errorCloseButton: {
+    marginRight: 0,
+    right: 0,
+    // width:13,
+  },
+  errorContainer: {
+    height: 40,
+    width: '80%',
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 10,
+    flexDirection: 'row',
   },
 });
 

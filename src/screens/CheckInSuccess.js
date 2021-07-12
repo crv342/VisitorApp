@@ -17,8 +17,9 @@ const HomeScreen = props => {
 
   return (
     <View style={styles.screen}>
-      <Image style={styles.gifStyle} 
-             source={require('../Image/approval.gif')} 
+      <Image
+        style={styles.gifStyle}
+        source={require('../Image/approval.gif')}
       />
       <Title>{name}</Title>
       <Text> is checked In</Text>
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   gifStyle: {
     width: 200,
     height: 200,
-  }
+  },
 });
 
 export default HomeScreen;

@@ -26,12 +26,15 @@ export const fetchCheckedIn = () => {
       const checkedInData = [];
       //id, title, imageUrl, description, price, category, owner
       for (var key = 0; key < resData.length; key++) {
-        resData[key];
         if (!resData[key].checkOut) {
           checkedInData.push(
             new Visitor(
               resData[key]._id,
               resData[key].name,
+              resData[key].phone,
+              resData[key].address,
+              resData[key].gender,
+              resData[key].dob,
               resData[key].checkIn,
               resData[key].checkOut,
               resData[key].host,
@@ -74,6 +77,10 @@ export const fetchvisitor = () => {
           new Visitor(
             resData[key]._id,
             resData[key].name,
+            resData[key].phone,
+            resData[key].address,
+            resData[key].gender,
+            resData[key].dob,
             resData[key].checkIn,
             resData[key].checkOut,
             resData[key].host,
@@ -91,7 +98,17 @@ export const fetchvisitor = () => {
   };
 };
 
-export const checkin = (name, checkIn, checkOut, host, purpose) => {
+export const checkin = (
+  name,
+  phone,
+  address,
+  gender,
+  dob,
+  checkIn,
+  checkOut,
+  host,
+  purpose,
+) => {
   return async dispatch => {
     try {
       const response = await fetch(URL + '/visitor/checkin', {
@@ -101,6 +118,10 @@ export const checkin = (name, checkIn, checkOut, host, purpose) => {
         },
         body: JSON.stringify({
           name,
+          phone,
+          address,
+          gender,
+          dob,
           checkIn,
           host,
           purpose,
@@ -117,6 +138,10 @@ export const checkin = (name, checkIn, checkOut, host, purpose) => {
       const visitorData = {
         id: resData._id,
         name: resData.name,
+        phone: resData.phone,
+        address: resData.address,
+        gender: resData.address,
+        dob: resData.dob,
         checkIn: resData.checkIn,
         checkOut: resData.checkOut,
         host: resData.host,

@@ -4,82 +4,123 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import ItemPicker from '../components/ItemPicker';
-import {Picker} from '@react-native-picker/picker';
 
-import {Divider, Menu, Button, TextInput, Text} from 'react-native-paper';
-import {useDispatch} from 'react-redux';
+import {
+  Divider,
+  Menu,
+  Button,
+  TextInput,
+  Text,
+  Subheading,
+  HelperText,
+} from 'react-native-paper';
+import {useDispatch, useSelector} from 'react-redux';
 import {checkin} from '../store/actions/visitor';
+import {err} from 'react-native-svg/lib/typescript/xml';
+import Colors from '../constants/Colors';
 
 let vData;
 
 const CheckInDetails = props => {
   const dispatch = useDispatch();
   const [visitorName, setVisitorName] = useState('');
+  const [visitorPhone, setVisitorPhone] = useState();
+  const [visitorAddress, setVisitorAddress] = useState();
+  const [visitorGender, setVisitorGender] = useState();
+  const [visitorDOB, setVisitorDOB] = useState();
   const [hostValue, setHostValue] = useState();
   const [purposeValue, setPurposeValue] = useState();
   const [visibleHost, setVisibleHost] = useState(false);
   const [visiblePurpose, setVisiblePurpose] = useState(false);
+  const purposeData = useSelector(state => state.host.purposes);
+  const [error, setError] = useState(false);
 
   // Changes XML to JSON
-  function xmlToJson(xml) {
-    // Create the return object
-    var obj = {};
-
-    if (xml.nodeType == 1) {
-      // element
-      // do attributes
-      if (xml.attributes.length > 0) {
-        obj['@attributes'] = {};
-        for (var j = 0; j < xml.attributes.length; j++) {
-          var attribute = xml.attributes.item(j);
-          obj['@attributes'][attribute.nodeName] = attribute.nodeValue;
-        }
-      }
-    } else if (xml.nodeType == 3) {
-      // text
-      obj = xml.nodeValue;
-    }
-
-    // do children
-    if (xml.hasChildNodes()) {
-      for (var i = 0; i < xml.childNodes.length; i++) {
-        var item = xml.childNodes.item(i);
-        var nodeName = item.nodeName;
-        if (typeof obj[nodeName] === 'undefined') {
-          obj[nodeName] = xmlToJson(item);
-        } else {
-          if (typeof obj[nodeName].push === 'undefined') {
-            var old = obj[nodeName];
-            obj[nodeName] = [];
-            obj[nodeName].push(old);
-          }
-          obj[nodeName].push(xmlToJson(item));
-        }
-      }
-    }
-    return obj;
-  }
+  // function xmlToJson(xml) {
+  //   // Create the return object
+  //   var obj = {};
+  //
+  //   if (xml.nodeType == 1) {
+  //     // element
+  //     // do attributes
+  //     if (xml.attributes.length > 0) {
+  //       obj['@attributes'] = {};
+  //       for (var j = 0; j < xml.attributes.length; j++) {
+  //         var attribute = xml.attributes.item(j);
+  //         obj['@attributes'][attribute.nodeName] = attribute.nodeValue;
+  //       }
+  //     }
+  //   } else if (xml.nodeType == 3) {
+  //     // text
+  //     obj = xml.nodeValue;
+  //   }
+  //
+  //   // do children
+  //   if (xml.hasChildNodes()) {
+  //     for (var i = 0; i < xml.childNodes.length; i++) {
+  //       var item = xml.childNodes.item(i);
+  //       var nodeName = item.nodeName;
+  //       if (typeof obj[nodeName] === 'undefined') {
+  //         obj[nodeName] = xmlToJson(item);
+  //       } else {
+  //         if (typeof obj[nodeName].push === 'undefined') {
+  //           var old = obj[nodeName];
+  //           obj[nodeName] = [];
+  //           obj[nodeName].push(old);
+  //         }
+  //         obj[nodeName].push(xmlToJson(item));
+  //       }
+  //     }
+  //   }
+  //   return obj;
+  // }
   if (props.route.params) {
     vData = props.route.params.data;
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       if (typeof vData === 'string' && vData.startsWith('<')) {
         if (vData.startsWith('<?xml')) {
           vData = vData.slice(63, vData.length - 2).trim();
         } else if (vData.startsWith('<')) {
-          vData = vData.slice(5, vData.indexOf('a="') - 1).trim();
+          vData = vData.slice(5, vData.indexOf('s="') - 1).trim();
         }
         console.log('pre' + vData);
-        // vData = vData.replace(/ /g, '?');
+        vData = vData.replace(/[,]/g, '?');
         vData = vData.replace(/[=]/g, '":');
         vData = '{"' + vData.replace(/" /g, ',"') + '}';
         vData = vData.replace(/[,]/g, '",');
+        vData = vData.replace(/[?]/g, ',');
         console.log('before parse' + vData);
         vData = JSON.parse(vData);
         setVisitorName('name' in vData ? vData.name : vData.n);
+        setVisitorAddress(
+          'a' in vData
+            ? vData.a
+            : vData.house +
+                ', ' +
+                vData.street +
+                ', ' +
+                vData.lm +
+                ', ' +
+                vData.vtc +
+                ', ' +
+                vData.po +
+                ', ' +
+                vData.dist +
+                ', ' +
+                vData.subdist +
+                ', ' +
+                vData.state +
+                ', ' +
+                vData.pc,
+        );
+        setVisitorGender('gender' in vData ? vData.gender : vData.g);
+        setVisitorDOB('dob' in vData ? vData.dob : vData.d);
       }
-    }, [vData]);
+    }, []);
   }
   // vData = props.route.params.data;
   // useEffect(() => {
@@ -113,24 +154,37 @@ const CheckInDetails = props => {
       name: 'abc',
     },
   ];
-  const dataPurpose = [
-    {
-      _id: 'p1',
-      name: 'meeting',
-    },
-    {
-      _id: 'p2',
-      name: 'interview',
-    },
-  ];
 
   const submitHandler = async () => {
-    dispatch(checkin(visitorName, new Date(), '', hostValue, purposeValue));
+    if (
+      visitorName === '' ||
+      hostValue === undefined ||
+      purposeValue === undefined ||
+      visitorPhone === undefined
+    ) {
+      setError('required field is empty!');
+      return;
+    }
+    if (visitorPhone.length < 10) {
+      setError('mobile number should be 10 numbers long');
+      return;
+    }
+    dispatch(
+      checkin(
+        visitorName,
+        visitorPhone,
+        visitorAddress,
+        visitorGender,
+        visitorDOB,
+        new Date(),
+        '',
+        hostValue,
+        purposeValue,
+      ),
+    );
     props.navigation.navigate('CheckInSuccess', {name: visitorName});
   };
 
-  // const openMenu = () => setVisible(true);
-  //
   const closeMenu = () => {
     setVisibleHost(false);
     setVisiblePurpose(false);
@@ -138,75 +192,87 @@ const CheckInDetails = props => {
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.screen}>
-        <View style={{height: '25%'}} />
+      {/*<ScrollView contentContainerStyle={styles.screen}>*/}
+      {/*<View style={{height: '20%'}} />*/}
+      <View style={styles.formContainer}>
         <TextInput
           style={styles.inputField}
-          label={'name'}
+          label={'Name*'}
           value={visitorName}
           onChangeText={t => {
             setVisitorName(t);
           }}
+          onFocus={() => setError(false)}
         />
-        {/*<View style={styles.formContainer}>*/}
-        {/*<TextInput value={host} onFocus={() => openMenu()} />*/}
-        {/*<View style={styles.menuContainer}>*/}
-        {/*  <Menu*/}
-        {/*    style={styles.menuSelect}*/}
-        {/*    visible={visible}*/}
-        {/*    onDismiss={closeMenu}*/}
-        {/*    anchor={*/}
-        {/*      <TextInput*/}
-        {/*        style={styles.inputShow}*/}
-        {/*        keyboardAppearance={false}*/}
-        {/*        showSoftInputOnFocus={false}*/}
-        {/*        label={'Select a Host'}*/}
-        {/*        value={host}*/}
-        {/*        onFocus={() => {*/}
-        {/*          openMenu();*/}
-        {/*        }}*/}
-        {/*        keyboardType={null}*/}
-        {/*      />*/}
-        {/*      // <Button mode={'outlined'} onPress={openMenu}>*/}
-        {/*      //   Select Host*/}
-        {/*      // </Button>*/}
-        {/*    }>*/}
-        {/*    <Menu.Item*/}
-        {/*      style={styles.menuSelect}*/}
-        {/*      onPress={() => {}}*/}
-        {/*      title="Item 1"*/}
-        {/*    />*/}
-        {/*    <Menu.Item*/}
-        {/*      style={styles.menuSelect}*/}
-        {/*      onPress={() => {}}*/}
-        {/*      title="Item 2"*/}
-        {/*    />*/}
-        {/*    <Menu.Item*/}
-        {/*      style={styles.menuSelect}*/}
-        {/*      onPress={() => {}}*/}
-        {/*      title="Item 3"*/}
-        {/*    />*/}
-        {/*  </Menu>*/}
-        {/*</View>*/}
+        {visitorAddress && (
+          <TextInput
+            style={{...styles.inputField}}
+            label={'Address'}
+            value={visitorAddress}
+            editable={false}
+            disabled={true}
+            numberOfLines={3}
+            multiline={true}
+          />
+          // <View style={styles.otherData}>
+          //   <Subheading>Address</Subheading>
+          //   <Text>{visitorAddress}</Text>
+          // </View>
+        )}
+
+        <TextInput
+          textContentType={'telephoneNumber'}
+          keyboardType={'number-pad'}
+          style={{...styles.inputField}}
+          label={'Mobile*'}
+          value={visitorPhone}
+          onChangeText={t => {
+            setVisitorPhone(t);
+          }}
+          left={<TextInput.Affix text={'+91 '} />}
+        />
+        {/*<TextInput*/}
+        {/*  style={styles.inputField}*/}
+        {/*  label={'Address'}*/}
+        {/*  value={visitorAddress}*/}
+        {/*  onChangeText={t => {*/}
+        {/*    setVisitorAddress(t);*/}
+        {/*  }}*/}
+        {/*/>*/}
         <ItemPicker
           itemData={dataHost}
-          onFocus={() => setVisibleHost(true)}
+          onFocus={() => {
+            setError(false);
+            setVisibleHost(true);
+          }}
           value={hostValue}
           setValue={setHostValue}
           visible={visibleHost}
           onDismiss={closeMenu}
-          lable={'Select a Host'}
+          lable={'Select a Host*'}
         />
         <ItemPicker
-          itemData={dataPurpose}
-          onFocus={() => setVisiblePurpose(true)}
+          itemData={purposeData}
+          onFocus={() => {
+            setError(false);
+            setVisiblePurpose(true);
+          }}
           value={purposeValue}
           setValue={setPurposeValue}
           visible={visiblePurpose}
           onDismiss={closeMenu}
-          lable={'Select Purpose'}
+          lable={'Select Purpose*'}
         />
-        <View style={{alignItems: 'center'}}>
+        {/*{error && (*/}
+
+        {/*)}*/}
+        <View style={{alignItems: 'center', marginTop: 30}}>
+          <HelperText
+            style={styles.errorText}
+            type="error"
+            visible={error ? true : false}>
+            {error}
+          </HelperText>
           <Button
             mode={'contained'}
             style={styles.button}
@@ -214,17 +280,8 @@ const CheckInDetails = props => {
             Next
           </Button>
         </View>
-
-        {/*</View>*/}
-        {/*<Picker*/}
-        {/*  selectedValue={selectedLanguage}*/}
-        {/*  onValueChange={(itemValue, itemIndex) =>*/}
-        {/*    setSelectedLanguage(itemValue)*/}
-        {/*  }>*/}
-        {/*  <Picker.Item label="Java" value="java" />*/}
-        {/*  <Picker.Item label="JavaScript" value="js" />*/}
-        {/*</Picker>*/}
       </View>
+      {/*</ScrollView>*/}
     </TouchableWithoutFeedback>
   );
 };
@@ -232,36 +289,38 @@ const CheckInDetails = props => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    justifyContent: 'center',
   },
   button: {
     width: 100,
-    marginTop: 30,
   },
   inputField: {
     width: 300,
     alignSelf: 'center',
+    marginTop: 10,
   },
-  // inputShow: {
-  //   // marginTop: 30,
-  //   width: 300,
-  //   // margin: 20,
-  // },
-  // menuSelect: {
-  //   width: 300,
-  // },
-  // menuContainer: {
-  //   marginTop: 60,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  // },
+  otherData: {
+    marginTop: 10,
+    width: 300,
+    borderColor: Colors.primary,
+    borderWidth: 1.5,
+    // borderRadius: 10,
+    borderBottomEndRadius: 15,
+    borderTopLeftRadius: 15,
+  },
   formContainer: {
     flex: 1,
-    height: '90%',
+    // height: '90%',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '90%',
+    // width: '90%',
+  },
+  errorText: {
+    alignSelf: 'center',
+    fontSize: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
   },
 });
 

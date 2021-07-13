@@ -1,9 +1,24 @@
 // import moment from 'moment';
 
 class Visitor {
-  constructor(id, name, checkIn, checkOut, host, purpose) {
+  constructor(
+    id,
+    name,
+    phone,
+    address,
+    gender,
+    dob,
+    checkIn,
+    checkOut,
+    host,
+    purpose,
+  ) {
     this.id = id;
     this.name = name;
+    this.phone = phone;
+    this.address = address;
+    this.gender = gender;
+    this.dob = dob;
     this.checkIn = checkIn;
     this.checkOut = checkOut;
     this.host = host;

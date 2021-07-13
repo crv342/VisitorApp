@@ -7,6 +7,7 @@ import * as visitorActions from '../store/actions/visitor';
 
 import Colors from '../constants/Colors';
 import {useDispatch} from 'react-redux';
+import {fetchDetails} from '../store/actions/host';
 
 const SplashScreen = props => {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const SplashScreen = props => {
       dispatch(authActions.restoreToken(token, adminData));
     };
     tryLogin();
+    dispatch(fetchDetails());
   }, [dispatch]);
 
   // useEffect(() => {

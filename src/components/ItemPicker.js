@@ -43,17 +43,6 @@ const ItemPicker = ({
             title={item.name}
           />
         ))}
-
-        {/*<Menu.Item*/}
-        {/*  style={styles.menuSelect}*/}
-        {/*  onPress={() => {}}*/}
-        {/*  title="Item 2"*/}
-        {/*/>*/}
-        {/*<Menu.Item*/}
-        {/*  style={styles.menuSelect}*/}
-        {/*  onPress={() => {}}*/}
-        {/*  title="Item 3"*/}
-        {/*/>*/}
       </Menu>
     </View>
   );
@@ -69,7 +58,7 @@ const styles = StyleSheet.create({
     width: 300,
   },
   menuContainer: {
-    marginTop: 60,
+    marginTop: 10,
     justifyContent: 'center',
     alignItems: 'center',
   },

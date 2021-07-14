@@ -36,6 +36,7 @@ const CheckInDetails = props => {
   const [visibleHost, setVisibleHost] = useState(false);
   const [visiblePurpose, setVisiblePurpose] = useState(false);
   const purposeData = useSelector(state => state.host.purposes);
+  const hostData = useSelector(state => state.host.hosts);
   const [error, setError] = useState(false);
 
   // Changes XML to JSON
@@ -144,17 +145,6 @@ const CheckInDetails = props => {
   // var jsonText = JSON.stringify(xmlToJson(vData));
   // console.log(jsonText);
 
-  const dataHost = [
-    {
-      _id: 'wfwf',
-      name: 'crv',
-    },
-    {
-      _id: 'dgfg',
-      name: 'abc',
-    },
-  ];
-
   const submitHandler = async () => {
     if (
       visitorName === '' ||
@@ -240,7 +230,7 @@ const CheckInDetails = props => {
         {/*  }}*/}
         {/*/>*/}
         <ItemPicker
-          itemData={dataHost}
+          itemData={hostData}
           onFocus={() => {
             setError(false);
             setVisibleHost(true);

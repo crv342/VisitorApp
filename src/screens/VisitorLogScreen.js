@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
 import {
   Appbar,
   Text,
@@ -23,12 +23,12 @@ let visitorData, ascData, descData;
 const VisitorLogScreen = ({navigation}) => {
   // const dispatch = useDispatch();
   let tableRow = 'even';
-  const [asc, setAsc] = useState(false);
+  const [asc, setAsc] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [visitor, setVisitor] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
 
   const showModal = data => {
     setVisitor(data);
@@ -61,13 +61,14 @@ const VisitorLogScreen = ({navigation}) => {
         />
         <Appbar.Content title={'History'} />
       </Appbar.Header>
-      <View style={styles.tableStyle}>
-        <View style={styles.table}>
-          {isLoading ? (
-            <ActivityIndicator />
-          ) : (
-            <DataTable>
-              <ScrollView>
+
+      <ScrollView>
+        <View style={styles.tableStyle}>
+          <View style={styles.table}>
+            {isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <DataTable>
                 <DataTable.Header>
                   <View style={{flex: 1, flexDirection: 'row'}}>
                     <View
@@ -126,60 +127,60 @@ const VisitorLogScreen = ({navigation}) => {
                     </DataTable.Row>
                   );
                 })}
-              </ScrollView>
-              {/*<DataTable.Pagination*/}
-              {/*  page={page}*/}
-              {/*  numberOfPages={3}*/}
-              {/*  onPageChange={page => setPage(page)}*/}
-              {/*  label="1-2 of 6"*/}
-              {/*  optionsPerPage={optionsPerPage}*/}
-              {/*  itemsPerPage={itemsPerPage}*/}
-              {/*  setItemsPerPage={setItemsPerPage}*/}
-              {/*  showFastPagination*/}
-              {/*  optionsLabel={'Rows per page'}*/}
-              {/*/>*/}
-            </DataTable>
-          )}
-        </View>
-      </View>
-      {/*<Provider>*/}
-      <Portal>
-        <Modal
-          visible={visible}
-          onDismiss={hideModal}
-          contentContainerStyle={styles.containerStyle}>
-          <View>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: 4,
-              }}>
-              <Title>Visitor Details</Title>
-            </View>
-            <Divider />
-            {Object.keys(visitor).map((keyName, keyIndex) => {
-              if (keyName === 'id') {
-                return;
-              }
-              return (
-                <View style={styles.modelText} key={keyName}>
-                  <Title>{keyName}: </Title>
-                  <Text style={styles.visitorDetail}>{visitor[keyName]}</Text>
-                </View>
-                // <List.Item key={keyName}>
-                //   {console.log(keyName,keyIndex)}
-                //   <Text>
-                //     {keyName}
-                //     {visitor[keyName]}
-                //   </Text>
-                // </List.Item>
-              );
-            })}
+                {/*<DataTable.Pagination*/}
+                {/*  page={page}*/}
+                {/*  numberOfPages={3}*/}
+                {/*  onPageChange={page => setPage(page)}*/}
+                {/*  label="1-2 of 6"*/}
+                {/*  optionsPerPage={optionsPerPage}*/}
+                {/*  itemsPerPage={itemsPerPage}*/}
+                {/*  setItemsPerPage={setItemsPerPage}*/}
+                {/*  showFastPagination*/}
+                {/*  optionsLabel={'Rows per page'}*/}
+                {/*/>*/}
+              </DataTable>
+            )}
           </View>
-        </Modal>
-      </Portal>
-      {/*</Provider>*/}
+        </View>
+        {/*<Provider>*/}
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={hideModal}
+            contentContainerStyle={styles.containerStyle}>
+            <View>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom: 4,
+                }}>
+                <Title>Visitor Details</Title>
+              </View>
+              <Divider />
+              {Object.keys(visitor).map((keyName, keyIndex) => {
+                if (keyName === 'id') {
+                  return;
+                }
+                return (
+                  <View style={styles.modelText} key={keyName}>
+                    <Title>{keyName}: </Title>
+                    <Text style={styles.visitorDetail}>{visitor[keyName]}</Text>
+                  </View>
+                  // <List.Item key={keyName}>
+                  //   {console.log(keyName,keyIndex)}
+                  //   <Text>
+                  //     {keyName}
+                  //     {visitor[keyName]}
+                  //   </Text>
+                  // </List.Item>
+                );
+              })}
+            </View>
+          </Modal>
+        </Portal>
+        {/*</Provider>*/}
+      </ScrollView>
     </View>
   );
 };
@@ -228,10 +229,12 @@ const styles = StyleSheet.create({
     color: 'green',
     marginVertical: 4,
     marginTop: 8,
+    fontSize: Dimensions.get('window').width * 0.0361,
   },
   checkOutText: {
     color: 'red',
     marginBottom: 4,
+    fontSize: Dimensions.get('window').width * 0.0361,
   },
   modelText: {
     flexDirection: 'row',

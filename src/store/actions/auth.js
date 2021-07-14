@@ -1,17 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UPDATEHOST} from './host';
 
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
+export const UPDATE = 'UPDATE';
 export const RESTORE_TOKEN = 'RESTORE_TOKEN';
 export const URL = 'https://visitorapi.herokuapp.com';
 
 let timer;
 
 export const login = (username, password) => {
-  // console.log("...start")
   return async dispatch => {
     try {
-      // console.log("...in start")
       const response = await fetch(URL + '/admin/login', {
         method: 'POST',
         headers: {
@@ -22,7 +22,6 @@ export const login = (username, password) => {
           password,
         }),
       });
-      // console.log("...after call", await response.json())
       if (!response.ok) {
         const resData = await response.json();
         let message = 'Something went wrong!';
@@ -48,7 +47,43 @@ export const login = (username, password) => {
       dispatch(setLogoutTimer(parseInt(expiresIn) * 1000));
       dispatch({type: LOGIN, token: resData.token, adminData});
     } catch (e) {
-      // console.log(e.message);
+      throw new Error(e.message);
+    }
+  };
+};
+
+export const updateAdmin = updateData => {
+  return async (dispatch, getState) => {
+    try {
+      const token = getState().auth.token;
+      const response = await fetch(URL + '/admin/update', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify(updateData),
+      });
+      if (!response.ok) {
+        throw new Error('something went wrong');
+      }
+      const resData = await response.json();
+      const adminData = {
+        id: resData._id,
+        username: resData.username,
+        email: resData.email,
+      };
+
+      AsyncStorage.mergeItem(
+        'adminData',
+        JSON.stringify({
+          adminData,
+        }),
+      );
+
+      dispatch({type: UPDATE, adminData});
+    } catch (e) {
+      console.log(e.message);
       throw new Error(e.message);
     }
   };

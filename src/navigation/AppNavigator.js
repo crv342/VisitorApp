@@ -39,7 +39,6 @@ const AuthNavigator = ({navigation}) => {
         component={AuthScreen}
         options={{
           title: 'Admin Login',
-          // headerShown: false,
           headerLeft: () => (
             <Icon
               name={Platform.OS === 'ios' ? 'arrow-back-ios' : 'arrow-back'}
@@ -119,13 +118,13 @@ const DrawerNavigator = ({navigation}) => {
               }}
             />
             <SafeAreaView forceInset={{top: 'always', horizontal: 'never'}}>
-              <View style={{backgroundColor: Colors.primary}}>
+              <View
+                style={{backgroundColor: Colors.primary, fontColor: 'white'}}>
                 <DrawerItem
                   label={userName || ''}
                   onPress={() => {
                     navigation.navigate('Settings');
                   }}
-                  o
                   icon={() => (
                     <Icon color={'white'} size={24} name={'account-circle'} />
                   )}

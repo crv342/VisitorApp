@@ -142,25 +142,27 @@ const AuthScreen = ({navigation}) => {
                   {errors.password}
                 </Text>
               )}
-              {isLoading ? (
-                <Button mode={'text'}>
-                  <ActivityIndicator />
-                </Button>
-              ) : (
-                <Button
-                  mode="contained"
-                  raised
-                  theme={{roundness: 5}}
-                  onPress={handleSubmit}
-                  // onPress={() =>
-                  // navigation.reset({
-                  //   index: 0,
-                  //   routes: [{name: 'DrawerNav'}],
-                  // })}
-                >
-                  LogIn
-                </Button>
-              )}
+              {/*{isLoading ? (*/}
+              {/*  <Button mode={'text'}>*/}
+              {/*    <ActivityIndicator />*/}
+              {/*  </Button>*/}
+              {/*) : (*/}
+              <Button
+                uppercase={false}
+                loading={isLoading ? true : false}
+                mode="contained"
+                raised
+                theme={{roundness: 5}}
+                onPress={handleSubmit}
+                // onPress={() =>
+                // navigation.reset({
+                //   index: 0,
+                //   routes: [{name: 'DrawerNav'}],
+                // })}
+              >
+                Log In
+              </Button>
+              {/*)}*/}
             </View>
           )}
         </Formik>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Menu, TextInput} from 'react-native-paper';
+import {Menu, TextInput, Divider} from 'react-native-paper';
 import {Keyboard, StyleSheet, View} from 'react-native';
 
 const ItemPicker = ({
@@ -11,6 +11,7 @@ const ItemPicker = ({
   onFocus,
   itemData,
 }) => {
+  const len = itemData.length;
   return (
     <View style={styles.menuContainer}>
       <Menu
@@ -27,21 +28,20 @@ const ItemPicker = ({
             onFocus={onFocus}
             keyboardType={null}
           />
-          // <Button mode={'outlined'} onPress={openMenu}>
-          //   Select Host
-          // </Button>
         }>
-        {itemData.map(item => (
-          <Menu.Item
-            key={item._id}
-            style={styles.menuSelect}
-            onPress={() => {
-              Keyboard.dismiss();
-              onDismiss();
-              setValue(item.name);
-            }}
-            title={item.name}
-          />
+        {itemData.map((item, i) => (
+          <View key={item.name}>
+            <Menu.Item
+              style={styles.menuSelect}
+              onPress={() => {
+                Keyboard.dismiss();
+                onDismiss();
+                setValue(item.name);
+              }}
+              title={item.name}
+            />
+            {len !== i + 1 && <Divider />}
+          </View>
         ))}
       </Menu>
     </View>

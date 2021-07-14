@@ -2,7 +2,7 @@ import {URL} from './auth';
 import Host from '../../models/host';
 
 export const ADDHOST = 'ADDHOST';
-export const REMOVEHOST = 'REMOVEHOST';
+export const DELETEHOST = 'DELETEHOST';
 export const FETCH_DETAILS = 'FETCH_DETAILS';
 export const UPDATEHOST = 'UPDATEHOST';
 export const UPDATEPURPOSE = 'UPDATEPURPOSE';
@@ -17,18 +17,13 @@ export const fetchDetails = () => {
           'Content-Type': 'application/json',
         },
       });
-      console.log('1');
       if (!response.ok) {
-        console.log('2');
         const resData = await response.json();
-        console.log('3' + resData);
         throw new Error('Fetching details failed..');
       }
       const resData = await response.json();
-      console.log('4' + resData.host);
       const purposeData = resData.purpose;
       const hData = resData.host;
-      console.log(purposeData);
       const hostData = [];
       //id, title, imageUrl, description, price, category, owner
       for (var key = 0; key < hData.length; key++) {
@@ -37,7 +32,7 @@ export const fetchDetails = () => {
             hData[key]._id,
             hData[key].name,
             hData[key].phone,
-            'abc@gmail.com',
+            hData[key].email,
           ),
         );
       }
@@ -48,6 +43,97 @@ export const fetchDetails = () => {
       });
     } catch (error) {
       throw new Error('No Data Found!');
+    }
+  };
+};
+
+export const addHost = (name, phone, email) => {
+  return async (dispatch, getState) => {
+    try {
+      const token = getState().auth.token;
+      const response = await fetch(URL + '/host/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('something went wrong');
+      }
+      const responseData = await response.json();
+      const resData = responseData.host;
+      const hostData = [];
+      for (var key = 0; key < resData.length; key++) {
+        hostData.push(
+          new Host(
+            resData[key]._id,
+            resData[key].name,
+            resData[key].phone,
+            resData[key].email,
+          ),
+        );
+      }
+
+      dispatch({type: ADDHOST, hostData});
+    } catch (e) {
+      console.log(e.message);
+      throw new Error(e.message);
+    }
+  };
+};
+
+export const updateHost = (id, host) => {
+  return async (dispatch, getState) => {
+    try {
+      const token = getState().auth.token;
+      const response = await fetch(URL + '/host/update/' + id, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify(host),
+      });
+
+      if (!response.ok) {
+        throw new Error('something went wrong');
+      }
+      const hostData = await response.json();
+
+      dispatch({type: UPDATEHOST, hostData, id});
+    } catch (e) {
+      console.log(e.message);
+      throw new Error(e.message);
+    }
+  };
+};
+
+export const deleteHost = id => {
+  return async (dispatch, getState) => {
+    try {
+      const token = getState().auth.token;
+      const response = await fetch(URL + '/host/remove/' + id, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify(),
+      });
+      if (!response.ok) {
+        throw new Error('something went wrong');
+      }
+      const resData = await response.json();
+
+      dispatch({type: DELETEHOST, id: resData._id});
+    } catch (e) {
+      throw new Error(e.message);
     }
   };
 };

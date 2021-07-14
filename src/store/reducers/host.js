@@ -1,6 +1,6 @@
 import {
   ADDHOST,
-  REMOVEHOST,
+  DELETEHOST,
   UPDATEHOST,
   UPDATEPURPOSE,
   FETCH_DETAILS,
@@ -23,18 +23,39 @@ export default (state = initialState, action) => {
     case ADDHOST:
       return {
         ...state,
-        hosts: state.hosts.concat(action.hostData),
+        hosts: action.hostData,
       };
 
-    case REMOVEHOST:
+    case DELETEHOST:
       return {
         ...state,
-        hosts: state.visitor.filter(data => data.id === action.id),
+        hosts: state.hosts.filter(data => data.id !== action.id),
       };
     case UPDATEHOST:
+      // var index = state.checkedInVisitors.findIndex(
+      //   item => item.id == action.id,
+      // );
+      // if (index !== -1) {
+      //   state.checkedInVisitors.splice(index, 1);
+      // }
+      const index = state.hosts.findIndex(item => item.id == action.id);
+      // const data = state.hosts[index];
+      // const updatedData = {...data, ...action.hostData};
+      // const hosts = state.hosts;
+      // hosts[index] = updatedData;
+      if (index === -1) {
+        return state;
+      }
       return {
         ...state,
-        hosts: action.hostData,
+        hosts: [
+          ...state.hosts.slice(0, index), // everything before current post
+          {
+            ...state.hosts[index],
+            ...action.hostData,
+          },
+          ...state.hosts.slice(index + 1), // everything after current post
+        ],
       };
     case UPDATEPURPOSE:
       return {

@@ -1,4 +1,4 @@
-import {LOGIN, LOGOUT, RESTORE_TOKEN} from '../actions/auth';
+import {LOGIN, LOGOUT, UPDATE, RESTORE_TOKEN} from '../actions/auth';
 
 const initialState = {
   token: null,
@@ -14,6 +14,11 @@ export default (state = initialState, action) => {
         token: action.token,
         adminData: action.adminData,
         isLoading: false,
+      };
+    case UPDATE:
+      return {
+        ...state,
+        adminData: action.adminData,
       };
     case LOGOUT:
       return initialState;

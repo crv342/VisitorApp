@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TouchableOpacity,
+  Button as B,
 } from 'react-native';
 import {
   Appbar,
@@ -17,6 +18,7 @@ import {
   Title,
   List,
   IconButton,
+  ActivityIndicator
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -24,6 +26,7 @@ import {
   removePurpose,
   updatePurpose,
 } from '../store/actions/host';
+import * as authActions from '../store/actions/auth';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Colors from '../constants/Colors';
 
@@ -32,8 +35,9 @@ const SettingScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState(adminData.username);
   const [email, setEmail] = useState(adminData.email);
-  const [phone, setPhone] = useState(adminData.phone);
+  // const [phone, setPhone] = useState(adminData.phone);
   const [purpose, setPurpose] = useState('');
+  const [loading, setLoading] = useState(false);
   const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
@@ -44,6 +48,12 @@ const SettingScreen = ({navigation}) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  const submitHandler = async () => {
+    setLoading(true);
+    await dispatch(authActions.updateAdmin({username, email}));
+    setLoading(false);
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -59,6 +69,7 @@ const SettingScreen = ({navigation}) => {
         <View style={styles.screen}>
           <Title>Admin Details</Title>
           <TextInput
+            autoCapitalize={'none'}
             mode={'outlined'}
             style={styles.inputField}
             label={'username'}
@@ -68,6 +79,7 @@ const SettingScreen = ({navigation}) => {
             }}
           />
           <TextInput
+            autoCapitalize={'none'}
             mode={'outlined'}
             style={styles.inputField}
             label={'email'}
@@ -76,15 +88,17 @@ const SettingScreen = ({navigation}) => {
               setEmail(t);
             }}
           />
-          <TextInput
-            mode={'outlined'}
-            style={styles.inputField}
-            label={'phone'}
-            value={phone}
-            onChangeText={t => {
-              setPhone(t);
-            }}
-          />
+          {/*<TextInput*/}
+          {/*  mode={'outlined'}*/}
+          {/*  style={styles.inputField}*/}
+          {/*  label={'phone'}*/}
+          {/*  value={phone}*/}
+          {/*  onChangeText={t => {*/}
+          {/*    setPhone(t);*/}
+          {/*  }}*/}
+          {/*/>*/}
+          {loading && <ActivityIndicator style={styles.inputField} />}
+
           <Provider>
             <Portal>
               <Modal
@@ -134,6 +148,13 @@ const SettingScreen = ({navigation}) => {
             </Portal>
             <Button
               color={Colors.primary}
+              mode={'contained'}
+              style={styles.inputField}
+              onPress={submitHandler}>
+              Save
+            </Button>
+            <Button
+              color={Colors.primary}
               mode={'outlined'}
               style={styles.inputField}
               onPress={showModal}>
@@ -150,8 +171,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     padding: 16,
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   inputField: {
     width: '90%',

@@ -28,8 +28,7 @@ const formSchema = yup.object({
 
 const AuthScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  // const [username, setUsername] = useState('');
-  // const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [userIconColor, setUserIconColor] = useState('black');
@@ -65,14 +64,10 @@ const AuthScreen = ({navigation}) => {
           {({
             values,
             handleChange,
-            handleBlur,
             errors,
             setFieldTouched,
             touched,
-            isValid,
             handleSubmit,
-            isSubmitting,
-            isValidating,
           }) => (
             <View style={styles.screen}>
               <Icon name={'admin-panel-settings'} size={34} />
@@ -101,7 +96,6 @@ const AuthScreen = ({navigation}) => {
                 autoCapitalize={'none'}
                 autoCorrect={false}
                 left={<TextInput.Icon name="account" color={userIconColor} />}
-                // mode='outlined'
                 placeholder="username"
                 style={styles.inputField}
                 lable="Username"
@@ -126,9 +120,14 @@ const AuthScreen = ({navigation}) => {
                 theme={{background: '#fff'}}
                 placeholder="password"
                 style={styles.inputField}
-                right={<TextInput.Icon name="eye" />}
+                right={
+                  <TextInput.Icon
+                    onPress={() => setShowPassword(showPassword ? false : true)}
+                    name={showPassword ? 'eye-off' : 'eye'}
+                  />
+                }
                 lable="Password"
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 value={values.password}
                 onChangeText={handleChange('password')}
                 onFocus={() => setPassIconColor('#C1403D')}
@@ -142,24 +141,13 @@ const AuthScreen = ({navigation}) => {
                   {errors.password}
                 </Text>
               )}
-              {/*{isLoading ? (*/}
-              {/*  <Button mode={'text'}>*/}
-              {/*    <ActivityIndicator />*/}
-              {/*  </Button>*/}
-              {/*) : (*/}
               <Button
                 uppercase={false}
                 loading={isLoading ? true : false}
                 mode="contained"
                 raised
                 theme={{roundness: 5}}
-                onPress={handleSubmit}
-                // onPress={() =>
-                // navigation.reset({
-                //   index: 0,
-                //   routes: [{name: 'DrawerNav'}],
-                // })}
-              >
+                onPress={handleSubmit}>
                 Log In
               </Button>
               {/*)}*/}

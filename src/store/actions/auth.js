@@ -6,6 +6,7 @@ export const LOGOUT = 'LOGOUT';
 export const UPDATE = 'UPDATE';
 export const RESTORE_TOKEN = 'RESTORE_TOKEN';
 export const URL = 'https://visitorapi.herokuapp.com';
+// export const URL = 'http://localhost:3000';
 
 let timer;
 

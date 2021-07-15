@@ -108,6 +108,7 @@ export const checkin = (
   checkOut,
   host,
   purpose,
+  hostid,
 ) => {
   return async dispatch => {
     try {
@@ -125,6 +126,7 @@ export const checkin = (
           checkIn,
           host,
           purpose,
+          hostid,
         }),
       });
 

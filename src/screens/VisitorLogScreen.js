@@ -10,15 +10,24 @@ import {
   Button,
   Provider,
   Title,
-  List,
+  Searchbar,
   Divider,
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchvisitor} from '../store/actions/visitor';
 import moment from 'moment';
+import Colors from '../constants/Colors';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const optionsPerPage = [2, 3, 4];
-let visitorData, ascData, descData;
+const widthScreen = Dimensions.get('screen').width;
+const capitalize = input => {
+  return input
+    .toLowerCase()
+    .split(' ')
+    .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(' ');
+};
 
 const VisitorLogScreen = ({navigation}) => {
   // const dispatch = useDispatch();
@@ -29,6 +38,10 @@ const VisitorLogScreen = ({navigation}) => {
   const [visitor, setVisitor] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
   const [visible, setVisible] = useState(false);
+  const [showSearchBar, setShowSearchBar] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const onChangeSearch = query => setSearchQuery(query);
 
   const showModal = data => {
     setVisitor(data);
@@ -42,11 +55,23 @@ const VisitorLogScreen = ({navigation}) => {
     setIsLoading(false);
   }, []);
   const visitorsData = useSelector(state => state.visitor.visitor);
-  ascData = visitorsData.slice();
-  // descData = visitorsData.slice().reverse();
   const [visitorData, setVisitorData] = useState(
     visitorsData.slice().reverse(),
   );
+  useEffect(() => {
+    if (searchQuery !== '') {
+      setVisitorData(
+        visitorsData
+          .slice()
+          .reverse()
+          .filter(data =>
+            data.name.toLowerCase().includes(searchQuery.toLowerCase()),
+          ),
+      );
+    } else {
+      setVisitorData(visitorsData.slice().reverse());
+    }
+  }, [searchQuery, visitorsData]);
 
   useEffect(() => {
     setPage(0);
@@ -55,11 +80,46 @@ const VisitorLogScreen = ({navigation}) => {
   return (
     <View style={styles.screen}>
       <Appbar.Header>
-        <Appbar.Action
-          icon={'menu'}
-          onPress={() => navigation.toggleDrawer()}
-        />
-        <Appbar.Content title={'History'} />
+        {showSearchBar ? (
+          <>
+            <Searchbar
+              style={styles.searchBar}
+              autoCapitalize={'none'}
+              placeholder="Search"
+              onChangeText={onChangeSearch}
+              value={searchQuery}
+            />
+
+            <Appbar.Action
+              color={'white'}
+              icon={'arrow-right'}
+              onPress={() => {
+                setShowSearchBar(false);
+                setSearchQuery('');
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <Appbar.Action
+              color={'white'}
+              icon={'menu'}
+              onPress={() => navigation.toggleDrawer()}
+            />
+            <Appbar.Content title={'History'} />
+            <Appbar.Action
+              icon={({size, color}) => (
+                <Icon
+                  color={'white'}
+                  size={24}
+                  name={'search'}
+                  // style={{width: size, height: size, tintColor: color}}
+                />
+              )}
+              onPress={() => setShowSearchBar(true)}
+            />
+          </>
+        )}
       </Appbar.Header>
 
       <ScrollView>
@@ -73,6 +133,7 @@ const VisitorLogScreen = ({navigation}) => {
                   <View style={{flex: 1, flexDirection: 'row'}}>
                     <View
                       style={{
+                        ...styles.headerText,
                         flex: 3,
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -92,7 +153,6 @@ const VisitorLogScreen = ({navigation}) => {
                           setAsc(asc ? false : true);
                         }}
                         sortDirection={asc ? 'ascending' : 'descending'}
-                        style={styles.headerText}
                         numeric>
                         In/Out Time
                       </DataTable.Title>
@@ -109,8 +169,12 @@ const VisitorLogScreen = ({navigation}) => {
                       style={
                         tableRow !== 'odd' ? styles.rowEven : styles.rowOdd
                       }>
-                      <DataTable.Cell>
-                        <Text numberOfLines={2}>{item.name}</Text>
+                      <DataTable.Cell style={styles.dataTitle}>
+                        <Text
+                          style={{fontSize: widthScreen * 0.0361}}
+                          numberOfLines={2}>
+                          {item.name}
+                        </Text>
                       </DataTable.Cell>
                       <DataTable.Cell numeric>
                         <View>
@@ -158,24 +222,32 @@ const VisitorLogScreen = ({navigation}) => {
                 <Title>Visitor Details</Title>
               </View>
               <Divider />
-              {Object.keys(visitor).map((keyName, keyIndex) => {
-                if (keyName === 'id') {
-                  return;
-                }
-                return (
-                  <View style={styles.modelText} key={keyName}>
-                    <Title>{keyName}: </Title>
-                    <Text style={styles.visitorDetail}>{visitor[keyName]}</Text>
-                  </View>
-                  // <List.Item key={keyName}>
-                  //   {console.log(keyName,keyIndex)}
-                  //   <Text>
-                  //     {keyName}
-                  //     {visitor[keyName]}
-                  //   </Text>
-                  // </List.Item>
-                );
-              })}
+              <DataTable>
+                {Object.keys(visitor).map((keyName, keyIndex) => {
+                  if (keyName === 'id') {
+                    return;
+                  }
+                  return (
+                    <DataTable.Row key={keyName}>
+                      <DataTable.Title style={styles.modalDataTitle}>
+                        {capitalize(keyName)}
+                      </DataTable.Title>
+                      <ScrollView horizontal style={{width: '40%'}}>
+                        {keyName === 'checkIn' || keyName === 'checkOut' ? (
+                          <DataTable.Cell>
+                            {moment(visitor[keyName]).format(
+                              'MMMM Do YYYY, hh:mm',
+                            )}
+                          </DataTable.Cell>
+                        ) : (
+                          <DataTable.Cell>{visitor[keyName]}</DataTable.Cell>
+                        )}
+                      </ScrollView>
+                    </DataTable.Row>
+                  );
+                })}
+              </DataTable>
+              {/*</ScrollView>*/}
             </View>
           </Modal>
         </Portal>
@@ -184,11 +256,20 @@ const VisitorLogScreen = ({navigation}) => {
     </View>
   );
 };
-
+const rowTable = {
+  marginTop: 8,
+  borderRadius: 5,
+  shadowOpacity: 0.4,
+  shadowOffset: {width: 1, height: 2},
+  elevation: 0.3,
+};
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  searchBar: {
+    width: '90%',
   },
   containerStyle: {
     backgroundColor: 'white',
@@ -202,20 +283,26 @@ const styles = StyleSheet.create({
   },
   table: {
     flex: 1,
-    // borderWidth: 2,
     borderColor: '#d0d0d0',
     borderRadius: 10,
-    shadowColor: '#d0d0d0',
-    // shadowOffset: {width: 2, height: 2},
-    shadowOpacity: 1,
-    shadowRadius: 10,
-    elevation: 4,
+    // shadowColor: '#d0d0d0',
+    // shadowOpacity: 1,
+    // shadowRadius: 10,
+    // elevation: 4,
   },
+
   rowOdd: {
-    backgroundColor: '#fff',
+    ...rowTable,
+    backgroundColor: Colors.accent,
+    shadowColor: '#885b5b',
+    // elevation: 1.5,
   },
   rowEven: {
-    backgroundColor: 'rgb(226,226,226)',
+    ...rowTable,
+    // backgroundColor: 'rgb(226,226,226)',
+    backgroundColor: 'rgb(243,243,255)',
+    shadowColor: 'rgba(54,66,109,0.91)',
+    elevation: 3,
   },
   tableHeader: {
     justifyContent: 'space-around',
@@ -223,7 +310,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   headerText: {
-    // paddingLeft:20,
+    fontWeight: 'bold',
   },
   checkINText: {
     color: 'green',
@@ -239,10 +326,19 @@ const styles = StyleSheet.create({
   modelText: {
     flexDirection: 'row',
     alignItems: 'center',
+    overflow: 'hidden',
   },
   visitorDetail: {
     marginBottom: -1,
     marginLeft: 2,
+  },
+  modalDataTitle: {
+    maxWidth: '40%',
+  },
+  dataTitle: {
+    fontSize: widthScreen * 0.0361,
+    width: widthScreen * 0.6,
+    maxWidth: widthScreen * 0.6,
   },
 });
 

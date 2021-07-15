@@ -8,18 +8,9 @@ import {
 } from 'react-native';
 import ItemPicker from '../components/ItemPicker';
 
-import {
-  Divider,
-  Menu,
-  Button,
-  TextInput,
-  Text,
-  Subheading,
-  HelperText,
-} from 'react-native-paper';
+import {Button, TextInput, HelperText} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {checkin} from '../store/actions/visitor';
-import {err} from 'react-native-svg/lib/typescript/xml';
 import Colors from '../constants/Colors';
 
 let vData;
@@ -32,6 +23,7 @@ const CheckInDetails = props => {
   const [visitorGender, setVisitorGender] = useState();
   const [visitorDOB, setVisitorDOB] = useState();
   const [hostValue, setHostValue] = useState();
+  const [hostId, setHostId] = useState();
   const [purposeValue, setPurposeValue] = useState();
   const [visibleHost, setVisibleHost] = useState(false);
   const [visiblePurpose, setVisiblePurpose] = useState(false);
@@ -39,45 +31,6 @@ const CheckInDetails = props => {
   const hostData = useSelector(state => state.host.hosts);
   const [error, setError] = useState(false);
 
-  // Changes XML to JSON
-  // function xmlToJson(xml) {
-  //   // Create the return object
-  //   var obj = {};
-  //
-  //   if (xml.nodeType == 1) {
-  //     // element
-  //     // do attributes
-  //     if (xml.attributes.length > 0) {
-  //       obj['@attributes'] = {};
-  //       for (var j = 0; j < xml.attributes.length; j++) {
-  //         var attribute = xml.attributes.item(j);
-  //         obj['@attributes'][attribute.nodeName] = attribute.nodeValue;
-  //       }
-  //     }
-  //   } else if (xml.nodeType == 3) {
-  //     // text
-  //     obj = xml.nodeValue;
-  //   }
-  //
-  //   // do children
-  //   if (xml.hasChildNodes()) {
-  //     for (var i = 0; i < xml.childNodes.length; i++) {
-  //       var item = xml.childNodes.item(i);
-  //       var nodeName = item.nodeName;
-  //       if (typeof obj[nodeName] === 'undefined') {
-  //         obj[nodeName] = xmlToJson(item);
-  //       } else {
-  //         if (typeof obj[nodeName].push === 'undefined') {
-  //           var old = obj[nodeName];
-  //           obj[nodeName] = [];
-  //           obj[nodeName].push(old);
-  //         }
-  //         obj[nodeName].push(xmlToJson(item));
-  //       }
-  //     }
-  //   }
-  //   return obj;
-  // }
   if (props.route.params) {
     vData = props.route.params.data;
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -118,32 +71,19 @@ const CheckInDetails = props => {
                 ', ' +
                 vData.pc,
         );
-        setVisitorGender('gender' in vData ? vData.gender : vData.g);
+        setVisitorGender(
+          'gender' in vData
+            ? vData.gender.startsWith('M')
+              ? 'Male'
+              : 'Female'
+            : vData.g.startsWith('M')
+            ? 'Male'
+            : 'Female',
+        );
         setVisitorDOB('dob' in vData ? vData.dob : vData.d);
       }
     }, []);
   }
-  // vData = props.route.params.data;
-  // useEffect(() => {
-  //   if (typeof vData === 'string' && vData.startsWith('<')) {
-  //     if (vData.startsWith('<?xml')) {
-  //       vData = vData.slice(63, vData.length - 2).trim();
-  //     } else if (vData.startsWith('<')) {
-  //       vData = vData.slice(5, vData.indexOf('a="') - 1).trim();
-  //     }
-  //     console.log('pre' + vData);
-  //     // vData = vData.replace(/ /g, '?');
-  //     vData = vData.replace(/[=]/g, '":');
-  //     vData = '{"' + vData.replace(/" /g, ',"') + '}';
-  //     vData = vData.replace(/[,]/g, '",');
-  //     console.log('before parse' + vData);
-  //     vData = JSON.parse(vData);
-  //     setVisitorName('name' in vData ? vData.name : vData.n);
-  //   }
-  // }, []);
-
-  // var jsonText = JSON.stringify(xmlToJson(vData));
-  // console.log(jsonText);
 
   const submitHandler = async () => {
     if (
@@ -170,6 +110,7 @@ const CheckInDetails = props => {
         '',
         hostValue,
         purposeValue,
+        hostId,
       ),
     );
     props.navigation.navigate('CheckInSuccess', {name: visitorName});
@@ -204,10 +145,6 @@ const CheckInDetails = props => {
             numberOfLines={3}
             multiline={true}
           />
-          // <View style={styles.otherData}>
-          //   <Subheading>Address</Subheading>
-          //   <Text>{visitorAddress}</Text>
-          // </View>
         )}
 
         <TextInput
@@ -221,14 +158,6 @@ const CheckInDetails = props => {
           }}
           left={<TextInput.Affix text={'+91 '} />}
         />
-        {/*<TextInput*/}
-        {/*  style={styles.inputField}*/}
-        {/*  label={'Address'}*/}
-        {/*  value={visitorAddress}*/}
-        {/*  onChangeText={t => {*/}
-        {/*    setVisitorAddress(t);*/}
-        {/*  }}*/}
-        {/*/>*/}
         <ItemPicker
           itemData={hostData}
           onFocus={() => {
@@ -237,6 +166,7 @@ const CheckInDetails = props => {
           }}
           value={hostValue}
           setValue={setHostValue}
+          setId={setHostId}
           visible={visibleHost}
           onDismiss={closeMenu}
           lable={'Select a Host*'}
@@ -253,9 +183,7 @@ const CheckInDetails = props => {
           onDismiss={closeMenu}
           lable={'Select Purpose*'}
         />
-        {/*{error && (*/}
 
-        {/*)}*/}
         <View style={{alignItems: 'center', marginTop: 30}}>
           <HelperText
             style={styles.errorText}
@@ -294,16 +222,13 @@ const styles = StyleSheet.create({
     width: 300,
     borderColor: Colors.primary,
     borderWidth: 1.5,
-    // borderRadius: 10,
     borderBottomEndRadius: 15,
     borderTopLeftRadius: 15,
   },
   formContainer: {
     flex: 1,
-    // height: '90%',
     alignItems: 'center',
     justifyContent: 'center',
-    // width: '90%',
   },
   errorText: {
     alignSelf: 'center',

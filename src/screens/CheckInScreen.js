@@ -81,14 +81,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // logoStle: {
-  //   width: 50,
-  //   height: 200,
-  //   resizeMode: 'stretch',
-  // },
   buttonContainer: {
     alignSelf: 'center',
-    marginTop: '60%',
+    marginTop: '55%',
     width: '100%',
     alignItems: 'center',
   },

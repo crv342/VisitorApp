@@ -10,6 +10,7 @@ const ItemPicker = ({
   lable,
   onFocus,
   itemData,
+  setId,
 }) => {
   const len = itemData.length;
   return (
@@ -37,6 +38,9 @@ const ItemPicker = ({
                 Keyboard.dismiss();
                 onDismiss();
                 setValue(item.name);
+                if (setId) {
+                  setId(item.id);
+                }
               }}
               title={item.name}
             />

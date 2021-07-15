@@ -18,7 +18,7 @@ import {
   Title,
   List,
   IconButton,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -99,68 +99,71 @@ const SettingScreen = ({navigation}) => {
           {/*/>*/}
           {loading && <ActivityIndicator style={styles.inputField} />}
 
-          <Provider>
-            <Portal>
-              <Modal
-                visible={visible}
-                onDismiss={hideModal}
-                contentContainerStyle={styles.containerStyle}>
-                <Title>Purposes</Title>
-                {purposeData &&
-                  purposeData.map(item => (
-                    <List.Item
-                      key={item._id}
-                      style={styles.listItem}
-                      title={item.name}
-                      right={props => (
-                        <TouchableOpacity
-                          onPress={() => {
-                            dispatch(removePurpose(item._id));
-                          }}>
-                          <List.Icon {...props} icon="close" />
-                        </TouchableOpacity>
-                      )}
-                    />
-                  ))}
-
-                <View style={{flexDirection: 'row'}}>
-                  <TextInput
-                    autoCapitalize={'none'}
-                    mode={'outlined'}
-                    style={{...styles.inputField, width: '80%'}}
-                    value={purpose}
-                    onChangeText={t => {
-                      setPurpose(t);
-                    }}
+          {/*<Provider>*/}
+          <Portal>
+            <Modal
+              visible={visible}
+              onDismiss={hideModal}
+              contentContainerStyle={styles.containerStyle}>
+              <Title>Purposes</Title>
+              {purposeData &&
+                purposeData.map(item => (
+                  <List.Item
+                    key={item._id}
+                    style={styles.listItem}
+                    title={item.name}
+                    right={props => (
+                      <TouchableOpacity
+                        onPress={() => {
+                          dispatch(removePurpose(item._id));
+                        }}>
+                        <List.Icon {...props} icon="close" />
+                      </TouchableOpacity>
+                    )}
                   />
-                  <Button
-                    style={styles.addButton}
-                    mode={'contained'}
-                    color={Colors.primary}
-                    onPress={() => {
-                      dispatch(updatePurpose(purpose));
-                      setPurpose('');
-                    }}>
-                    <Icon size={24} name={'plus'} />
-                  </Button>
-                </View>
-              </Modal>
-            </Portal>
-            <Button
-              color={Colors.primary}
-              mode={'contained'}
-              style={styles.inputField}
-              onPress={submitHandler}>
-              Save
-            </Button>
-            <Button
-              color={Colors.primary}
-              mode={'outlined'}
-              style={styles.inputField}
-              onPress={showModal}>
-              Purposes
-            </Button>
-          </Provider>
+                ))}
+
+              <View style={{flexDirection: 'row'}}>
+                <TextInput
+                  autoCapitalize={'none'}
+                  mode={'outlined'}
+                  style={{...styles.inputField, width: '80%'}}
+                  value={purpose}
+                  onChangeText={t => {
+                    setPurpose(t);
+                  }}
+                />
+                <Button
+                  style={styles.addButton}
+                  mode={'contained'}
+                  color={Colors.primary}
+                  onPress={() => {
+                    if (purpose === null || purpose === undefined) {
+                      return;
+                    }
+                    dispatch(updatePurpose(purpose));
+                    setPurpose('');
+                  }}>
+                  <Icon size={24} name={'plus'} />
+                </Button>
+              </View>
+            </Modal>
+          </Portal>
+          <Button
+            color={Colors.primary}
+            mode={'contained'}
+            style={styles.inputField}
+            onPress={submitHandler}>
+            Save
+          </Button>
+          <Button
+            color={Colors.primary}
+            mode={'outlined'}
+            style={styles.inputField}
+            onPress={showModal}>
+            Purposes
+          </Button>
+          {/*</Provider>*/}
         </View>
       </View>
     </TouchableWithoutFeedback>

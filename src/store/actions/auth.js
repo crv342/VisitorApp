@@ -4,6 +4,7 @@ import {UPDATEHOST} from './host';
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const UPDATE = 'UPDATE';
+export const UPDATEPASSWORD = 'UPDATEPASSWORD';
 export const RESTORE_TOKEN = 'RESTORE_TOKEN';
 export const URL = 'https://visitorapi.herokuapp.com';
 // export const URL = 'http://localhost:3000';
@@ -85,6 +86,33 @@ export const updateAdmin = updateData => {
       dispatch({type: UPDATE, adminData});
     } catch (e) {
       console.log(e.message);
+      throw new Error(e.message);
+    }
+  };
+};
+
+export const checkPass = password => {
+  return async dispatch => {
+    try {
+      const response = await fetch(URL + '/admin/checkpassword', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          password,
+        }),
+      });
+      if (!response.ok) {
+        const resData = await response.json();
+        let message = 'Something went wrong!';
+        if (resData.e == 'Password Does Not Match!') {
+          message = resData.e;
+        }
+        throw new Error(message);
+      }
+      dispatch(UPDATEPASSWORD, {setPassword: true});
+    } catch (e) {
       throw new Error(e.message);
     }
   };

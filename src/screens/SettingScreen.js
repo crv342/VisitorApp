@@ -32,17 +32,26 @@ import Colors from '../constants/Colors';
 
 const SettingScreen = ({navigation}) => {
   const adminData = useSelector(state => state.auth.adminData);
+  const setPass = useSelector(state => state.auth.setPass);
   const dispatch = useDispatch();
   const [username, setUsername] = useState(adminData.username);
   const [email, setEmail] = useState(adminData.email);
   // const [phone, setPhone] = useState(adminData.phone);
   const [purpose, setPurpose] = useState('');
+  const [currPass, setCurrPass] = useState('');
   const [loading, setLoading] = useState(false);
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
+  const [uPassModal, setUPassModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchDetails());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (setPass) {
+      navigation.navigate('Auth', {Screen: 'Update Pass'});
+    }
+  }, [navigation, setPass]);
 
   const purposeData = useSelector(state => state.host.purposes);
 
@@ -53,6 +62,16 @@ const SettingScreen = ({navigation}) => {
     setLoading(true);
     await dispatch(authActions.updateAdmin({username, email}));
     setLoading(false);
+  };
+
+  const passButtonHandler = async () => {
+    hideModal();
+    navigation.navigate('AuthNav', {screen: 'Update Pass'});
+    if (currPass === null || currPass === undefined) {
+      return;
+    }
+    await dispatch(authActions.checkPass(currPass));
+    setCurrPass('');
   };
 
   return (
@@ -105,48 +124,75 @@ const SettingScreen = ({navigation}) => {
               visible={visible}
               onDismiss={hideModal}
               contentContainerStyle={styles.containerStyle}>
-              <Title>Purposes</Title>
-              {purposeData &&
-                purposeData.map(item => (
-                  <List.Item
-                    key={item._id}
-                    style={styles.listItem}
-                    title={item.name}
-                    right={props => (
-                      <TouchableOpacity
-                        onPress={() => {
-                          dispatch(removePurpose(item._id));
-                        }}>
-                        <List.Icon {...props} icon="close" />
-                      </TouchableOpacity>
-                    )}
-                  />
-                ))}
+              {uPassModal ? (
+                <>
+                  <Title>Update Password</Title>
+                  <View>
+                    <TextInput
+                      placeholder={'Enter Current Password'}
+                      autoCapitalize={'none'}
+                      mode={'outlined'}
+                      style={{...styles.inputField}}
+                      value={purpose}
+                      onChangeText={t => {
+                        setPurpose(t);
+                      }}
+                    />
+                    <Button
+                      style={{...styles.inputField, width: 100}}
+                      mode={'contained'}
+                      color={Colors.primary}
+                      onPress={passButtonHandler}>
+                      Next
+                    </Button>
+                  </View>
+                </>
+              ) : (
+                <>
+                  <Title>Purposes</Title>
+                  {purposeData &&
+                    purposeData.map(item => (
+                      <List.Item
+                        key={item._id}
+                        style={styles.listItem}
+                        title={item.name}
+                        right={props => (
+                          <TouchableOpacity
+                            onPress={() => {
+                              dispatch(removePurpose(item._id));
+                            }}>
+                            <List.Icon {...props} icon="close" />
+                          </TouchableOpacity>
+                        )}
+                      />
+                    ))}
 
-              <View style={{flexDirection: 'row'}}>
-                <TextInput
-                  autoCapitalize={'none'}
-                  mode={'outlined'}
-                  style={{...styles.inputField, width: '80%'}}
-                  value={purpose}
-                  onChangeText={t => {
-                    setPurpose(t);
-                  }}
-                />
-                <Button
-                  style={styles.addButton}
-                  mode={'contained'}
-                  color={Colors.primary}
-                  onPress={() => {
-                    if (purpose === null || purpose === undefined) {
-                      return;
-                    }
-                    dispatch(updatePurpose(purpose));
-                    setPurpose('');
-                  }}>
-                  <Icon size={24} name={'plus'} />
-                </Button>
-              </View>
+                  <View style={{flexDirection: 'row'}}>
+                    <TextInput
+                      autoCapitalize={'none'}
+                      mode={'outlined'}
+                      style={{...styles.inputField, width: '80%'}}
+                      value={purpose}
+                      onChangeText={t => {
+                        setPurpose(t);
+                      }}
+                    />
+                    <Button
+                      style={styles.addButton}
+                      mode={'contained'}
+                      color={Colors.primary}
+                      onPress={() => {
+                        if (purpose === null || purpose === undefined) {
+                          return;
+                        }
+                        dispatch(updatePurpose(purpose));
+                        setPurpose('');
+                      }}>
+                      <Icon size={24} name={'plus'} />
+                    </Button>
+                  </View>
+                </>
+              )}
             </Modal>
           </Portal>
           <Button
@@ -160,8 +206,18 @@ const SettingScreen = ({navigation}) => {
             color={Colors.primary}
             mode={'outlined'}
             style={styles.inputField}
-            onPress={showModal}>
+            onPress={() => {
+              setUPassModal(false);
+              showModal();
+            }}>
             Purposes
+          </Button>
+          <Button
+            onPress={() => {
+              setUPassModal(true);
+              showModal();
+            }}>
+            Update Password
           </Button>
           {/*</Provider>*/}
         </View>

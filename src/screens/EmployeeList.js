@@ -173,6 +173,7 @@ const EmployeeList = ({navigation}) => {
                 {addHost ? (
                   <View style={styles.buttonContainer}>
                     <Button
+
                       loading={loading}
                       mode={'contained'}
                       color={'#349822'}

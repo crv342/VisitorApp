@@ -29,7 +29,7 @@ const capitalize = input => {
     .join(' ');
 };
 
-const VisitorLogScreen = ({navigation}) => {
+const VisitorLogScreen = ({navigation, route}) => {
   // const dispatch = useDispatch();
   let tableRow = 'even';
   const [asc, setAsc] = useState(true);
@@ -55,10 +55,29 @@ const VisitorLogScreen = ({navigation}) => {
     setIsLoading(false);
   }, []);
   const visitorsData = useSelector(state => state.visitor.visitor);
+  // if (!visitorsData) {
+  //   return (
+  //     <View>
+  //       <Appbar.Header>
+  //             <Appbar.Action
+  //               color={'white'}
+  //               icon={'menu'}
+  //               onPress={() => navigation.toggleDrawer()}
+  //             />
+  //             <Appbar.Content title={'History'} />
+  //       </Appbar.Header>
+  //       <Text>no visitors found.</Text>
+  //     </View>
+  //   );
+  // }
   const [visitorData, setVisitorData] = useState(
     visitorsData.slice().reverse(),
   );
   useEffect(() => {
+    if (route.params) {
+      setVisitorData(route.params.vData.slice().reverse());
+      return;
+    }
     if (searchQuery !== '') {
       setVisitorData(
         visitorsData
@@ -71,7 +90,7 @@ const VisitorLogScreen = ({navigation}) => {
     } else {
       setVisitorData(visitorsData.slice().reverse());
     }
-  }, [searchQuery, visitorsData]);
+  }, [route, searchQuery, visitorsData, navigation]);
 
   useEffect(() => {
     setPage(0);
@@ -82,21 +101,20 @@ const VisitorLogScreen = ({navigation}) => {
       <Appbar.Header>
         {showSearchBar ? (
           <>
+            <Appbar.Action
+              color={'white'}
+              icon={'arrow-left'}
+              onPress={() => {
+                setShowSearchBar(false);
+                setSearchQuery('');
+              }}
+            />
             <Searchbar
               style={styles.searchBar}
               autoCapitalize={'none'}
               placeholder="Search"
               onChangeText={onChangeSearch}
               value={searchQuery}
-            />
-
-            <Appbar.Action
-              color={'white'}
-              icon={'arrow-right'}
-              onPress={() => {
-                setShowSearchBar(false);
-                setSearchQuery('');
-              }}
             />
           </>
         ) : (
@@ -159,38 +177,49 @@ const VisitorLogScreen = ({navigation}) => {
                     </View>
                   </View>
                 </DataTable.Header>
-
-                {visitorData.map(item => {
-                  tableRow = tableRow !== 'odd' ? 'odd' : 'even';
-                  return (
-                    <DataTable.Row
-                      key={item.id}
-                      onPress={() => showModal(item)}
-                      style={
-                        tableRow !== 'odd' ? styles.rowEven : styles.rowOdd
-                      }>
-                      <DataTable.Cell style={styles.dataTitle}>
-                        <Text
-                          style={{fontSize: widthScreen * 0.0361}}
-                          numberOfLines={2}>
-                          {item.name}
-                        </Text>
-                      </DataTable.Cell>
-                      <DataTable.Cell numeric>
-                        <View>
-                          <Text style={styles.checkINText}>
-                            {moment(item.checkIn).format('MMMM Do YYYY, hh:mm')}
-                          </Text>
-                          <Text style={styles.checkOutText}>
-                            {moment(item.checkOut).format(
-                              'MMMM Do YYYY, hh:mm',
-                            )}
-                          </Text>
-                        </View>
-                      </DataTable.Cell>
-                    </DataTable.Row>
-                  );
-                })}
+                {visitorData.length === 0 && (
+                  <Text style={{alignSelf: 'center', marginTop: 5}}>
+                    No Visitors Found.
+                  </Text>
+                )}
+                {visitorData &&
+                  visitorData.map(item => {
+                    if (item.checkOut !== undefined || true) {
+                      tableRow = tableRow !== 'odd' ? 'odd' : 'even';
+                      return (
+                        <DataTable.Row
+                          key={item.id}
+                          onPress={() => showModal(item)}
+                          style={
+                            tableRow !== 'odd' ? styles.rowEven : styles.rowOdd
+                          }>
+                          <DataTable.Cell style={styles.dataTitle}>
+                            <Text
+                              style={{fontSize: widthScreen * 0.0361}}
+                              numberOfLines={2}>
+                              {item.name}
+                            </Text>
+                          </DataTable.Cell>
+                          <DataTable.Cell numeric>
+                            <View>
+                              <Text style={styles.checkINText}>
+                                {moment(item.checkIn).format(
+                                  'MMMM Do YYYY, hh:mm',
+                                )}
+                              </Text>
+                              <Text style={styles.checkOutText}>
+                                {item.checkOut !== undefined
+                                  ? moment(item.checkOut).format(
+                                      'MMMM Do YYYY, hh:mm',
+                                    )
+                                  : ''}
+                              </Text>
+                            </View>
+                          </DataTable.Cell>
+                        </DataTable.Row>
+                      );
+                    }
+                  })}
                 {/*<DataTable.Pagination*/}
                 {/*  page={page}*/}
                 {/*  numberOfPages={3}*/}
@@ -233,7 +262,9 @@ const VisitorLogScreen = ({navigation}) => {
                         {capitalize(keyName)}
                       </DataTable.Title>
                       <ScrollView horizontal style={{width: '40%'}}>
-                        {keyName === 'checkIn' || keyName === 'checkOut' ? (
+                        {keyName === 'checkIn' ||
+                        (keyName === 'checkOut' &&
+                          visitor[keyName] !== undefined) ? (
                           <DataTable.Cell>
                             {moment(visitor[keyName]).format(
                               'MMMM Do YYYY, hh:mm',
@@ -269,7 +300,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   searchBar: {
-    width: '90%',
+    width: '85%',
   },
   containerStyle: {
     backgroundColor: 'white',

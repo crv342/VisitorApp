@@ -142,6 +142,7 @@ const AuthScreen = ({navigation}) => {
                 </Text>
               )}
               <Button
+                contentStyle={{flexDirection: 'row-reverse'}}
                 uppercase={false}
                 loading={isLoading ? true : false}
                 mode="contained"

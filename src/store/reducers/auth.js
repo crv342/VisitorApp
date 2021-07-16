@@ -1,9 +1,16 @@
-import {LOGIN, LOGOUT, UPDATE, RESTORE_TOKEN} from '../actions/auth';
+import {
+  LOGIN,
+  LOGOUT,
+  UPDATE,
+  UPDATEPASSWORD,
+  RESTORE_TOKEN,
+} from '../actions/auth';
 
 const initialState = {
   token: null,
   adminData: {},
   isLoading: true,
+  setPass: false,
 };
 
 export default (state = initialState, action) => {
@@ -19,6 +26,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         adminData: action.adminData,
+      };
+    case UPDATEPASSWORD:
+      return {
+        ...state,
+        setPass: action.setPassword,
       };
     case LOGOUT:
       return initialState;

@@ -27,6 +27,7 @@ import SettingScreen from '../screens/SettingScreen';
 import CheckInDetails from '../screens/CheckInDetails';
 import {logout} from '../store/actions/auth';
 import CheckInSuccess from '../screens/CheckInSuccess';
+import UpdatePassword from '../screens/UpdatePassword';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -51,6 +52,11 @@ const AuthNavigator = ({navigation}) => {
             />
           ),
         }}
+      />
+      <Stack.Screen
+        name={'Update Pass'}
+        component={UpdatePassword}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );
@@ -102,7 +108,7 @@ const DrawerNavigator = ({navigation}) => {
   const userName = useSelector(state => state.auth.adminData.username);
   useEffect(() => {
     setUsername(userName);
-  }, [navigation]);
+  }, [navigation, userName]);
 
   return (
     <Drawer.Navigator

@@ -12,13 +12,14 @@ import {
   TextInput,
   Button,
   ActivityIndicator,
+  Switch,
   HelperText,
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import * as hostActions from '../store/actions/host';
 import Colors from '../constants/Colors';
 
-const EmployeeList = ({navigation}) => {
+const HostList = ({navigation}) => {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [id, setId] = useState();
@@ -31,6 +32,9 @@ const EmployeeList = ({navigation}) => {
   const [addHost, setAddHost] = useState(false);
   const hostData = useSelector(state => state.host.hosts);
   const [hosts, setHosts] = useState(hostData);
+  const [sendemail, setSendEmailOn] = useState(false);
+
+  const onToggleSwitch = () => setSendEmailOn(!sendemail);
 
   useEffect(() => {
     setHosts(hostData);
@@ -42,6 +46,7 @@ const EmployeeList = ({navigation}) => {
       setName(data.name);
       setPhone(data.phone.toString());
       setEmail(data.email);
+      setSendEmailOn(data.sendemail);
     } else {
       setId();
       setName();
@@ -65,10 +70,17 @@ const EmployeeList = ({navigation}) => {
 
     if (type === 'add') {
       setLoading(true);
-      await dispatch(hostActions.addHost(name, phone, email));
+      await dispatch(hostActions.addHost(name, phone, email, sendemail));
     } else if (type === 'update') {
       setLoading(true);
-      await dispatch(hostActions.updateHost(id, {name, phone, email}));
+      await dispatch(
+        hostActions.updateHost(id, {
+          name,
+          phone,
+          email,
+          sendemail,
+        }),
+      );
     } else {
       setLoadingDelete(true);
       await dispatch(hostActions.deleteHost(id));
@@ -85,7 +97,7 @@ const EmployeeList = ({navigation}) => {
           icon={'menu'}
           onPress={() => navigation.toggleDrawer()}
         />
-        <Appbar.Content title={'Employee List'} />
+        <Appbar.Content title={'Host List'} />
         <Appbar.Action
           icon={'plus'}
           onPress={() => {
@@ -131,10 +143,19 @@ const EmployeeList = ({navigation}) => {
                   <Title>Host Details</Title>
                 </View>
                 <Divider />
+                <View style={styles.switchContainer}>
+                  <Text>Send Email </Text>
+                  <Switch
+                    color={Colors.primary}
+                    value={sendemail}
+                    onValueChange={onToggleSwitch}
+                  />
+                </View>
+
                 <TextInput
                   mode={'outlined'}
                   style={styles.inputField}
-                  label={'name*'}
+                  label={'Name*'}
                   value={name}
                   onChangeText={t => {
                     setName(t);
@@ -145,7 +166,7 @@ const EmployeeList = ({navigation}) => {
                   keyboardType={'numeric'}
                   mode={'outlined'}
                   style={styles.inputField}
-                  label={'phone*'}
+                  label={'Phone*'}
                   value={phone}
                   onChangeText={t => {
                     setPhone(t);
@@ -156,7 +177,7 @@ const EmployeeList = ({navigation}) => {
                   autoCapitalize={'none'}
                   mode={'outlined'}
                   style={styles.inputField}
-                  label={'email'}
+                  label={'Email'}
                   value={email}
                   onChangeText={t => {
                     setEmail(t);
@@ -173,7 +194,6 @@ const EmployeeList = ({navigation}) => {
                 {addHost ? (
                   <View style={styles.buttonContainer}>
                     <Button
-
                       loading={loading}
                       mode={'contained'}
                       color={'#349822'}
@@ -253,6 +273,13 @@ const styles = StyleSheet.create({
   errorText: {
     marginLeft: '5%',
   },
+  switchContainer: {
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent: 'space-between',
+    padding: 4,
+  },
 });
 
-export default EmployeeList;
+export default HostList;

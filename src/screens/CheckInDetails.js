@@ -156,6 +156,7 @@ const CheckInDetails = props => {
           onChangeText={t => {
             setVisitorPhone(t);
           }}
+          maxLength={10}
           left={<TextInput.Affix text={'+91 '} />}
         />
         <ItemPicker

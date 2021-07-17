@@ -1,25 +1,7 @@
-// import React from 'react';
-// import {View, StyleSheet} from 'react-native';
-// import {Text} from 'react-native-paper';
-//
-// const IdScanner = () => {
-//   return (
-//     <View>
-//       <Text>scanner</Text>
-//     </View>
-//   );
-// };
-//
-// export default IdScanner;
-
-'use strict';
-
 import React from 'react';
-
 import {
   AppRegistry,
   StyleSheet,
-  Text,
   TouchableOpacity,
   Linking,
   View,
@@ -27,9 +9,10 @@ import {
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
-import {Button} from 'react-native-paper';
+import {Button, Text, Divider} from 'react-native-paper';
 import Colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Color from 'color';
 
 const IdScanner = ({navigation}) => {
@@ -46,22 +29,52 @@ const IdScanner = ({navigation}) => {
     <QRCodeScanner
       onRead={onSuccess}
       // flashMode={RNCamera.Constants.FlashMode.torch}
-      topContent={<Text style={styles.centerText} />}
+      topContent={
+        <>
+          <View style={styles.topContainer}>
+            <View>
+              <Button onPress={() => navigation.goBack()}>
+                <View style={styles.buttonContainer}>
+                  <Icons
+                    size={24}
+                    name={'chevron-left-circle-outline'}
+                    color={Colors.primary}
+                  />
+                  <Text style={{color: Colors.primary}}> Back</Text>
+                </View>
+              </Button>
+            </View>
+            <View>
+              <Button onPress={() => navigation.navigate('CheckInDetails')}>
+                <View style={styles.buttonContainer}>
+                  <Text style={{color: Colors.primary}}>Skip </Text>
+                  <Icons
+                    size={24}
+                    name={'skip-next-circle-outline'}
+                    color={Colors.primary}
+                  />
+                </View>
+              </Button>
+            </View>
+          </View>
+          <Divider />
+        </>
+      }
       bottomContent={
         <View style={styles.bottomContainer}>
-          <View style={styles.bottomButtomLeft}>
-            <Button onPress={() => navigation.goBack()}>
-              <Icon size={24} name={'navigate-before'} />
-            </Button>
-          </View>
+          {/*<View style={styles.bottomButtomLeft}>*/}
+          {/*  <Button onPress={() => navigation.goBack()}>*/}
+          {/*    <Icon size={24} name={'navigate-before'} />*/}
+          {/*  </Button>*/}
+          {/*</View>*/}
           <View style={styles.bottomText}>
             <Text style={styles.buttonText}>Scan Id Card</Text>
           </View>
-          <View style={styles.bottomButtomRight}>
-            <Button onPress={() => navigation.navigate('CheckInDetails')}>
-              <Icon size={24} name={'navigate-next'} />
-            </Button>
-          </View>
+          {/*<View style={styles.bottomButtomRight}>*/}
+          {/*  <Button onPress={() => navigation.navigate('CheckInDetails')}>*/}
+          {/*    <Icons size={24} name={'skip-next-circle-outline'} />*/}
+          {/*  </Button>*/}
+          {/*</View>*/}
         </View>
       }
     />
@@ -83,6 +96,19 @@ const styles = StyleSheet.create({
     fontSize: 21,
     color: '#000',
     // marginTop: '15%',
+  },
+  topContainer: {
+    width: '100%',
+    // height: 70,
+    marginTop: -60,
+    flexDirection: 'row',
+    // padding: 5,
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    color: Colors.primary,
   },
   bottomText: {
     padding: 5,

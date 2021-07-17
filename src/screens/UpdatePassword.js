@@ -1,29 +1,105 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, Image, Text as text, Text} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Platform,
+  TextInput,
+  Alert,
+} from 'react-native';
 
 import Colors from '../constants/Colors';
 import {useDispatch} from 'react-redux';
+import {Appbar, Button, IconButton, Text} from 'react-native-paper';
+import {updatePassword} from '../store/actions/auth';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const SplashScreen = props => {
+const UpdatePassword = ({navigation}) => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   useEffect(() => {});
 
+  const submitHandler = async () => {
+    try {
+      if (newPassword !== confirmPassword) {
+        throw new Error('Password does not match');
+      }
+
+      setIsLoading(true);
+      await dispatch(updatePassword(newPassword));
+      setIsLoading(false);
+    } catch (e) {
+      Alert.alert(e.message);
+    }
+  };
+
   return (
-    <View style={styles.screen}>
-      <Text>Update Password</Text>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{flex: 1}}>
+        <Appbar.Header>
+          <Appbar.BackAction
+            // icon={Platform.OS === 'ios' ? 'chevron-left' : 'arrow-left'}
+            onPress={() => navigation.goBack()}
+          />
+          <Appbar.Content title={'Update Password'} />
+          <Appbar.Action
+            icon={'content-save-outline'}
+            onPress={submitHandler}
+          />
+        </Appbar.Header>
+        <View style={styles.screen}>
+          <Text style={{margin: 15, fontSize: 16}}>Update Password</Text>
+          <TextInput
+            autoFocus
+            autoCorrect={false}
+            autoCapitalize={'none'}
+            allowFontScaling={true}
+            style={styles.inputField}
+            placeholder={'New Password'}
+            value={newPassword}
+            onChangeText={t => {
+              setNewPassword(t);
+            }}
+          />
+          <TextInput
+            autoCorrect={false}
+            autoCapitalize={'none'}
+            allowFontScaling={true}
+            underlineColorAndroid={'black'}
+            style={styles.inputField}
+            placeholder={'Confirm Password'}
+            value={confirmPassword}
+            onChangeText={t => {
+              setConfirmPassword(t);
+            }}
+          />
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.primary,
-    flexDirection: 'row',
+    padding: '3%',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  inputField: {
+    alignSelf: 'center',
+    width: '90%',
+    height: 35,
+    margin: '3%',
+    borderBottomColor: '#000000',
+    borderBottomWidth: 0.5,
+    fontSize: 15,
+    // borderWidth: 1,
   },
 });
 
-export default SplashScreen;
+export default UpdatePassword;

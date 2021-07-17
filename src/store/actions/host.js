@@ -25,7 +25,6 @@ export const fetchDetails = () => {
       const purposeData = resData.purpose;
       const hData = resData.host;
       const hostData = [];
-      //id, title, imageUrl, description, price, category, owner
       for (var key = 0; key < hData.length; key++) {
         hostData.push(
           new Host(
@@ -33,6 +32,7 @@ export const fetchDetails = () => {
             hData[key].name,
             hData[key].phone,
             hData[key].email,
+            hData[key].sendemail,
           ),
         );
       }
@@ -47,7 +47,7 @@ export const fetchDetails = () => {
   };
 };
 
-export const addHost = (name, phone, email) => {
+export const addHost = (name, phone, email, sendemail) => {
   return async (dispatch, getState) => {
     try {
       const token = getState().auth.token;
@@ -61,6 +61,7 @@ export const addHost = (name, phone, email) => {
           name,
           phone,
           email,
+          sendemail,
         }),
       });
       if (!response.ok) {
@@ -76,13 +77,13 @@ export const addHost = (name, phone, email) => {
             resData[key].name,
             resData[key].phone,
             resData[key].email,
+            resData[key].sendemail,
           ),
         );
       }
 
       dispatch({type: ADDHOST, hostData});
     } catch (e) {
-      console.log(e.message);
       throw new Error(e.message);
     }
   };
@@ -108,7 +109,6 @@ export const updateHost = (id, host) => {
 
       dispatch({type: UPDATEHOST, hostData, id});
     } catch (e) {
-      console.log(e.message);
       throw new Error(e.message);
     }
   };

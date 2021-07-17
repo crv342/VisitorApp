@@ -22,7 +22,7 @@ import AuthScreen from '../screens/AuthScreen';
 import HomeScreen from '../screens/HomeScreen';
 import CheckOutScreen from '../screens/CheckOutScreen';
 import VisitorLogScreen from '../screens/VisitorLogScreen';
-import EmployeeList from '../screens/EmployeeList';
+import HostList from '../screens/HostList';
 import SettingScreen from '../screens/SettingScreen';
 import CheckInDetails from '../screens/CheckInDetails';
 import {logout} from '../store/actions/auth';
@@ -185,10 +185,10 @@ const DrawerNavigator = ({navigation}) => {
         }}
       />
       <Drawer.Screen
-        name={'Employee'}
-        component={EmployeeList}
+        name={'Host'}
+        component={HostList}
         options={{
-          title: 'Employees',
+          title: 'Hosts',
           drawerIcon: ({focused, size}) => (
             <Icon
               name={'people'}

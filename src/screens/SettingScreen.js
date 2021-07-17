@@ -6,6 +6,7 @@ import {
   Keyboard,
   TouchableOpacity,
   Button as B,
+  Alert,
 } from 'react-native';
 import {
   Appbar,
@@ -49,7 +50,7 @@ const SettingScreen = ({navigation}) => {
 
   useEffect(() => {
     if (setPass) {
-      navigation.navigate('Auth', {Screen: 'Update Pass'});
+      navigation.navigate('AuthNav', {screen: 'Update Pass'});
     }
   }, [navigation, setPass]);
 
@@ -64,16 +65,37 @@ const SettingScreen = ({navigation}) => {
     setLoading(false);
   };
 
-  const passButtonHandler = async () => {
-    hideModal();
-    navigation.navigate('AuthNav', {screen: 'Update Pass'});
-    if (currPass === null || currPass === undefined) {
+  const addPurposeHandler = async () => {
+    if (purpose === '' || purpose === undefined) {
       return;
+    } else {
+      await dispatch(updatePurpose(purpose));
+      setPurpose('');
     }
-    await dispatch(authActions.checkPass(currPass));
-    setCurrPass('');
   };
 
+  const passButtonHandler = async () => {
+    try {
+      if (currPass === '' || currPass === undefined) {
+        Alert.alert(Alert, 'Please enter current password.', {
+          text: 'OK',
+          onPress: () => console.log('OK Pressed'),
+        });
+        return;
+      }
+      console.log('sfdf');
+      await dispatch(authActions.checkPass(currPass));
+      hideModal();
+      setCurrPass('');
+      navigation.navigate('AuthNav', {screen: 'Update Pass'});
+    } catch (e) {
+      setCurrPass('');
+      Alert.alert(e.message, 'Please enter correct password.', {
+        text: 'OK',
+        onPress: () => console.log('OK Pressed'),
+      });
+    }
+  };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{flex: 1}}>
@@ -91,7 +113,7 @@ const SettingScreen = ({navigation}) => {
             autoCapitalize={'none'}
             mode={'outlined'}
             style={styles.inputField}
-            label={'username'}
+            label={'Username'}
             value={username}
             onChangeText={t => {
               setUsername(t);
@@ -101,7 +123,7 @@ const SettingScreen = ({navigation}) => {
             autoCapitalize={'none'}
             mode={'outlined'}
             style={styles.inputField}
-            label={'email'}
+            label={'Email'}
             value={email}
             onChangeText={t => {
               setEmail(t);
@@ -133,9 +155,9 @@ const SettingScreen = ({navigation}) => {
                       autoCapitalize={'none'}
                       mode={'outlined'}
                       style={{...styles.inputField}}
-                      value={purpose}
+                      value={currPass}
                       onChangeText={t => {
-                        setPurpose(t);
+                        setCurrPass(t);
                       }}
                     />
                     <Button
@@ -181,13 +203,7 @@ const SettingScreen = ({navigation}) => {
                       style={styles.addButton}
                       mode={'contained'}
                       color={Colors.primary}
-                      onPress={() => {
-                        if (purpose === null || purpose === undefined) {
-                          return;
-                        }
-                        dispatch(updatePurpose(purpose));
-                        setPurpose('');
-                      }}>
+                      onPress={addPurposeHandler}>
                       <Icon size={24} name={'plus'} />
                     </Button>
                   </View>

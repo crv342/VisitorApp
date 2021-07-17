@@ -11,6 +11,7 @@ const initialState = {
   adminData: {},
   isLoading: true,
   setPass: false,
+  resToken: null,
 };
 
 export default (state = initialState, action) => {
@@ -31,6 +32,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         setPass: action.setPassword,
+        resToken: action.resToken,
       };
     case LOGOUT:
       return initialState;

@@ -92,12 +92,14 @@ export const updateAdmin = updateData => {
 };
 
 export const checkPass = password => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     try {
+      const token = getState().auth.token;
       const response = await fetch(URL + '/admin/checkpassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
         },
         body: JSON.stringify({
           password,
@@ -106,12 +108,46 @@ export const checkPass = password => {
       if (!response.ok) {
         const resData = await response.json();
         let message = 'Something went wrong!';
+        console.log(resData);
         if (resData.e == 'Password Does Not Match!') {
           message = resData.e;
         }
         throw new Error(message);
       }
-      dispatch(UPDATEPASSWORD, {setPassword: true});
+      const resData = await response.json();
+      console.log(resData, '5');
+      dispatch({
+        type: UPDATEPASSWORD,
+        setPassword: true,
+        resToken: resData.token,
+      });
+    } catch (e) {
+      throw new Error(e.message);
+    }
+  };
+};
+
+export const updatePassword = password => {
+  return async (dispatch, getState) => {
+    try {
+      const token = getState().auth.resToken;
+      const response = await fetch(URL + '/admin/updatepassword', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token,
+        },
+        body: JSON.stringify({password}),
+      });
+      if (!response.ok) {
+        throw new Error('something went wrong');
+      }
+
+      dispatch({
+        type: UPDATEPASSWORD,
+        setPassword: false,
+        resToken: null,
+      });
     } catch (e) {
       throw new Error(e.message);
     }

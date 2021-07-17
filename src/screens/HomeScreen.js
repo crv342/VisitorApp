@@ -49,8 +49,11 @@ const HomeScreen = ({navigation}) => {
   const checkedInData = useSelector(state => state.visitor.checkedInVisitors);
   const hosts = useSelector(state => state.host.hosts);
   const purposes = useSelector(state => state.host.purposes);
-  const [visible, setVisible] = React.useState(false);
-  const [chartName, setChartName] = React.useState('bezier');
+  const [visible, setVisible] = useState(false);
+  const [chartName, setChartName] = useState('bezier');
+  const [color, setColor] = useState('#e26a00');
+  const [gradientColor, setGradientColor] = useState('#fb8c00');
+  const [stroke, setStroke] = useState('#ffa726');
 
   const filterData = visitorData.filter(
     data => new Date(data.checkIn) > compareDate,
@@ -88,9 +91,9 @@ const HomeScreen = ({navigation}) => {
   const hideDialog = () => setVisible(false);
 
   const chartConfig = {
-    backgroundColor: '#e26a00',
-    backgroundGradientFrom: '#fb8c00',
-    backgroundGradientTo: '#ffa726',
+    backgroundColor: color,
+    backgroundGradientFrom: gradientColor,
+    backgroundGradientTo: stroke,
     decimalPlaces: 2, // optional, defaults to 2dp
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -100,7 +103,7 @@ const HomeScreen = ({navigation}) => {
     propsForDots: {
       r: '6',
       strokeWidth: '2',
-      stroke: '#ffa726',
+      stroke: stroke,
     },
   };
 

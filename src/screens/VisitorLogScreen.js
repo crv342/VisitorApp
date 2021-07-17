@@ -331,9 +331,9 @@ const styles = StyleSheet.create({
   rowEven: {
     ...rowTable,
     // backgroundColor: 'rgb(226,226,226)',
-    backgroundColor: 'rgb(243,243,255)',
+    backgroundColor: 'rgb(255,255,255)',
     shadowColor: 'rgba(54,66,109,0.91)',
-    elevation: 3,
+    elevation: 1.5,
   },
   tableHeader: {
     justifyContent: 'space-around',

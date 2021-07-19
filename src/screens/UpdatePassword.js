@@ -11,8 +11,14 @@ import {
 
 import Colors from '../constants/Colors';
 import {useDispatch} from 'react-redux';
-import {Appbar, Button, IconButton, Text} from 'react-native-paper';
-import {updatePassword} from '../store/actions/auth';
+import {
+  ActivityIndicator,
+  Appbar,
+  Button,
+  IconButton,
+  Text,
+} from 'react-native-paper';
+import {UPDATEPASSWORD, updatePassword} from '../store/actions/auth';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const UpdatePassword = ({navigation}) => {
@@ -20,8 +26,43 @@ const UpdatePassword = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [changedPass, setChangedPass] = useState(false);
+  // const hasUnsavedChanges = Boolean(text);
 
-  useEffect(() => {});
+  useEffect(
+    () =>
+      navigation.addListener('beforeRemove', e => {
+        if (changedPass) {
+          return;
+        }
+
+        e.preventDefault();
+
+        Alert.alert(
+          'Are You Sure?',
+          'You are leaving screen without updating password. Are you sure to leave the screen?',
+          [
+            {text: "Don't leave", style: 'cancel', onPress: () => {}},
+            {
+              text: 'Discard',
+              style: 'destructive',
+              onPress: () => navigation.dispatch(e.data.action),
+            },
+          ],
+        );
+      }),
+    [navigation, changedPass],
+  );
+  useEffect(() => {
+    const blur = navigation.addListener('blur', () => {
+      dispatch({
+        type: UPDATEPASSWORD,
+        setPassword: false,
+        resToken: null,
+      });
+    });
+  });
+  // useEffect(() => {});
 
   const submitHandler = async () => {
     try {
@@ -31,7 +72,9 @@ const UpdatePassword = ({navigation}) => {
 
       setIsLoading(true);
       await dispatch(updatePassword(newPassword));
+      setChangedPass(true);
       setIsLoading(false);
+      navigation.goBack();
     } catch (e) {
       Alert.alert(e.message);
     }
@@ -46,10 +89,17 @@ const UpdatePassword = ({navigation}) => {
             onPress={() => navigation.goBack()}
           />
           <Appbar.Content title={'Update Password'} />
-          <Appbar.Action
-            icon={'content-save-outline'}
-            onPress={submitHandler}
-          />
+          {isLoading ? (
+            <ActivityIndicator
+              color={'white'}
+              style={{marginRight: '3.5%', marginLeft: '3%'}}
+            />
+          ) : (
+            <Appbar.Action
+              icon={'content-save-outline'}
+              onPress={submitHandler}
+            />
+          )}
         </Appbar.Header>
         <View style={styles.screen}>
           <Text style={{margin: 15, fontSize: 16}}>Update Password</Text>

@@ -102,6 +102,18 @@ const CheckInNavigator = () => {
   );
 };
 
+// const VisitorLogNavigator = ({navigation}) => {
+//   return (
+//     <Stack.Navigator>
+//       <Stack.Screen
+//         name={'VisitorLog'}
+//         component={VisitorLogScreen}
+//         options={{headerShown: false}}
+//       />
+//     </Stack.Navigator>
+//   );
+// };
+
 const DrawerNavigator = ({navigation}) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
@@ -182,6 +194,7 @@ const DrawerNavigator = ({navigation}) => {
               color={focused ? Colors.primary : '#ccc'}
             />
           ),
+          // unmountOnBlur: true,
         }}
       />
       <Drawer.Screen

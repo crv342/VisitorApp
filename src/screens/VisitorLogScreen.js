@@ -30,7 +30,7 @@ const capitalize = input => {
 };
 
 const VisitorLogScreen = ({navigation, route}) => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   let tableRow = 'even';
   const [asc, setAsc] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,7 +50,7 @@ const VisitorLogScreen = ({navigation, route}) => {
   const hideModal = () => setVisible(false);
 
   useEffect(() => {
-    setIsLoading(true);
+    // setIsLoading(true);
     // dispatch(fetchvisitor());
     setIsLoading(false);
   }, []);

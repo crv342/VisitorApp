@@ -163,6 +163,7 @@ const HostList = ({navigation}) => {
                   onFocus={() => setError(false)}
                 />
                 <TextInput
+                  maxLength={10}
                   keyboardType={'numeric'}
                   mode={'outlined'}
                   style={styles.inputField}

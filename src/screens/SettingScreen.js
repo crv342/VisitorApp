@@ -43,16 +43,17 @@ const SettingScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [uPassModal, setUPassModal] = useState(false);
+  const [loadingModal, setLoadingModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchDetails());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (setPass) {
-      navigation.navigate('AuthNav', {screen: 'Update Pass'});
-    }
-  }, [navigation, setPass]);
+  // useEffect(() => {
+  //   if (setPass) {
+  //     navigation.navigate('AuthNav', {screen: 'Update Pass'});
+  //   }
+  // }, [navigation, setPass]);
 
   const purposeData = useSelector(state => state.host.purposes);
 
@@ -69,7 +70,9 @@ const SettingScreen = ({navigation}) => {
     if (purpose === '' || purpose === undefined) {
       return;
     } else {
+      setLoadingModal(true);
       await dispatch(updatePurpose(purpose));
+      setLoadingModal(false);
       setPurpose('');
     }
   };
@@ -83,13 +86,15 @@ const SettingScreen = ({navigation}) => {
         });
         return;
       }
-      console.log('sfdf');
+      setLoadingModal(true);
       await dispatch(authActions.checkPass(currPass));
+      setLoadingModal(false);
       hideModal();
       setCurrPass('');
       navigation.navigate('AuthNav', {screen: 'Update Pass'});
     } catch (e) {
       setCurrPass('');
+      setLoadingModal(false);
       Alert.alert(e.message, 'Please enter correct password.', {
         text: 'OK',
         onPress: () => console.log('OK Pressed'),
@@ -165,7 +170,11 @@ const SettingScreen = ({navigation}) => {
                       mode={'contained'}
                       color={Colors.primary}
                       onPress={passButtonHandler}>
-                      Next
+                      {loadingModal ? (
+                        <ActivityIndicator size={18} color={'white'} />
+                      ) : (
+                        'Next'
+                      )}
                     </Button>
                   </View>
                 </>
@@ -204,7 +213,11 @@ const SettingScreen = ({navigation}) => {
                       mode={'contained'}
                       color={Colors.primary}
                       onPress={addPurposeHandler}>
-                      <Icon size={24} name={'plus'} />
+                      {loadingModal ? (
+                        <ActivityIndicator color={'white'} />
+                      ) : (
+                        <Icon size={24} name={'plus'} />
+                      )}
                     </Button>
                   </View>
                 </>

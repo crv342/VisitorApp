@@ -11,6 +11,7 @@ import {
   Dialog,
   Portal,
   Divider,
+  shadow,
 } from 'react-native-paper';
 import Colors from '../constants/Colors';
 import {useDispatch, useSelector} from 'react-redux';
@@ -18,7 +19,6 @@ import {
   LineChart,
   BarChart,
   PieChart,
-  ProgressChart,
   ContributionGraph,
   StackedBarChart,
 } from 'react-native-chart-kit';
@@ -54,6 +54,31 @@ const HomeScreen = ({navigation}) => {
   const [color, setColor] = useState('#e26a00');
   const [gradientColor, setGradientColor] = useState('#fb8c00');
   const [stroke, setStroke] = useState('#ffa726');
+  const [chartShadowColor, setChartShadowColor] = useState('#ffa726');
+  const colorArray = [
+    '#e26a00',
+    '#69e200',
+    '#0066e2',
+    '#a600e2',
+    '#e2002d',
+    '#00c8e2',
+  ];
+  const gradientArray = [
+    '#fb8c00',
+    '#698c00',
+    '#0066e2',
+    '#a600e2',
+    '#e2002d',
+    '#00c8e2',
+  ];
+  const strokeArray = [
+    '#ffa726',
+    '#69a726',
+    '#0066e2',
+    '#a600e2',
+    '#e2002d',
+    '#00c8e2',
+  ];
 
   const filterData = visitorData.filter(
     data => new Date(data.checkIn) > compareDate,
@@ -94,7 +119,7 @@ const HomeScreen = ({navigation}) => {
     backgroundColor: color,
     backgroundGradientFrom: gradientColor,
     backgroundGradientTo: stroke,
-    decimalPlaces: 2, // optional, defaults to 2dp
+    decimalPlaces: 0, // optional, defaults to 2dp
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     style: {
@@ -176,6 +201,30 @@ const HomeScreen = ({navigation}) => {
     {date: '2017-03-05', count: 2},
     {date: '2017-02-30', count: 4},
   ];
+  const p = new Array();
+  const c = new Array();
+  for (let v of visitorData) {
+    if (!p.includes(v.purpose)) {
+      p.push(v.purpose);
+      c.push(0);
+    }
+    let i = p.indexOf(v.purpose);
+    if (i !== -1) {
+      c[i] += 1;
+    }
+  }
+  console.log(p, c);
+  const pieChart = new Array();
+  for (let i in p) {
+    pieChart.push({
+      name: p[i],
+      visitors: c[i],
+      color: colorArray[i],
+      legendFontColor: '#7F7F7F',
+      legendFontSize: 15,
+    });
+  }
+  console.log(pieChart);
 
   return (
     <View style={{flex: 1}}>
@@ -247,16 +296,19 @@ const HomeScreen = ({navigation}) => {
               </Card>
             </View>
 
-            <Button
-              icon={({size, color}) => (
-                <Icon color={color} size={24} name={'menu-down'} />
-              )}
-              contentStyle={styles.b}
-              style={styles.dialogShowButton}
-              onPress={showDialog}>
-              Select Chart
-              {/*<Icon size={20} name={'menu-down'} />*/}
-            </Button>
+            <View style={{flexDirection: 'row'}}>
+              <Button
+                icon={({size, color}) => (
+                  <Icon color={color} size={24} name={'menu-down'} />
+                )}
+                contentStyle={styles.b}
+                style={styles.dialogShowButton}
+                onPress={showDialog}>
+                Select Chart
+                {/*<Icon size={20} name={'menu-down'} />*/}
+              </Button>
+            </View>
+
             <Portal>
               <Dialog visible={visible} onDismiss={hideDialog}>
                 <Dialog.Title>Select Chart</Dialog.Title>
@@ -264,6 +316,13 @@ const HomeScreen = ({navigation}) => {
                 <Dialog.Content>
                   <RadioButton.Group
                     onValueChange={newValue => {
+                      let randomNumber =
+                        Math.floor(
+                          Math.random() * (colorArray.length - 1 - 0 + 1),
+                        ) + 0;
+                      setColor(colorArray[randomNumber]);
+                      setGradientColor(gradientArray[randomNumber]);
+                      setStroke(strokeArray[randomNumber]);
                       setChartName(newValue);
                       hideDialog();
                     }}
@@ -284,7 +343,8 @@ const HomeScreen = ({navigation}) => {
                 {/*</Dialog.Actions>*/}
               </Dialog>
             </Portal>
-            <View style={styles.graphContainer}>
+            <View
+              style={{...styles.graphContainer, shadowColor: chartShadowColor}}>
               {(chartName === 'line' || chartName === 'bezier') && (
                 <LineChart
                   bezier={chartName === 'bezier' && true}
@@ -320,7 +380,24 @@ const HomeScreen = ({navigation}) => {
                 />
               )}
             </View>
-            <View style={styles.graphContainer}>
+
+            <View
+              style={{...styles.graphContainer, shadowColor: chartShadowColor}}>
+              <PieChart
+                style={styles.pieChart}
+                data={pieChart}
+                width={chartWidth}
+                height={220}
+                chartConfig={chartConfig}
+                accessor={'visitors'}
+                // backgroundColor={'#ccc'}
+                paddingLeft={'15'}
+                // center={[10, 50]}
+                absolute
+              />
+            </View>
+            <View
+              style={{...styles.graphContainer, shadowColor: chartShadowColor}}>
               <StackedBarChart
                 style={styles.chartStyle}
                 data={data}
@@ -384,12 +461,25 @@ const styles = StyleSheet.create({
     // aspectRatio: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#664b4b',
+    shadowOffset: {height: 1, width: 1},
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
   },
   graphContainer: {
     flex: 2,
-    padding: 4,
+    // padding: 4,
+    height: h,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#c6c0c0',
+    shadowOffset: {height: 1.5, width: 1.5},
+    shadowOpacity: 3,
+    shadowRadius: 8,
+    elevation: 3,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    margin: 8,
   },
   chartStyle: {
     marginVertical: 8,
@@ -406,6 +496,12 @@ const styles = StyleSheet.create({
   b: {
     flexDirection: 'row-reverse',
     // backgroundColor: 'white',
+  },
+  pieChart: {
+    shadowColor: '#a4a4a4',
+    shadowOffset: {height: 2, width: 2},
+    shadowOpacity: 2,
+    shadowRadius: 3,
   },
 });
 

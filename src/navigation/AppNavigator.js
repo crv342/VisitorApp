@@ -118,6 +118,7 @@ const DrawerNavigator = ({navigation}) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const userName = useSelector(state => state.auth.adminData.username);
+  const Colors = useSelector(state => state.theme.colors);
   useEffect(() => {
     setUsername(userName);
   }, [navigation, userName]);

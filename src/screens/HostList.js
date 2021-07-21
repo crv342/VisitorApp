@@ -21,6 +21,7 @@ import Colors from '../constants/Colors';
 
 const HostList = ({navigation}) => {
   const dispatch = useDispatch();
+  const Colors = useSelector(state => state.theme.colors);
   const [visible, setVisible] = useState(false);
   const [id, setId] = useState();
   const [name, setName] = useState();

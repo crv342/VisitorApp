@@ -21,6 +21,7 @@
     "react-native": "0.64.2",
     "react-native-camera": "^3.44.3",
     "react-native-chart-kit": "^6.11.0",
+    "react-native-color-picker": "^0.6.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-paper": "^4.9.2",
     "react-native-permissions": "^3.0.5",

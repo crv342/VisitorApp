@@ -13,9 +13,10 @@ import {Button, Text, Divider} from 'react-native-paper';
 import Colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Color from 'color';
+import {useSelector} from 'react-redux';
 
 const IdScanner = ({navigation}) => {
+  const Colors = useSelector(state => state.theme.colors);
   const onSuccess = e => {
     navigation.navigate('CheckInDetails', {data: e.data});
     console.log(e);

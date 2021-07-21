@@ -5,7 +5,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TouchableOpacity,
-  Button as B,
   Alert,
 } from 'react-native';
 import {
@@ -20,6 +19,7 @@ import {
   List,
   IconButton,
   ActivityIndicator,
+  Divider,
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -29,10 +29,15 @@ import {
 } from '../store/actions/host';
 import * as authActions from '../store/actions/auth';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Colors from '../constants/Colors';
+import {ColorPicker, fromHsv} from 'react-native-color-picker';
+import Colors, {changeColors} from '../constants/Colors';
+import {updateTheme} from '../store/actions/theme';
+
+// let Colors;
 
 const SettingScreen = ({navigation}) => {
   const adminData = useSelector(state => state.auth.adminData);
+  const Colors = useSelector(state => state.theme.colors);
   const setPass = useSelector(state => state.auth.setPass);
   const dispatch = useDispatch();
   const [username, setUsername] = useState(adminData.username);
@@ -44,6 +49,8 @@ const SettingScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
   const [uPassModal, setUPassModal] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
+  const [themeColor, setThemeColor] = useState('');
+  const [colorModal, setColorModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchDetails());
@@ -59,6 +66,9 @@ const SettingScreen = ({navigation}) => {
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  const showColorModal = () => setColorModal(true);
+  const hideColorModal = () => setColorModal(false);
 
   const submitHandler = async () => {
     setLoading(true);
@@ -100,6 +110,12 @@ const SettingScreen = ({navigation}) => {
         onPress: () => console.log('OK Pressed'),
       });
     }
+  };
+  const themeColorHandler = color => {
+    setThemeColor(color);
+    // changeColors(color);
+    dispatch(updateTheme(color, Colors.accent));
+    hideColorModal();
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -145,7 +161,6 @@ const SettingScreen = ({navigation}) => {
           {/*/>*/}
           {loading && <ActivityIndicator style={styles.inputField} />}
 
-          {/*<Provider>*/}
           <Portal>
             <Modal
               visible={visible}
@@ -224,15 +239,32 @@ const SettingScreen = ({navigation}) => {
               )}
             </Modal>
           </Portal>
+          <Portal>
+            <Modal
+              style={{flex: 1}}
+              visible={colorModal}
+              onDismiss={hideColorModal}
+              contentContainerStyle={{
+                ...styles.containerStyle,
+                height: '50%',
+                backgroundColor: '#1f1f1f',
+              }}>
+              <ColorPicker
+                onColorSelected={color => themeColorHandler(color)}
+                style={{flex: 1}}
+              />
+            </Modal>
+          </Portal>
+
           <Button
-            color={Colors.primary}
+            // color={Colors.primary}
             mode={'contained'}
             style={styles.inputField}
             onPress={submitHandler}>
             Save
           </Button>
           <Button
-            color={Colors.primary}
+            // color={Colors.primary}
             mode={'outlined'}
             style={styles.inputField}
             onPress={() => {
@@ -248,7 +280,15 @@ const SettingScreen = ({navigation}) => {
             }}>
             Update Password
           </Button>
-          {/*</Provider>*/}
+          <Divider />
+          <View style={styles.updateThemeContainer}>
+            <Text style={{fontSize: 16}}>Change Theme</Text>
+            <IconButton
+              icon={'format-color-fill'}
+              onPress={showColorModal}
+              color={Colors.primary}
+            />
+          </View>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -275,6 +315,12 @@ const styles = StyleSheet.create({
   addButton: {
     margin: 7,
     justifyContent: 'center',
+  },
+  updateThemeContainer: {
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

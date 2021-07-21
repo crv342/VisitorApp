@@ -3,7 +3,7 @@ import React from 'react';
 import type {Node} from 'react';
 import {Provider as StoreProvider} from 'react-redux';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
-import {SafeAreaView} from 'react-native';
+import ThemeProvider from './src/ThemeProvider';
 
 import store from './src/store/store';
 import AppNavigator from './src/navigation/AppNavigator';
@@ -23,10 +23,11 @@ const theme = {
 const App: () => Node = () => {
   return (
     <StoreProvider store={store}>
-      <PaperProvider theme={theme}>
-        {/*<StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />*/}
-        <AppNavigator />
-      </PaperProvider>
+      <ThemeProvider />
+      {/*<PaperProvider theme={theme}>*/}
+      {/*  /!*<StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />*!/*/}
+      {/*  <AppNavigator />*/}
+      {/*</PaperProvider>*/}
     </StoreProvider>
   );
 };

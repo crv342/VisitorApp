@@ -12,6 +12,7 @@ import {
   Portal,
   Divider,
   shadow,
+  Modal,
 } from 'react-native-paper';
 import Colors from '../constants/Colors';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,7 +25,10 @@ import {
 } from 'react-native-chart-kit';
 import {fetchvisitor} from '../store/actions/visitor';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
+import {SaturationSlider, HueSlider, LightnessSlider} from 'react-native-color';
+import {ColorPicker} from 'react-native-color-picker';
 
 let h = Dimensions.get('window').height;
 const chartWidth = Dimensions.get('window').width - 16;
@@ -49,7 +53,9 @@ const HomeScreen = ({navigation}) => {
   const checkedInData = useSelector(state => state.visitor.checkedInVisitors);
   const hosts = useSelector(state => state.host.hosts);
   const purposes = useSelector(state => state.host.purposes);
+  const Colors = useSelector(state => state.theme.colors);
   const [visible, setVisible] = useState(false);
+  const [pickerVisible, setPickerVisible] = useState(false);
   const [chartName, setChartName] = useState('bezier');
   const [color, setColor] = useState('#e26a00');
   const [gradientColor, setGradientColor] = useState('#fb8c00');
@@ -112,8 +118,15 @@ const HomeScreen = ({navigation}) => {
   }
 
   const showDialog = () => setVisible(true);
-
   const hideDialog = () => setVisible(false);
+
+  const showColorModal = () => setPickerVisible(true);
+  const hideColorModal = () => setPickerVisible(false);
+
+  const colorHandler = color => {
+    hideColorModal();
+    setGradientColor(color);
+  };
 
   const chartConfig = {
     backgroundColor: color,
@@ -296,7 +309,7 @@ const HomeScreen = ({navigation}) => {
               </Card>
             </View>
 
-            <View style={{flexDirection: 'row'}}>
+            <View style={styles.chartButtonContainer}>
               <Button
                 icon={({size, color}) => (
                   <Icon color={color} size={24} name={'menu-down'} />
@@ -307,6 +320,13 @@ const HomeScreen = ({navigation}) => {
                 Select Chart
                 {/*<Icon size={20} name={'menu-down'} />*/}
               </Button>
+              <Entypo
+                size={21}
+                color={Colors.primary}
+                style={{marginRight: 20}}
+                name={'colours'}
+                onPress={showColorModal}
+              />
             </View>
 
             <Portal>
@@ -342,6 +362,22 @@ const HomeScreen = ({navigation}) => {
                 {/*  <Button onPress={hideDialog}>Ok</Button>*/}
                 {/*</Dialog.Actions>*/}
               </Dialog>
+            </Portal>
+            <Portal>
+              <Modal
+                style={{flex: 1}}
+                visible={pickerVisible}
+                onDismiss={hideColorModal}
+                contentContainerStyle={{
+                  ...styles.containerStyle,
+                  height: '50%',
+                  backgroundColor: '#1f1f1f',
+                }}>
+                <ColorPicker
+                  onColorSelected={color => colorHandler(color)}
+                  style={{flex: 1}}
+                />
+              </Modal>
             </Portal>
             <View
               style={{...styles.graphContainer, shadowColor: chartShadowColor}}>
@@ -410,7 +446,7 @@ const HomeScreen = ({navigation}) => {
         </View>
       )}
       <View style={styles.screen}>
-        <View style={styles.bottomView}>
+        <View style={{...styles.bottomView, backgroundColor: Colors.primary}}>
           <Button
             style={styles.bottomButton}
             color={'white'}
@@ -436,7 +472,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     width: '100%',
     height: 50,
-    backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -465,6 +500,12 @@ const styles = StyleSheet.create({
     shadowOffset: {height: 1, width: 1},
     shadowOpacity: 0.5,
     shadowRadius: 4,
+  },
+  chartButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
   },
   graphContainer: {
     flex: 2,
@@ -502,6 +543,12 @@ const styles = StyleSheet.create({
     shadowOffset: {height: 2, width: 2},
     shadowOpacity: 2,
     shadowRadius: 3,
+  },
+  containerStyle: {
+    backgroundColor: 'white',
+    padding: 20,
+    margin: 10,
+    borderRadius: 5,
   },
 });
 

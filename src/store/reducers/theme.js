@@ -4,6 +4,7 @@ const initialState = {
   colors: {
     primary: '#C1403D',
     accent: '#ffeaea',
+    text: '#000000',
   },
 };
 
@@ -16,6 +17,7 @@ export default (state = initialState, action) => {
         colors: {
           primary: action.primaryColor,
           accent: action.accentColor,
+          text: action.textColor,
         },
       };
     default:

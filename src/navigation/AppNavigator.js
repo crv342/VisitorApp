@@ -113,12 +113,23 @@ const CheckInNavigator = () => {
 //     </Stack.Navigator>
 //   );
 // };
-
+let luma;
 const DrawerNavigator = ({navigation}) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const userName = useSelector(state => state.auth.adminData.username);
   const Colors = useSelector(state => state.theme.colors);
+
+  // useEffect(() => {
+  //   let c = Colors.primary.slice().substring(1); // strip #
+  //   let rgb = parseInt(c, 16); // convert rrggbb to decimal
+  //   let r = (rgb >> 16) & 0xff; // extract red
+  //   let g = (rgb >> 8) & 0xff; // extract green
+  //   let b = (rgb >> 0) & 0xff; // extract blue
+  //
+  //   luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+  // }, [Colors]);
+
   useEffect(() => {
     setUsername(userName);
   }, [navigation, userName]);
@@ -137,15 +148,19 @@ const DrawerNavigator = ({navigation}) => {
               }}
             />
             <SafeAreaView forceInset={{top: 'always', horizontal: 'never'}}>
-              <View
-                style={{backgroundColor: Colors.primary, fontColor: 'white'}}>
+              <View style={{backgroundColor: Colors.primary}}>
                 <DrawerItem
-                  label={userName || ''}
+                  labelStyle={{color: Colors.text}}
+                  label={username || ''}
                   onPress={() => {
                     navigation.navigate('Settings');
                   }}
                   icon={() => (
-                    <Icon color={'white'} size={24} name={'account-circle'} />
+                    <Icon
+                      color={Colors.text}
+                      size={24}
+                      name={'account-circle'}
+                    />
                   )}
                 />
               </View>

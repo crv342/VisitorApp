@@ -449,7 +449,7 @@ const HomeScreen = ({navigation}) => {
         <View style={{...styles.bottomView, backgroundColor: Colors.primary}}>
           <Button
             style={styles.bottomButton}
-            color={'white'}
+            color={Colors.text}
             onPress={() =>
               navigation.navigate('CheckInNav', {Screen: 'CheckOut'})
             }>

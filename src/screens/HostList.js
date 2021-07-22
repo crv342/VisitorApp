@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     marginVertical: 4,
-    color: Colors.primary,
+    // color: Colors.primary,
   },
   buttonContainer: {
     marginTop: 10,

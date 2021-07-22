@@ -5,6 +5,8 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {
   Text,
@@ -51,112 +53,121 @@ const AuthScreen = ({navigation}) => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={{flex: 1}}>
-        {/*<Appbar.Header>*/}
-        {/*  <Appbar.Action icon={'arrow-left'} />*/}
-        {/*</Appbar.Header>*/}
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      enabled
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={{flex: 1}}>
+          {/*<Appbar.Header>*/}
+          {/*  <Appbar.Action icon={'arrow-left'} />*/}
+          {/*</Appbar.Header>*/}
 
-        <Formik
-          initialValues={{username: '', password: ''}}
-          validationSchema={formSchema}
-          onSubmit={values => submitHandler(values.username, values.password)}>
-          {({
-            values,
-            handleChange,
-            errors,
-            setFieldTouched,
-            touched,
-            handleSubmit,
-          }) => (
-            <View style={styles.screen}>
-              <Icon name={'admin-panel-settings'} size={34} />
-              {error && (
-                <View style={styles.errorContainer}>
-                  <View style={styles.errorText}>
-                    <HelperText
-                      style={styles.errorText}
-                      type="error"
-                      visible={error ? true : false}>
-                      {error}
-                    </HelperText>
+          <Formik
+            initialValues={{username: '', password: ''}}
+            validationSchema={formSchema}
+            onSubmit={values =>
+              submitHandler(values.username, values.password)
+            }>
+            {({
+              values,
+              handleChange,
+              errors,
+              setFieldTouched,
+              touched,
+              handleSubmit,
+            }) => (
+              <View style={styles.screen}>
+                <Icon name={'admin-panel-settings'} size={34} />
+                {error && (
+                  <View style={styles.errorContainer}>
+                    <View style={styles.errorText}>
+                      <HelperText
+                        style={styles.errorText}
+                        type="error"
+                        visible={error ? true : false}>
+                        {error}
+                      </HelperText>
+                    </View>
+                    <View style={styles.errorCloseButton}>
+                      <IconButton
+                        icon={'close'}
+                        size={13}
+                        color={Colors.primary}
+                        onPress={() => setError(false)}
+                      />
+                    </View>
                   </View>
-                  <View style={styles.errorCloseButton}>
-                    <IconButton
-                      icon={'close'}
-                      size={13}
-                      color={Colors.primary}
-                      onPress={() => setError(false)}
+                )}
+
+                <TextInput
+                  autoCapitalize={'none'}
+                  autoCorrect={false}
+                  left={<TextInput.Icon name="account" color={userIconColor} />}
+                  placeholder="username"
+                  style={styles.inputField}
+                  lable="Username"
+                  value={values.username}
+                  onChangeText={handleChange('username')}
+                  onFocus={() => setUserIconColor('#C1403D')}
+                  onBlur={() => {
+                    setUserIconColor('black');
+                    setFieldTouched('username');
+                    // handleBlur('username');
+                  }}
+                />
+                {touched.username && errors.username && (
+                  <Text style={{fontSize: 12, color: '#FF0D10'}}>
+                    {errors.username}
+                  </Text>
+                )}
+                <TextInput
+                  left={<TextInput.Icon name="lock" color={passIconColor} />}
+                  sectionColor="#fff"
+                  icon="camera"
+                  theme={{background: '#fff'}}
+                  placeholder="password"
+                  style={styles.inputField}
+                  right={
+                    <TextInput.Icon
+                      onPress={() =>
+                        setShowPassword(showPassword ? false : true)
+                      }
+                      name={showPassword ? 'eye-off' : 'eye'}
                     />
-                  </View>
-                </View>
-              )}
-
-              <TextInput
-                autoCapitalize={'none'}
-                autoCorrect={false}
-                left={<TextInput.Icon name="account" color={userIconColor} />}
-                placeholder="username"
-                style={styles.inputField}
-                lable="Username"
-                value={values.username}
-                onChangeText={handleChange('username')}
-                onFocus={() => setUserIconColor('#C1403D')}
-                onBlur={() => {
-                  setUserIconColor('black');
-                  setFieldTouched('username');
-                  // handleBlur('username');
-                }}
-              />
-              {touched.username && errors.username && (
-                <Text style={{fontSize: 12, color: '#FF0D10'}}>
-                  {errors.username}
-                </Text>
-              )}
-              <TextInput
-                left={<TextInput.Icon name="lock" color={passIconColor} />}
-                sectionColor="#fff"
-                icon="camera"
-                theme={{background: '#fff'}}
-                placeholder="password"
-                style={styles.inputField}
-                right={
-                  <TextInput.Icon
-                    onPress={() => setShowPassword(showPassword ? false : true)}
-                    name={showPassword ? 'eye-off' : 'eye'}
-                  />
-                }
-                lable="Password"
-                secureTextEntry={!showPassword}
-                value={values.password}
-                onChangeText={handleChange('password')}
-                onFocus={() => setPassIconColor('#C1403D')}
-                onBlur={() => {
-                  setPassIconColor('black');
-                  setFieldTouched('password');
-                }}
-              />
-              {touched.password && errors.password && (
-                <Text style={{fontSize: 12, color: '#FF0D10'}}>
-                  {errors.password}
-                </Text>
-              )}
-              <Button
-                contentStyle={{flexDirection: 'row-reverse'}}
-                uppercase={false}
-                loading={isLoading ? true : false}
-                mode="contained"
-                raised
-                theme={{roundness: 5}}
-                onPress={handleSubmit}>
-                Log In
-              </Button>
-              {/*)}*/}
-            </View>
-          )}
-        </Formik>
-      </View>
-    </TouchableWithoutFeedback>
+                  }
+                  lable="Password"
+                  secureTextEntry={!showPassword}
+                  value={values.password}
+                  onChangeText={handleChange('password')}
+                  onFocus={() => setPassIconColor('#C1403D')}
+                  onBlur={() => {
+                    setPassIconColor('black');
+                    setFieldTouched('password');
+                  }}
+                />
+                {touched.password && errors.password && (
+                  <Text style={{fontSize: 12, color: '#FF0D10'}}>
+                    {errors.password}
+                  </Text>
+                )}
+                <Button
+                  contentStyle={{flexDirection: 'row-reverse'}}
+                  uppercase={false}
+                  loading={isLoading ? true : false}
+                  mode="contained"
+                  raised
+                  theme={{roundness: 5}}
+                  onPress={handleSubmit}>
+                  Log In
+                </Button>
+                {/*)}*/}
+              </View>
+            )}
+          </Formik>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

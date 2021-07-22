@@ -5,12 +5,14 @@ import {Text} from 'react-native-paper';
 import * as authActions from '../store/actions/auth';
 import * as visitorActions from '../store/actions/visitor';
 
-import Colors from '../constants/Colors';
-import {useDispatch} from 'react-redux';
+// import Colors from '../constants/Colors';
+import {useDispatch, useSelector} from 'react-redux';
 import {fetchDetails} from '../store/actions/host';
+import {updateTheme} from '../store/actions/theme';
 
 const SplashScreen = props => {
   const dispatch = useDispatch();
+  const Colors = useSelector(state => state.theme.colors);
 
   useEffect(() => {
     const tryLogin = async () => {
@@ -36,6 +38,22 @@ const SplashScreen = props => {
     dispatch(fetchDetails());
   }, [dispatch]);
 
+  useEffect(() => {
+    const getTheme = async () => {
+      const themeData = await AsyncStorage.getItem('theme');
+      const themeDataJson = JSON.parse(themeData);
+
+      if (!themeData) {
+        return;
+      }
+
+      const {primary, accent} = themeDataJson;
+
+      dispatch(updateTheme(primary, accent));
+    };
+    getTheme();
+  }, [Colors, dispatch]);
+
   // useEffect(() => {
   //   dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
   // },[dispatch]);
@@ -47,7 +65,7 @@ const SplashScreen = props => {
   // }, []);
 
   return (
-    <View style={styles.screen}>
+    <View style={{...styles.screen, backgroundColor: Colors.primary}}>
       <Image
         source={require('../Image/visitor.jpeg')}
         style={{width: '10%', resizeMode: 'contain', margin: 30}}
@@ -71,7 +89,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.primary,
+    // backgroundColor: Colors.primary,
     flexDirection: 'row',
   },
 });

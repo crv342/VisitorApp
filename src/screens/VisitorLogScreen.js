@@ -31,6 +31,7 @@ const capitalize = input => {
 
 const VisitorLogScreen = ({navigation, route}) => {
   const dispatch = useDispatch();
+  const Colors = useSelector(state => state.theme.colors);
   let tableRow = 'even';
   const [asc, setAsc] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -191,7 +192,12 @@ const VisitorLogScreen = ({navigation, route}) => {
                           key={item.id}
                           onPress={() => showModal(item)}
                           style={
-                            tableRow !== 'odd' ? styles.rowEven : styles.rowOdd
+                            tableRow !== 'odd'
+                              ? styles.rowEven
+                              : {
+                                  ...styles.rowOdd,
+                                  backgroundColor: Colors.accent,
+                                }
                           }>
                           <DataTable.Cell style={styles.dataTitle}>
                             <Text
@@ -324,7 +330,6 @@ const styles = StyleSheet.create({
 
   rowOdd: {
     ...rowTable,
-    backgroundColor: Colors.accent,
     shadowColor: '#885b5b',
     // elevation: 1.5,
   },

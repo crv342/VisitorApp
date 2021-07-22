@@ -32,6 +32,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ColorPicker, fromHsv} from 'react-native-color-picker';
 import Colors, {changeColors} from '../constants/Colors';
 import {updateTheme} from '../store/actions/theme';
+import CustomSwitch from '../components/CustomSwitch';
 
 // let Colors;
 
@@ -49,8 +50,10 @@ const SettingScreen = ({navigation}) => {
   const [visible, setVisible] = useState(false);
   const [uPassModal, setUPassModal] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
-  const [themeColor, setThemeColor] = useState('');
+  const [themePrimaryColor, setThemePrimaryColor] = useState(Colors.primary);
+  const [themeAccentColor, setThemeAccentColor] = useState(Colors.accent);
   const [colorModal, setColorModal] = useState(false);
+  const [switchValue, setSwitchValue] = useState(1);
 
   useEffect(() => {
     dispatch(fetchDetails());
@@ -68,7 +71,10 @@ const SettingScreen = ({navigation}) => {
   const hideModal = () => setVisible(false);
 
   const showColorModal = () => setColorModal(true);
-  const hideColorModal = () => setColorModal(false);
+  const hideColorModal = () => {
+    setSwitchValue(1);
+    setColorModal(false);
+  };
 
   const submitHandler = async () => {
     setLoading(true);
@@ -111,11 +117,31 @@ const SettingScreen = ({navigation}) => {
       });
     }
   };
-  const themeColorHandler = color => {
-    setThemeColor(color);
-    // changeColors(color);
-    dispatch(updateTheme(color, Colors.accent));
-    hideColorModal();
+
+  const onSelectSwitch = index => {
+    setSwitchValue(index);
+  };
+
+  const changeColorHandler = color => {
+    if (switchValue === 1) {
+      setThemePrimaryColor(color);
+    }
+    if (switchValue === 2) {
+      setThemeAccentColor(color);
+    }
+  };
+
+  const themeColorHandler = async color => {
+    if (switchValue === 1) {
+      await dispatch(updateTheme(color, Colors.accent));
+      // setThemePrimaryColor(color);
+    }
+    if (switchValue === 2) {
+      await dispatch(updateTheme(Colors.primary, color));
+      // setThemeAccentColor(color);
+    }
+
+    // hideColorModal();
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -247,12 +273,25 @@ const SettingScreen = ({navigation}) => {
               contentContainerStyle={{
                 ...styles.containerStyle,
                 height: '50%',
-                backgroundColor: '#1f1f1f',
+                backgroundColor: '#dedede',
               }}>
               <ColorPicker
+                color={switchValue === 1 ? themePrimaryColor : themeAccentColor}
+                oldColor={switchValue === 1 ? Colors.primary : Colors.accent}
                 onColorSelected={color => themeColorHandler(color)}
+                onColorChange={color => changeColorHandler(color)}
                 style={{flex: 1}}
               />
+              <View style={{alignItems: 'center', margin: 5}}>
+                <CustomSwitch
+                  selectionMode={1}
+                  roundCorner={true}
+                  option1={'Primary'}
+                  option2={'Accent'}
+                  onSelectSwitch={onSelectSwitch}
+                  selectionColor={Colors.primary}
+                />
+              </View>
             </Modal>
           </Portal>
 

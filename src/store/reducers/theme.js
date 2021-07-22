@@ -11,7 +11,6 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case UPDATE_THEME_COLOR:
-      console.log('colors reducers', action);
       return {
         ...state,
         colors: {

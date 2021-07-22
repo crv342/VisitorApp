@@ -11,7 +11,6 @@ import {
   Dialog,
   Portal,
   Divider,
-  shadow,
   Modal,
 } from 'react-native-paper';
 import Colors from '../constants/Colors';
@@ -27,8 +26,10 @@ import {fetchvisitor} from '../store/actions/visitor';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
-import {SaturationSlider, HueSlider, LightnessSlider} from 'react-native-color';
+import CustomSwitch from '../components/CustomSwitch3';
 import {ColorPicker} from 'react-native-color-picker';
+import {ColorPicker as ColorPickerBtr} from 'react-native-btr';
+import CustomColorPicker from '../components/CustomColorPicker';
 
 let h = Dimensions.get('window').height;
 const chartWidth = Dimensions.get('window').width - 16;
@@ -56,11 +57,14 @@ const HomeScreen = ({navigation}) => {
   const Colors = useSelector(state => state.theme.colors);
   const [visible, setVisible] = useState(false);
   const [pickerVisible, setPickerVisible] = useState(false);
+  const [colorChangeVisible, setColorChangeVisible] = useState(false);
   const [chartName, setChartName] = useState('bezier');
-  const [color, setColor] = useState('#e26a00');
-  const [gradientColor, setGradientColor] = useState('#fb8c00');
+  const [gradientStartColor, setGradientStartColor] = useState('#e26a00');
+  const [gradientEndColor, setGradientEndColor] = useState('#fb8c00');
   const [stroke, setStroke] = useState('#ffa726');
   const [chartShadowColor, setChartShadowColor] = useState('#ffa726');
+  const [switchValue, setSwitchValue] = useState(1);
+  const [selectedColor, setSelectedColor] = useState('');
   const colorArray = [
     '#e26a00',
     '#69e200',
@@ -123,15 +127,46 @@ const HomeScreen = ({navigation}) => {
   const showColorModal = () => setPickerVisible(true);
   const hideColorModal = () => setPickerVisible(false);
 
+  const onSelectSwitch = index => {
+    setSwitchValue(index);
+    if (switchValue === 1) {
+      setSelectedColor(gradientStartColor);
+    } else if (switchValue === 2) {
+      setSelectedColor(gradientEndColor);
+    } else {
+      setSelectedColor(stroke);
+    }
+  };
+
+  const btrColorHandler = color => {
+    if (color === '#ffffff') {
+      showColorModal();
+    }
+    setSelectedColor(color);
+    if (switchValue === 1) {
+      setGradientStartColor(color);
+    } else if (switchValue === 2) {
+      setGradientEndColor(color);
+    } else {
+      setStroke(color);
+    }
+  };
+
   const colorHandler = color => {
     hideColorModal();
-    setGradientColor(color);
+    if (switchValue === 1) {
+      setGradientStartColor(color);
+    } else if (switchValue === 2) {
+      setGradientEndColor(color);
+    } else {
+      setStroke(color);
+    }
   };
 
   const chartConfig = {
-    backgroundColor: color,
-    backgroundGradientFrom: gradientColor,
-    backgroundGradientTo: stroke,
+    backgroundColor: gradientStartColor,
+    backgroundGradientFrom: gradientStartColor,
+    backgroundGradientTo: gradientEndColor,
     decimalPlaces: 0, // optional, defaults to 2dp
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -174,17 +209,17 @@ const HomeScreen = ({navigation}) => {
   let stackData = new Array(hostLable.length).fill(
     new Array(purposeLable.length).fill(0),
   );
-  console.log(stackData);
+  // console.log(stackData);
   for (let d of visitorData) {
     let hIndex = hostLable.indexOf(d.host);
     let pIndex = purposeLable.indexOf(d.purpose);
-    console.log(hIndex, pIndex);
+    // console.log(hIndex, pIndex);
     if (hIndex !== -1 && pIndex !== -1) {
       stackData[hIndex][pIndex]++;
     }
-    console.log(stackData);
+    // console.log(stackData);
   }
-  console.log('this---', hostLable, purposeLable, stackData, '----!');
+  // console.log('this---', hostLable, purposeLable, stackData, '----!');
   // const data = {
   //   labels: hostLable,
   //   legend: purposeLable,
@@ -226,7 +261,7 @@ const HomeScreen = ({navigation}) => {
       c[i] += 1;
     }
   }
-  console.log(p, c);
+  // console.log(p, c);
   const pieChart = new Array();
   for (let i in p) {
     pieChart.push({
@@ -237,7 +272,7 @@ const HomeScreen = ({navigation}) => {
       legendFontSize: 15,
     });
   }
-  console.log(pieChart);
+  // console.log(pieChart);
 
   return (
     <View style={{flex: 1}}>
@@ -323,11 +358,59 @@ const HomeScreen = ({navigation}) => {
               <Entypo
                 size={21}
                 color={Colors.primary}
-                style={{marginRight: 20}}
+                style={{
+                  marginRight: 20,
+                  transform: colorChangeVisible
+                    ? [{rotateX: '180deg'}]
+                    : [{rotateX: '0deg'}],
+                }}
                 name={'colours'}
-                onPress={showColorModal}
+                onPress={() =>
+                  setColorChangeVisible(colorChangeVisible ? false : true)
+                }
               />
             </View>
+            {colorChangeVisible && (
+              <View>
+                <View style={{alignItems: 'center'}}>
+                  <CustomSwitch
+                    selectionMode={switchValue}
+                    roundCorner={true}
+                    option1={'Gradient Start'}
+                    option2={'Gradient End'}
+                    option3={'Stroke'}
+                    onSelectSwitch={onSelectSwitch}
+                    selectionColor={Colors.primary}
+                  />
+                </View>
+                <CustomColorPicker
+                  colors={[
+                    '#F44336',
+                    '#E91E63',
+                    '#9C27B0',
+                    '#673AB7',
+                    '#3F51B5',
+                    '#2196F3',
+                    '#03A9F4',
+                    '#00BCD4',
+                    '#009688',
+                    '#4CAF50',
+                    '#8BC34A',
+                    '#CDDC39',
+                    '#FFEB3B',
+                    '#FFC107',
+                    '#FF9800',
+                    '#FF5722',
+                    '#795548',
+                    '#9E9E9E',
+                    '#607D8B',
+                    '#ffffff',
+                  ]}
+                  selectedColor={selectedColor}
+                  onSelect={selectedColor => btrColorHandler(selectedColor)}
+                />
+              </View>
+            )}
 
             <Portal>
               <Dialog visible={visible} onDismiss={hideDialog}>
@@ -340,9 +423,9 @@ const HomeScreen = ({navigation}) => {
                         Math.floor(
                           Math.random() * (colorArray.length - 1 - 0 + 1),
                         ) + 0;
-                      setColor(colorArray[randomNumber]);
-                      setGradientColor(gradientArray[randomNumber]);
-                      setStroke(strokeArray[randomNumber]);
+                      // setGradientStartColor(colorArray[randomNumber]);
+                      // setGradientEndColor(gradientArray[randomNumber]);
+                      // setStroke(strokeArray[randomNumber]);
                       setChartName(newValue);
                       hideDialog();
                     }}
@@ -371,7 +454,7 @@ const HomeScreen = ({navigation}) => {
                 contentContainerStyle={{
                   ...styles.containerStyle,
                   height: '50%',
-                  backgroundColor: '#1f1f1f',
+                  backgroundColor: '#dedede',
                 }}>
                 <ColorPicker
                   onColorSelected={color => colorHandler(color)}
@@ -399,7 +482,8 @@ const HomeScreen = ({navigation}) => {
                   data={chartData}
                   width={chartWidth}
                   height={h}
-                  yAxisLabel="$"
+                  withVerticalLabels={true}
+                  // yAxisLabel=" visitors"
                   chartConfig={chartConfig}
                   verticalLabelRotation={30}
                 />

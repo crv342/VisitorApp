@@ -24,22 +24,21 @@ const CustomSwitch = ({
     <View>
       <View
         style={{
-          height: 44,
-          width: 215,
+          height: 25,
+          width: '95%',
           backgroundColor: 'white',
           borderRadius: getRoundCorner ? 25 : 0,
-          borderWidth: 1,
+          // borderWidth: 1,
           borderColor: selectionColor,
           flexDirection: 'row',
           justifyContent: 'center',
-          padding: 2,
+          // padding: 2,
         }}>
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => updatedSwitchData(1)}
           style={{
             flex: 1,
-
             backgroundColor: getSelectionMode == 1 ? selectionColor : 'white',
             borderRadius: getRoundCorner ? 25 : 0,
             justifyContent: 'center',
@@ -58,7 +57,6 @@ const CustomSwitch = ({
           onPress={() => updatedSwitchData(2)}
           style={{
             flex: 1,
-
             backgroundColor: getSelectionMode == 2 ? selectionColor : 'white',
             borderRadius: getRoundCorner ? 25 : 0,
             justifyContent: 'center',

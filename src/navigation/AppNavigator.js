@@ -40,6 +40,7 @@ const AuthNavigator = ({navigation}) => {
         component={AuthScreen}
         options={{
           title: 'Admin Login',
+          headerShown:false,
           headerLeft: () => (
             <Icon
               name={Platform.OS === 'ios' ? 'arrow-back-ios' : 'arrow-back'}

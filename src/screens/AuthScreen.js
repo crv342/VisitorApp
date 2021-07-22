@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   View,
   StyleSheet,
@@ -30,6 +30,7 @@ const formSchema = yup.object({
 
 const AuthScreen = ({navigation}) => {
   const dispatch = useDispatch();
+  const Colors = useSelector(state => state.theme.colors);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -59,9 +60,11 @@ const AuthScreen = ({navigation}) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={{flex: 1}}>
-          {/*<Appbar.Header>*/}
-          {/*  <Appbar.Action icon={'arrow-left'} />*/}
-          {/*</Appbar.Header>*/}
+          <Appbar.Header style={{backgroundColor:'white'}}>
+           <Appbar.BackAction color={Colors.primary} onPress={() => navigation.goBack()} />
+           <Appbar.Content title={'Login'} color={Colors.primary} style={{alignItems:'center'}} />
+           <Appbar.Action />
+          </Appbar.Header>
 
           <Formik
             initialValues={{username: '', password: ''}}
@@ -109,7 +112,7 @@ const AuthScreen = ({navigation}) => {
                   lable="Username"
                   value={values.username}
                   onChangeText={handleChange('username')}
-                  onFocus={() => setUserIconColor('#C1403D')}
+                  onFocus={() => setUserIconColor(Colors.primary)}
                   onBlur={() => {
                     setUserIconColor('black');
                     setFieldTouched('username');
@@ -124,7 +127,6 @@ const AuthScreen = ({navigation}) => {
                 <TextInput
                   left={<TextInput.Icon name="lock" color={passIconColor} />}
                   sectionColor="#fff"
-                  icon="camera"
                   theme={{background: '#fff'}}
                   placeholder="password"
                   style={styles.inputField}
@@ -140,7 +142,7 @@ const AuthScreen = ({navigation}) => {
                   secureTextEntry={!showPassword}
                   value={values.password}
                   onChangeText={handleChange('password')}
-                  onFocus={() => setPassIconColor('#C1403D')}
+                  onFocus={() => setPassIconColor(Colors.primary)}
                   onBlur={() => {
                     setPassIconColor('black');
                     setFieldTouched('password');

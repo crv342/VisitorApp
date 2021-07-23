@@ -1,5 +1,6 @@
 import {URL} from './auth';
 import Visitor from '../../models/visitor';
+import PushNotification from 'react-native-push-notification';
 
 export const CHECKIN = 'CHECKIN';
 export const CHECKOUT = 'CHECKOUT';
@@ -110,8 +111,9 @@ export const checkin = (
   purpose,
   hostid,
 ) => {
-  return async dispatch => {
+  return async (dispatch, getstate) => {
     try {
+      const notifyTime = getstate().auth.adminData.notifytime;
       const response = await fetch(URL + '/visitor/checkin', {
         method: 'POST',
         headers: {
@@ -149,7 +151,15 @@ export const checkin = (
         host: resData.host,
         purpose: resData.purpose,
       };
-
+      PushNotification.localNotificationSchedule({
+        id: visitorData.id,
+        channelId: 'id1',
+        message: `It's been ${notifyTime}.\n${visitorData.name} is not Checked Out yet`, // (required)
+        date: new Date(Date.now() + 60 * 1000 * 1), // in 60 secs
+        allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
+        /* Android Only Properties */
+        repeatTime: 1, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.
+      });
       dispatch({type: CHECKIN, visitorData});
     } catch (e) {
       console.log(e);
@@ -173,6 +183,7 @@ export const checkout = id => {
       }
 
       // const resData = await response.json();
+      PushNotification.cancelLocalNotifications({id: id});
       dispatch({type: CHECKOUT, id});
     } catch (e) {
       console.log(e);

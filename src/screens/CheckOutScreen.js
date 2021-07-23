@@ -7,7 +7,7 @@ import {checkout} from '../store/actions/visitor';
 
 const CheckOutScreen = () => {
   const dispatch = useDispatch();
-
+  const Colors = useSelector(state => state.theme.colors);
   const visitorList = useSelector(state => state.visitor.checkedInVisitors);
   // const [visitors, setVisitors] = useState(visitorList);
 
@@ -33,7 +33,7 @@ const CheckOutScreen = () => {
             visitorList.map(item => (
               <List.Item
                 key={item.id}
-                titleStyle={styles.itemTitle}
+                titleStyle={{...styles.itemTitle, color: Colors.primary}}
                 title={item.name}
                 description={
                   'Checked In ' +

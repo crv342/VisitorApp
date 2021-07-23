@@ -12,6 +12,7 @@ import {Button, TextInput, HelperText} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {checkin} from '../store/actions/visitor';
 import Colors from '../constants/Colors';
+import PushNotification from "react-native-push-notification";
 
 let vData;
 
@@ -115,6 +116,15 @@ const CheckInDetails = props => {
         hostId,
       ),
     );
+    PushNotification.localNotificationSchedule({
+      id: 12,
+      channelId: 'id1',
+      message: `It's been ${1}.\n${visitorName} is not Checked Out yet`, // (required)
+      date: new Date(Date.now() + 60 * 1000), // in 60 secs
+      allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
+      /* Android Only Properties */
+      repeatTime: 1, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.
+    });
     props.navigation.navigate('CheckInSuccess', {name: visitorName});
   };
 

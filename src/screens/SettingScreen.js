@@ -42,6 +42,7 @@ const SettingScreen = ({navigation}) => {
   const [username, setUsername] = useState(adminData.username);
   const [email, setEmail] = useState(adminData.email);
   // const [phone, setPhone] = useState(adminData.phone);
+  const [notifyTime, setNotifyTime] = useState(adminData.notifytime);
   const [purpose, setPurpose] = useState('');
   const [currPass, setCurrPass] = useState('');
   const [loading, setLoading] = useState(false);
@@ -189,6 +190,23 @@ const SettingScreen = ({navigation}) => {
           {/*    setPhone(t);*/}
           {/*  }}*/}
           {/*/>*/}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+            }}>
+            <Text>Notify Time</Text>
+            <TextInput
+              mode={'outlined'}
+              style={{...styles.inputField, width: 40, height: 40}}
+              // label={'phone'}
+              value={notifyTime}
+              onChangeText={t => {
+                setNotifyTime(t);
+              }}
+            />
+          </View>
           {loading && <ActivityIndicator style={styles.inputField} />}
 
           <Portal>

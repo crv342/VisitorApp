@@ -38,6 +38,7 @@ export const login = (username, password) => {
         id: resData.user._id,
         username: resData.user.username,
         email: resData.user.email,
+        notifytime: resData.user.notifytime,
       };
 
       let expiresIn = 3600;

@@ -13,7 +13,6 @@ import {Text, Button, Divider, Title} from 'react-native-paper';
 import Colors from '../constants/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import * as visitorActions from '../store/actions/visitor';
-import theme from '../store/reducers/theme';
 
 const width = Dimensions.get('window').width;
 
@@ -26,6 +25,7 @@ const CheckInScreen = ({navigation}) => {
   useEffect(() => {
     dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
   }, [dispatch]);
+
   return (
     <View style={{...styles.screen, backgroundColor: Colors.primary}}>
       {/* <StatusBar translucent={true} /> */}

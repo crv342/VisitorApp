@@ -4,6 +4,7 @@ import {List, IconButton, Title} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import Colors from '../constants/Colors';
 import {checkout} from '../store/actions/visitor';
+import PushNotification from 'react-native-push-notification';
 
 const CheckOutScreen = () => {
   const dispatch = useDispatch();
@@ -14,8 +15,9 @@ const CheckOutScreen = () => {
   // useEffect(() => {
   //   setVisitors(visitorList);
   // }, [visitorList, dispatch]);
-  const checkOutHandler = id => {
+  const checkOutHandler = (id, checkin) => {
     dispatch(checkout(id));
+    PushNotification.cancelLocalNotifications({id: checkin});
   };
   if (visitorList.length === 0) {
     return (
@@ -58,7 +60,7 @@ const CheckOutScreen = () => {
                     color={Colors.primary}
                     size={24}
                     icon="logout"
-                    onPress={() => checkOutHandler(item.id)}
+                    onPress={() => checkOutHandler(item.id,item.checkIn)}
                   />
                 )}
               />

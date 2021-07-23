@@ -173,7 +173,12 @@ const DrawerNavigator = ({navigation}) => {
                 // color={'black'}
                 onPress={() => {
                   dispatch(logout());
-                  navigation.popToTop();
+                  navigation.reset({
+                    index: 1,
+                    routes: [
+                      { name: 'CheckInNav'}
+                    ],
+                  });
                 }}>
                 Logout <Icon name={'logout'} />
               </Button>

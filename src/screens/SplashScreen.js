@@ -8,7 +8,7 @@ import * as visitorActions from '../store/actions/visitor';
 // import Colors from '../constants/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchDetails} from '../store/actions/host';
-import {updateTheme} from '../store/actions/theme';
+import {updateChartColor, updateTheme} from '../store/actions/theme';
 
 const SplashScreen = props => {
   const dispatch = useDispatch();
@@ -54,6 +54,22 @@ const SplashScreen = props => {
     getTheme();
   }, [Colors, dispatch]);
 
+  useEffect(() => {
+    const getChartColor = async () => {
+      const chartColorData = await AsyncStorage.getItem('chartColors');
+      const chartColorDataJson = JSON.parse(chartColorData);
+
+      if (!chartColorData) {
+        return;
+      }
+
+      // const {primary, accent} = chartColorDataJson;
+
+      dispatch(updateChartColor(chartColorDataJson));
+    };
+    getChartColor();
+  }, [dispatch]);
+
   // useEffect(() => {
   //   dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
   // },[dispatch]);
@@ -65,7 +81,7 @@ const SplashScreen = props => {
   // }, []);
 
   return (
-    <View style={{...styles.screen, backgroundColor: Colors.primary}}>
+    <View style={{...styles.screen}}>
       <Image
         source={require('../Image/visitor.jpeg')}
         style={{width: '10%', resizeMode: 'contain', margin: 30}}

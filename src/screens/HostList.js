@@ -49,7 +49,7 @@ const HostList = ({navigation}) => {
     if (data) {
       setId(data.id);
       setName(data.name);
-      setPhone(data.phone.toString());
+      setPhone(data.phone.toString().slice(2));
       setEmail(data.email);
       setSendEmail(data.sendemail);
       setSendSms(data.sendsms);

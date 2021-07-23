@@ -198,6 +198,7 @@ const SettingScreen = ({navigation}) => {
             }}>
             <Text>Notify Time</Text>
             <TextInput
+              keyboardType={'numeric'}
               mode={'outlined'}
               style={{...styles.inputField, width: 40, height: 40}}
               // label={'phone'}

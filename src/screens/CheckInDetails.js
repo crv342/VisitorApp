@@ -28,6 +28,7 @@ const CheckInDetails = props => {
   const [purposeValue, setPurposeValue] = useState();
   const [visibleHost, setVisibleHost] = useState(false);
   const [visiblePurpose, setVisiblePurpose] = useState(false);
+  const adminData = useSelector(state => state.auth.adminData);
   const purposeData = useSelector(state => state.host.purposes);
   const hostData = useSelector(state =>
     state.host.hosts.filter(h => h.status === true),
@@ -102,6 +103,8 @@ const CheckInDetails = props => {
       setError('mobile number should be 10 numbers long');
       return;
     }
+    let checkIn = new Date();
+    let nTime = adminData.notifytime || 3
     dispatch(
       checkin(
         visitorName,
@@ -109,18 +112,19 @@ const CheckInDetails = props => {
         visitorAddress,
         visitorGender,
         visitorDOB,
-        new Date(),
+        checkIn,
         '',
         hostValue,
         purposeValue,
         hostId,
       ),
     );
+    console.log(adminData.notifytime, typeof adminData.notifytime);
     PushNotification.localNotificationSchedule({
-      id: 12,
+      id: checkIn,
       channelId: 'id1',
-      message: `It's been ${1}.\n${visitorName} is not Checked Out yet`, // (required)
-      date: new Date(Date.now() + 60 * 1000), // in 60 secs
+      message: `It's been ${nTime} hours.\n${visitorName} is not Checked Out yet`, // (required)
+      date: new Date(Date.now() + 60 * 1000 * 60 * nTime), // in 60 secs
       allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
       /* Android Only Properties */
       repeatTime: 1, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.

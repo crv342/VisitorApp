@@ -34,8 +34,6 @@ import Colors, {changeColors} from '../constants/Colors';
 import {updateTheme} from '../store/actions/theme';
 import CustomSwitch from '../components/CustomSwitch';
 
-// let Colors;
-
 const SettingScreen = ({navigation}) => {
   const adminData = useSelector(state => state.auth.adminData);
   const Colors = useSelector(state => state.theme.colors);
@@ -54,6 +52,12 @@ const SettingScreen = ({navigation}) => {
   const [themeAccentColor, setThemeAccentColor] = useState(Colors.accent);
   const [colorModal, setColorModal] = useState(false);
   const [switchValue, setSwitchValue] = useState(1);
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const handleChange = (value: {hours: number, minutes: number}) => {
+    setHours(value.hours);
+    setMinutes(value.minutes);
+  };
 
   useEffect(() => {
     dispatch(fetchDetails());

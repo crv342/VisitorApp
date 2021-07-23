@@ -26,16 +26,20 @@ const HostList = ({navigation}) => {
   const [id, setId] = useState();
   const [name, setName] = useState();
   const [email, setEmail] = useState();
-  const [phone, setPhone] = useState();
+  const [phoneno, setPhone] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [error, setError] = useState(false);
   const [addHost, setAddHost] = useState(false);
   const hostData = useSelector(state => state.host.hosts);
   const [hosts, setHosts] = useState(hostData);
-  const [sendemail, setSendEmailOn] = useState(false);
+  const [sendemail, setSendEmail] = useState(false);
+  const [sendsms, setSendSms] = useState(false);
+  const [status, setStatus] = useState(true);
 
-  const onToggleSwitch = () => setSendEmailOn(!sendemail);
+  const onToggleEmail = () => setSendEmail(!sendemail);
+  const onToggleSms = () => setSendSms(!sendsms);
+  const onToggleStatus = () => setStatus(!status);
 
   useEffect(() => {
     setHosts(hostData);
@@ -47,12 +51,17 @@ const HostList = ({navigation}) => {
       setName(data.name);
       setPhone(data.phone.toString());
       setEmail(data.email);
-      setSendEmailOn(data.sendemail);
+      setSendEmail(data.sendemail);
+      setSendSms(data.sendsms);
+      setStatus(data.status);
     } else {
       setId();
       setName();
       setPhone();
       setEmail();
+      setSendEmail(false);
+      setSendSms(false);
+      setStatus(true);
     }
     setVisible(true);
   };
@@ -61,17 +70,19 @@ const HostList = ({navigation}) => {
   const submitHandler = async type => {
     if (
       name === undefined ||
-      phone === undefined ||
+      phoneno === undefined ||
       name === null ||
-      phone === null
+      phoneno === null
     ) {
       setError("required field can't be empty");
       return;
     }
-
+    let phone = '+91' + phoneno;
     if (type === 'add') {
       setLoading(true);
-      await dispatch(hostActions.addHost(name, phone, email, sendemail));
+      await dispatch(
+        hostActions.addHost(name, phone, email, sendemail, sendsms, status),
+      );
     } else if (type === 'update') {
       setLoading(true);
       await dispatch(
@@ -80,6 +91,8 @@ const HostList = ({navigation}) => {
           phone,
           email,
           sendemail,
+          sendsms,
+          status,
         }),
       );
     } else {
@@ -144,13 +157,41 @@ const HostList = ({navigation}) => {
                   <Title>Host Details</Title>
                 </View>
                 <Divider />
-                <View style={styles.switchContainer}>
-                  <Text>Send Email </Text>
-                  <Switch
-                    color={Colors.primary}
-                    value={sendemail}
-                    onValueChange={onToggleSwitch}
-                  />
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <View
+                    style={{
+                      ...styles.switchContainer,
+                      alignSelf: 'flex-start',
+                    }}>
+                    <Text>Status </Text>
+                    <Switch
+                      color={Colors.primary}
+                      value={status}
+                      onValueChange={onToggleStatus}
+                    />
+                  </View>
+                  <View>
+                    <View style={styles.switchContainer}>
+                      <Text>Send Email </Text>
+                      <Switch
+                        color={Colors.primary}
+                        value={sendemail}
+                        onValueChange={onToggleEmail}
+                      />
+                    </View>
+                    <View style={styles.switchContainer}>
+                      <Text>Send SMS </Text>
+                      <Switch
+                        color={Colors.primary}
+                        value={sendsms}
+                        onValueChange={onToggleSms}
+                      />
+                    </View>
+                  </View>
                 </View>
 
                 <TextInput
@@ -169,10 +210,11 @@ const HostList = ({navigation}) => {
                   mode={'outlined'}
                   style={styles.inputField}
                   label={'Phone*'}
-                  value={phone}
+                  value={phoneno}
                   onChangeText={t => {
                     setPhone(t);
                   }}
+                  left={<TextInput.Affix text={'+91'} />}
                   onFocus={() => setError(false)}
                 />
                 <TextInput

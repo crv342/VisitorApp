@@ -28,7 +28,9 @@ const CheckInDetails = props => {
   const [visibleHost, setVisibleHost] = useState(false);
   const [visiblePurpose, setVisiblePurpose] = useState(false);
   const purposeData = useSelector(state => state.host.purposes);
-  const hostData = useSelector(state => state.host.hosts);
+  const hostData = useSelector(state =>
+    state.host.hosts.filter(h => h.status === true),
+  );
   const [error, setError] = useState(false);
 
   if (props.route.params) {

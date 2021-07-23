@@ -32,17 +32,7 @@ export default (state = initialState, action) => {
         hosts: state.hosts.filter(data => data.id !== action.id),
       };
     case UPDATEHOST:
-      // var index = state.checkedInVisitors.findIndex(
-      //   item => item.id == action.id,
-      // );
-      // if (index !== -1) {
-      //   state.checkedInVisitors.splice(index, 1);
-      // }
       const index = state.hosts.findIndex(item => item.id == action.id);
-      // const data = state.hosts[index];
-      // const updatedData = {...data, ...action.hostData};
-      // const hosts = state.hosts;
-      // hosts[index] = updatedData;
       if (index === -1) {
         return state;
       }

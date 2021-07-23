@@ -56,7 +56,7 @@ const CheckInScreen = ({navigation}) => {
               <Text
                 style={{
                   color: Colors.primary,
-                  fontSize: 20,
+                  fontSize: Platform.OS === 'ios' ? 20 : 18,
                   fontWeight: '700',
                 }}>
                 TAP
@@ -77,7 +77,7 @@ const CheckInScreen = ({navigation}) => {
               <Text
                 style={{
                   color: '#fff',
-                  fontSize: 19,
+                  fontSize: Platform.OS === 'ios' ? 19 : 17,
                   fontWeight: '700',
                 }}>
                 CHECK IN

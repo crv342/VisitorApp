@@ -33,6 +33,8 @@ export const fetchDetails = () => {
             hData[key].phone,
             hData[key].email,
             hData[key].sendemail,
+            hData[key].sendsms,
+            hData[key].status,
           ),
         );
       }
@@ -47,7 +49,7 @@ export const fetchDetails = () => {
   };
 };
 
-export const addHost = (name, phone, email, sendemail) => {
+export const addHost = (name, phone, email, sendemail, sendsms, status) => {
   return async (dispatch, getState) => {
     try {
       const token = getState().auth.token;
@@ -62,6 +64,8 @@ export const addHost = (name, phone, email, sendemail) => {
           phone,
           email,
           sendemail,
+          sendsms,
+          status,
         }),
       });
       if (!response.ok) {
@@ -78,6 +82,8 @@ export const addHost = (name, phone, email, sendemail) => {
             resData[key].phone,
             resData[key].email,
             resData[key].sendemail,
+            resData[key].sendsms,
+            resData[key].status,
           ),
         );
       }

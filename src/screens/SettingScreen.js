@@ -42,7 +42,7 @@ const SettingScreen = ({navigation}) => {
   const [username, setUsername] = useState(adminData.username);
   const [email, setEmail] = useState(adminData.email);
   // const [phone, setPhone] = useState(adminData.phone);
-  const [notifyTime, setNotifyTime] = useState(adminData.notifytime);
+  const [notifyTime, setNotifyTime] = useState(adminData.notifytime.toString());
   const [purpose, setPurpose] = useState('');
   const [currPass, setCurrPass] = useState('');
   const [loading, setLoading] = useState(false);
@@ -53,6 +53,7 @@ const SettingScreen = ({navigation}) => {
   const [themeAccentColor, setThemeAccentColor] = useState(Colors.accent);
   const [colorModal, setColorModal] = useState(false);
   const [switchValue, setSwitchValue] = useState(1);
+  const [value, onChange] = useState('10:00');
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const handleChange = (value: {hours: number, minutes: number}) => {
@@ -83,7 +84,9 @@ const SettingScreen = ({navigation}) => {
 
   const submitHandler = async () => {
     setLoading(true);
-    await dispatch(authActions.updateAdmin({username, email}));
+    await dispatch(
+      authActions.updateAdmin({username, email, notifytime: notifyTime}),
+    );
     setLoading(false);
   };
 
@@ -193,20 +196,29 @@ const SettingScreen = ({navigation}) => {
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-around',
+              justifyContent: 'space-between',
               alignItems: 'center',
+              paddingHorizontal: '5%',
             }}>
             <Text>Notify Time</Text>
-            <TextInput
-              keyboardType={'numeric'}
-              mode={'outlined'}
-              style={{...styles.inputField, width: 40, height: 40}}
-              // label={'phone'}
-              value={notifyTime}
-              onChangeText={t => {
-                setNotifyTime(t);
-              }}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+              }}>
+              <TextInput
+                keyboardType={'numeric'}
+                mode={'outlined'}
+                style={{...styles.inputField, width: 40, height: 40}}
+                // label={'phone'}
+                value={notifyTime}
+                onChangeText={t => {
+                  setNotifyTime(t);
+                }}
+              />
+              <Text> Hours</Text>
+            </View>
           </View>
           {loading && <ActivityIndicator style={styles.inputField} />}
 

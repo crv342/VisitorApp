@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   Platform,
+  Animated,
 } from 'react-native';
 import {Text, Button, Divider, Title} from 'react-native-paper';
 
@@ -20,8 +21,45 @@ const CheckInScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const token = useSelector(state => state.auth.token);
-  const userName = useSelector(state => state);
-  // console.log(userName);
+  const animated = new Animated.Value(1);
+  const opacityA = new Animated.Value(1);
+  const animated2 = new Animated.Value(1);
+  const opacityA2 = new Animated.Value(1);
+
+  useEffect(() => {
+    Animated.stagger(2000, [
+      Animated.loop(
+        Animated.parallel([
+          Animated.timing(animated, {
+            toValue: 1.5,
+            duration: 1500,
+            useNativeDriver: false,
+          }),
+          Animated.timing(opacityA, {
+            toValue: 0,
+            duration: 1500,
+            useNativeDriver: false,
+          }),
+        ]),
+      ),
+
+      Animated.loop(
+        Animated.parallel([
+          Animated.timing(animated2, {
+            toValue: 1.5,
+            duration: 1500,
+            useNativeDriver: false,
+          }),
+          Animated.timing(opacityA2, {
+            toValue: 0,
+            duration: 1500,
+            useNativeDriver: false,
+          }),
+        ]),
+      ),
+    ]).start();
+  });
+
   useEffect(() => {
     dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));
   }, [dispatch]);
@@ -31,11 +69,21 @@ const CheckInScreen = ({navigation}) => {
       {/* <StatusBar translucent={true} /> */}
       <View style={styles.upperContainer}>
         <View style={styles.logoContainer}>
-          <Image
-            resizeMode={'center'}
-            // style={styles.logoStyle}
-            source={require('../Image/logo.png')}
-          />
+          <View
+            style={
+              {
+                // backgroundColor: '#fff',
+                // width: 200,
+                // height: 100,
+              }
+            }>
+            <Image
+              resizeMode={'center'}
+              style={{alignSelf: 'center'}}
+              // style={styles.logoStyle}
+              source={require('../Image/logo.png')}
+            />
+          </View>
           {/*<Title>VISITOR</Title>*/}
         </View>
       </View>
@@ -48,7 +96,44 @@ const CheckInScreen = ({navigation}) => {
           {/*  }}>*/}
           {/*  <Text>Tap to Check In</Text>*/}
           {/*</TouchableOpacity>*/}
+          <Animated.View
+            style={{
+              width: 120,
+              height: 120,
+              borderRadius: 60,
+              backgroundColor: Colors.accent,
+              opacity: opacityA,
+              transform: [
+                {
+                  scale: animated,
+                },
+              ],
+            }}>
+            <Animated.View
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: 60,
+                backgroundColor: Colors.accent,
+                opacity: opacityA2,
+                transform: [
+                  {
+                    scale: animated2,
+                  },
+                ],
+              }}
+            />
+          </Animated.View>
           <TouchableOpacity
+            activeOpacity={0.5}
+            style={{
+              zIndex: 2,
+              marginTop: -120,
+              // elevation: 5,
+              // shadowRadius: 12,
+              // shadowOpacity: 0.5,
+              // shadowOffset: {width: 0, height: 8},
+            }}
             onPress={() => {
               navigation.navigate('IdScanner');
             }}>
@@ -152,13 +237,16 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flex: 1,
     zIndex: 3,
-    marginTop: -15,
+    marginTop: Platform.OS === 'android' ? 0 : -15,
+    // marginTop: -15,
+    margin: Platform.OS === 'android' ? 1 : 0,
     width: '100%',
     // borderWidth: 2,
-    elevation: 5,
+    shadowColor: '#000',
     shadowRadius: 12,
     shadowOpacity: 1,
     shadowOffset: {width: 0, height: 8},
+    elevation: 5,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     // borderTopLeftRadius: 170,
@@ -194,6 +282,7 @@ const styles = StyleSheet.create({
     // height: 40
   },
   halfUpperCircle: {
+    margin: Platform.OS === 'android' ? 1 : 0,
     borderColor: 'white',
     borderWidth: 1,
     borderTopLeftRadius: 60,
@@ -203,6 +292,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     backgroundColor: 'white',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowRadius: 12,
+    shadowOpacity: 1,
+    shadowOffset: {width: 0, height: 8},
+    elevation: 5,
   },
   halfLowerCircle: {
     borderWidth: 1,
@@ -213,6 +307,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     overflow: 'hidden',
+    elevation: 5,
+    shadowRadius: 12,
+    shadowOpacity: 1,
+    shadowOffset: {width: 8, height: 0},
+    shadowColor: '#000000',
   },
   upperText: {
     fontSize: 18,

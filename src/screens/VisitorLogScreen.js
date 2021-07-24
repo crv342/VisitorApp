@@ -18,9 +18,24 @@ import {fetchvisitor} from '../store/actions/visitor';
 import moment from 'moment';
 import Colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Animated, {
+  add,
+  Easing,
+  interpolateNode,
+  Extrapolate,
+} from 'react-native-reanimated';
+import {PanGestureHandler} from 'react-native-gesture-handler';
+import {
+  usePanGestureHandler,
+  withDecay,
+  diffClamp,
+} from 'react-native-redash/lib/module/v1';
 
 const optionsPerPage = [2, 3, 4];
+const heightScreen = Dimensions.get('screen').height;
 const widthScreen = Dimensions.get('screen').width;
+const heightContainer = heightScreen * 0.8;
+const cardHeight = 55;
 const capitalize = input => {
   return input
     .toLowerCase()
@@ -41,6 +56,7 @@ const VisitorLogScreen = ({navigation, route}) => {
   const [visible, setVisible] = useState(false);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const {gestureHandler, translation, velocity, state} = usePanGestureHandler();
 
   const onChangeSearch = query => setSearchQuery(query);
 
@@ -93,9 +109,18 @@ const VisitorLogScreen = ({navigation, route}) => {
     }
   }, [route, searchQuery, visitorsData, navigation]);
 
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
+  const heightContainer = visitorData.length * (cardHeight + 8);
+  const y = diffClamp(
+    withDecay({
+      value: translation.y,
+      velocity: velocity.y,
+      state,
+    }),
+    -(visitorData.length * cardHeight) + heightScreen * 0.65,
+    0,
+  );
+  const visibleCards = Math.floor((heightScreen * 0.75) / (cardHeight + 8));
+  console.log(visibleCards);
 
   return (
     <View style={styles.screen}>
@@ -141,159 +166,211 @@ const VisitorLogScreen = ({navigation, route}) => {
         )}
       </Appbar.Header>
 
-      <ScrollView>
-        <View style={styles.tableStyle}>
-          <View style={styles.table}>
-            {isLoading ? (
-              <ActivityIndicator />
-            ) : (
-              <DataTable>
-                <DataTable.Header>
-                  <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View
-                      style={{
-                        ...styles.headerText,
-                        flex: 3,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginRight: '4%',
-                      }}>
-                      <DataTable.Title>Name</DataTable.Title>
-                    </View>
-                    <View
-                      style={{
-                        flex: 2,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}>
-                      <DataTable.Title
-                        onPress={() => {
-                          setVisitorData(visitorData.reverse());
-                          setAsc(asc ? false : true);
-                        }}
-                        sortDirection={asc ? 'ascending' : 'descending'}
-                        numeric>
-                        In/Out Time
-                      </DataTable.Title>
-                    </View>
-                  </View>
-                </DataTable.Header>
-                {visitorData.length === 0 && (
-                  <Text style={{alignSelf: 'center', marginTop: 5}}>
-                    No Visitors Found.
-                  </Text>
-                )}
-                {visitorData &&
-                  visitorData.map(item => {
+      {/*<ScrollView>*/}
+      <View style={styles.tableStyle}>
+        <View style={styles.table}>
+          {/*{isLoading ? (*/}
+          {/*  <ActivityIndicator />*/}
+          {/*) : (*/}
+          <DataTable>
+            <DataTable.Header>
+              <View style={{flex: 1, flexDirection: 'row'}}>
+                <View
+                  style={{
+                    ...styles.headerText,
+                    flex: 3,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: '4%',
+                  }}>
+                  <DataTable.Title>Name</DataTable.Title>
+                </View>
+                <View
+                  style={{
+                    flex: 2,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <DataTable.Title
+                    onPress={() => {
+                      setVisitorData(visitorData.reverse());
+                      setAsc(asc ? false : true);
+                    }}
+                    sortDirection={asc ? 'ascending' : 'descending'}
+                    numeric>
+                    In/Out Time
+                  </DataTable.Title>
+                </View>
+              </View>
+            </DataTable.Header>
+            {visitorData.length === 0 && (
+              <Text style={{alignSelf: 'center', marginTop: 5}}>
+                No Visitors Found.
+              </Text>
+            )}
+            <View>
+              <PanGestureHandler {...gestureHandler}>
+                <Animated.View>
+                  {visitorData.map((item, index) => {
+                    const positionY = add(y, index * cardHeight);
+                    const isDisappearing = -cardHeight;
+                    const isOnTop = 0;
+                    const isOnBottom = (visibleCards - 1) * cardHeight;
+                    const isAppearing = visibleCards * cardHeight;
+                    const extraTranslationY = interpolateNode(y, {
+                      inputRange: [isOnBottom, isAppearing],
+                      outputRange: [0, -cardHeight / 4],
+                      extrapolate: Extrapolate.CLAMP,
+                    });
+                    const translateY = add(
+                      interpolateNode(y, {
+                        inputRange: [-cardHeight * index, 0],
+                        outputRange: [-(cardHeight + 8) * index, 0],
+                        extrapolate: Extrapolate.CLAMP,
+                      }),
+                      extraTranslationY,
+                    );
+
+                    const scale = interpolateNode(positionY, {
+                      inputRange: [
+                        isDisappearing,
+                        isOnTop,
+                        isOnBottom,
+                        isAppearing,
+                      ],
+                      outputRange: [0.5, 1, 1, 0.5],
+                      extrapolate: Extrapolate.CLAMP,
+                    });
+                    const opacity = interpolateNode(positionY, {
+                      inputRange: [
+                        isDisappearing,
+                        isOnTop,
+                        isOnBottom,
+                        isAppearing,
+                      ],
+                      outputRange: [0.5, 1, 1, 0.5],
+                      // extrapolate: Extrapolate.CLAMP,
+                    });
                     if (item.checkOut !== undefined || true) {
                       tableRow = tableRow !== 'odd' ? 'odd' : 'even';
                       return (
-                        <DataTable.Row
+                        <Animated.View
                           key={item.id}
-                          onPress={() => showModal(item)}
-                          style={
-                            tableRow !== 'odd'
-                              ? styles.rowEven
-                              : {
-                                  ...styles.rowOdd,
-                                  backgroundColor: Colors.accent,
-                                }
-                          }>
-                          <DataTable.Cell style={styles.dataTitle}>
-                            <Text
-                              style={{fontSize: widthScreen * 0.0361}}
-                              numberOfLines={2}>
-                              {item.name}
-                            </Text>
-                          </DataTable.Cell>
-                          <DataTable.Cell numeric>
-                            <View>
-                              <Text style={styles.checkINText}>
-                                {moment(item.checkIn).format(
-                                  'MMMM Do YYYY, hh:mm',
-                                )}
+                          style={{
+                            opacity,
+                            transform: [{translateY}, {scale}],
+                          }}>
+                          <DataTable.Row
+                            key={item.id}
+                            onPress={() => showModal(item)}
+                            style={
+                              tableRow !== 'odd'
+                                ? styles.rowEven
+                                : {
+                                    ...styles.rowOdd,
+                                    backgroundColor: Colors.accent,
+                                  }
+                            }>
+                            <DataTable.Cell style={styles.dataTitle}>
+                              <Text
+                                style={{fontSize: widthScreen * 0.0361}}
+                                numberOfLines={2}>
+                                {item.name}
                               </Text>
-                              <Text style={styles.checkOutText}>
-                                {item.checkOut !== undefined
-                                  ? moment(item.checkOut).format(
-                                      'MMMM Do YYYY, hh:mm',
-                                    )
-                                  : ''}
-                              </Text>
-                            </View>
-                          </DataTable.Cell>
-                        </DataTable.Row>
+                            </DataTable.Cell>
+                            <DataTable.Cell numeric>
+                              <View>
+                                <Text style={styles.checkINText}>
+                                  {moment(item.checkIn).format(
+                                    'MMMM Do YYYY, hh:mm',
+                                  )}
+                                </Text>
+                                <Text style={styles.checkOutText}>
+                                  {item.checkOut !== undefined
+                                    ? moment(item.checkOut).format(
+                                        'MMMM Do YYYY, hh:mm',
+                                      )
+                                    : ''}
+                                </Text>
+                              </View>
+                            </DataTable.Cell>
+                          </DataTable.Row>
+                        </Animated.View>
                       );
                     }
                   })}
-                {/*<DataTable.Pagination*/}
-                {/*  page={page}*/}
-                {/*  numberOfPages={3}*/}
-                {/*  onPageChange={page => setPage(page)}*/}
-                {/*  label="1-2 of 6"*/}
-                {/*  optionsPerPage={optionsPerPage}*/}
-                {/*  itemsPerPage={itemsPerPage}*/}
-                {/*  setItemsPerPage={setItemsPerPage}*/}
-                {/*  showFastPagination*/}
-                {/*  optionsLabel={'Rows per page'}*/}
-                {/*/>*/}
-              </DataTable>
-            )}
-          </View>
-        </View>
-        {/*<Provider>*/}
-        <Portal>
-          <Modal
-            visible={visible}
-            onDismiss={hideModal}
-            contentContainerStyle={styles.containerStyle}>
-            <View>
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginBottom: 4,
-                }}>
-                <Title>Visitor Details</Title>
-              </View>
-              <Divider />
-              <DataTable>
-                {Object.keys(visitor).map((keyName, keyIndex) => {
-                  if (keyName === 'id') {
-                    return;
-                  }
-                  return (
-                    <DataTable.Row key={keyName}>
-                      <DataTable.Title style={styles.modalDataTitle}>
-                        {capitalize(keyName)}
-                      </DataTable.Title>
-                      <ScrollView horizontal style={{width: '40%'}}>
-                        {keyName === 'checkIn' ||
-                        (keyName === 'checkOut' &&
-                          visitor[keyName] !== undefined) ? (
-                          <DataTable.Cell>
-                            {moment(visitor[keyName]).format(
-                              'MMMM Do YYYY, hh:mm',
-                            )}
-                          </DataTable.Cell>
-                        ) : (
-                          <DataTable.Cell>{visitor[keyName]}</DataTable.Cell>
-                        )}
-                      </ScrollView>
-                    </DataTable.Row>
-                  );
-                })}
-              </DataTable>
-              {/*</ScrollView>*/}
+                </Animated.View>
+              </PanGestureHandler>
             </View>
-          </Modal>
-        </Portal>
-        {/*</Provider>*/}
-      </ScrollView>
+            {/*<DataTable.Pagination*/}
+            {/*  page={page}*/}
+            {/*  numberOfPages={3}*/}
+            {/*  onPageChange={page => setPage(page)}*/}
+            {/*  label="1-2 of 6"*/}
+            {/*  optionsPerPage={optionsPerPage}*/}
+            {/*  itemsPerPage={itemsPerPage}*/}
+            {/*  setItemsPerPage={setItemsPerPage}*/}
+            {/*  showFastPagination*/}
+            {/*  optionsLabel={'Rows per page'}*/}
+            {/*/>*/}
+          </DataTable>
+          {/*)}*/}
+        </View>
+      </View>
+      {/*<Provider>*/}
+      <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={styles.containerStyle}>
+          <View>
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 4,
+              }}>
+              <Title>Visitor Details</Title>
+            </View>
+            <Divider />
+            <DataTable>
+              {Object.keys(visitor).map((keyName, keyIndex) => {
+                if (keyName === 'id') {
+                  return;
+                }
+                return (
+                  <DataTable.Row key={keyName}>
+                    <DataTable.Title style={styles.modalDataTitle}>
+                      {capitalize(keyName)}
+                    </DataTable.Title>
+                    <ScrollView horizontal style={{width: '40%'}}>
+                      {keyName === 'checkIn' ||
+                      (keyName === 'checkOut' &&
+                        visitor[keyName] !== undefined) ? (
+                        <DataTable.Cell>
+                          {moment(visitor[keyName]).format(
+                            'MMMM Do YYYY, hh:mm',
+                          )}
+                        </DataTable.Cell>
+                      ) : (
+                        <DataTable.Cell>{visitor[keyName]}</DataTable.Cell>
+                      )}
+                    </ScrollView>
+                  </DataTable.Row>
+                );
+              })}
+            </DataTable>
+            {/*</ScrollView>*/}
+          </View>
+        </Modal>
+      </Portal>
+      {/*</Provider>*/}
+      {/*</ScrollView>*/}
     </View>
   );
 };
 const rowTable = {
+  height: cardHeight,
   marginTop: 8,
   borderRadius: 5,
   shadowOpacity: 0.4,

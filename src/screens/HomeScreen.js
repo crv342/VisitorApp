@@ -69,7 +69,7 @@ const HomeScreen = ({ navigation }) => {
   const [selectedColor, setSelectedColor] = useState('');
   const colorArray = [
     '#e26a00',
-    '#69e200',
+    '#8BC34A',
     '#0066e2',
     '#a600e2',
     '#e2002d',

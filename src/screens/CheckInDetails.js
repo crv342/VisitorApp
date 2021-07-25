@@ -119,7 +119,6 @@ const CheckInDetails = props => {
         hostId,
       ),
     );
-    console.log(adminData.notifytime, typeof adminData.notifytime);
     PushNotification.localNotificationSchedule({
       id: checkIn,
       channelId: 'id1',

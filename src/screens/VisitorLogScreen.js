@@ -35,7 +35,7 @@ const optionsPerPage = [2, 3, 4];
 const heightScreen = Dimensions.get('screen').height;
 const widthScreen = Dimensions.get('screen').width;
 const heightContainer = heightScreen * 0.8;
-const cardHeight = 55;
+const cardHeight = 60;
 const capitalize = input => {
   return input
     .toLowerCase()
@@ -119,7 +119,7 @@ const VisitorLogScreen = ({navigation, route}) => {
     -(visitorData.length * cardHeight) + heightScreen * 0.65,
     0,
   );
-  const visibleCards = Math.floor((heightScreen * 0.75) / (cardHeight + 8));
+  const visibleCards = Math.floor((heightScreen * 0.80) / (cardHeight + 8));
   console.log(visibleCards);
 
   return (

@@ -84,11 +84,25 @@ const SplashScreen = props => {
     <View style={{...styles.screen}}>
       <Image
         source={require('../Image/visitor.jpeg')}
-        style={{width: '10%', resizeMode: 'contain', margin: 30}}
+        style={{
+          width: '15%',
+          resizeMode: 'contain',
+          marginBottom: -40,
+          marginRight: -18,
+        }}
       />
-      <View style={{flexDirection: 'column'}}>
-        <Text style={{fontSize: 16}}>La Net</Text>
-        <Text style={{fontSize: 12}}>Visitor</Text>
+      <View style={styles.logoContainer}>
+        <View style={{alignItems: 'center'}}>
+          <Image
+            resizeMode={'center'}
+            style={{alignSelf: 'center'}}
+            // style={styles.logoStyle}
+            source={require('../Image/logo.png')}
+          />
+          <Text style={{fontSize: 16, marginTop: -48, zIndex: 100}}>
+            VISITOR
+          </Text>
+        </View>
       </View>
       {/*<ActivityIndicator*/}
       {/*  animating={animating}*/}
@@ -107,6 +121,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // backgroundColor: Colors.primary,
     flexDirection: 'row',
+  },
+  logoContainer: {
+    width: '40%',
+    alignItems: 'center',
+    // justifyContent: 'flex-end',
+    // marginTop: '-15%',
   },
 });
 

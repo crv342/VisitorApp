@@ -60,10 +60,17 @@ const AuthScreen = ({navigation}) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={{flex: 1}}>
-          <Appbar.Header style={{backgroundColor:'white'}}>
-           <Appbar.BackAction color={Colors.primary} onPress={() => navigation.goBack()} />
-           <Appbar.Content title={'Login'} color={Colors.primary} style={{alignItems:'center'}} />
-           <Appbar.Action />
+          <Appbar.Header style={{backgroundColor: 'white'}}>
+            <Appbar.BackAction
+              color={Colors.primary}
+              onPress={() => navigation.goBack()}
+            />
+            <Appbar.Content
+              title={'Login'}
+              color={Colors.primary}
+              style={{alignItems: 'center'}}
+            />
+            <Appbar.Action />
           </Appbar.Header>
 
           <Formik

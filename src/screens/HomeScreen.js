@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, Platform, ScrollView } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, Dimensions, Platform, ScrollView} from 'react-native';
 import {
   Text,
   Appbar,
@@ -14,7 +14,7 @@ import {
   Modal,
 } from 'react-native-paper';
 import Colors from '../constants/Colors';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   LineChart,
   BarChart,
@@ -22,15 +22,15 @@ import {
   ContributionGraph,
   StackedBarChart,
 } from 'react-native-chart-kit';
-import { fetchvisitor } from '../store/actions/visitor';
+import {fetchvisitor} from '../store/actions/visitor';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import CustomSwitch from '../components/CustomSwitch3';
-import { ColorPicker } from 'react-native-color-picker';
-import { ColorPicker as ColorPickerBtr } from 'react-native-btr';
+import {ColorPicker} from 'react-native-color-picker';
+import {ColorPicker as ColorPickerBtr} from 'react-native-btr';
 import CustomColorPicker from '../components/CustomColorPicker';
-import { updateChartColor } from '../store/actions/theme';
+import {updateChartColor} from '../store/actions/theme';
 
 let h = Dimensions.get('window').height;
 const chartWidth = Dimensions.get('window').width - 16;
@@ -48,7 +48,7 @@ weekdays[5] = 'Fri';
 weekdays[6] = 'Sat';
 let k = new Date().getDay();
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const visitorData = useSelector(state => state.visitor.visitor);
@@ -61,10 +61,14 @@ const HomeScreen = ({ navigation }) => {
   const [pickerVisible, setPickerVisible] = useState(false);
   const [colorChangeVisible, setColorChangeVisible] = useState(false);
   const [chartName, setChartName] = useState('bezier');
-  const [gradientStartColor, setGradientStartColor] = useState(chartColors.bezier.gradientStart);
-  const [gradientEndColor, setGradientEndColor] = useState(chartColors.bezier.gradientEnd);
+  const [gradientStartColor, setGradientStartColor] = useState(
+    chartColors.bezier.gradientStart,
+  );
+  const [gradientEndColor, setGradientEndColor] = useState(
+    chartColors.bezier.gradientEnd,
+  );
   const [stroke, setStroke] = useState(chartColors.bezier.stroke);
-  const [chartShadowColor, setChartShadowColor] = useState('#ffa726');
+  const [chartShadowColor, setChartShadowColor] = useState(Colors.accent);
   const [switchValue, setSwitchValue] = useState(1);
   const [selectedColor, setSelectedColor] = useState('');
   const colorArray = [
@@ -96,7 +100,7 @@ const HomeScreen = ({ navigation }) => {
     data => new Date(data.checkIn) > compareDate,
   );
   const todayVisitor = visitorData.filter(
-    data => new Date(data.checkIn) >= new Date(),
+    data => new Date(data.checkIn).toDateString() == new Date().toDateString(),
   );
   const monthVisitor = visitorData.filter(
     data => new Date(data.checkIn).getMonth() == new Date().getMonth(),
@@ -129,11 +133,9 @@ const HomeScreen = ({ navigation }) => {
   const showColorModal = () => setPickerVisible(true);
   const hideColorModal = () => setPickerVisible(false);
 
-  const radioButtonHandler = (value) => {
+  const radioButtonHandler = value => {
     let randomNumber =
-      Math.floor(
-        Math.random() * (colorArray.length - 1 - 0 + 1),
-      ) + 0;
+      Math.floor(Math.random() * (colorArray.length - 1 - 0 + 1)) + 0;
     // setGradientStartColor(colorArray[randomNumber]);
     // setGradientEndColor(gradientArray[randomNumber]);
     // setStroke(strokeArray[randomNumber]);
@@ -144,7 +146,7 @@ const HomeScreen = ({ navigation }) => {
     setStroke(chartColors[value].stroke);
     setChartName(value);
     hideDialog();
-  }
+  };
 
   const onSelectSwitch = index => {
     setSwitchValue(index);
@@ -160,50 +162,110 @@ const HomeScreen = ({ navigation }) => {
   const onColorSelect = color => {
     if (chartName === 'bezier') {
       if (switchValue === 1) {
-        dispatch(updateChartColor({ ...chartColors, bezier: { ...chartColors.bezier, gradientStart: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            bezier: {...chartColors.bezier, gradientStart: color},
+          }),
+        );
         setGradientStartColor(color);
       } else if (switchValue === 2) {
-        dispatch(updateChartColor({ ...chartColors, bezier: { ...chartColors.bezier, gradientEnd: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            bezier: {...chartColors.bezier, gradientEnd: color},
+          }),
+        );
         setGradientEndColor(color);
       } else {
-        dispatch(updateChartColor({ ...chartColors, bezier: { ...chartColors.bezier, stroke: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            bezier: {...chartColors.bezier, stroke: color},
+          }),
+        );
         setStroke(color);
       }
     } else if (chartName === 'line') {
       if (switchValue === 1) {
-        dispatch(updateChartColor({ ...chartColors, line: { ...chartColors.line, startGradient: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            line: {...chartColors.line, startGradient: color},
+          }),
+        );
         setGradientStartColor(color);
       } else if (switchValue === 2) {
-        dispatch(updateChartColor({ ...chartColors, line: { ...chartColors.line, gradientEnd: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            line: {...chartColors.line, gradientEnd: color},
+          }),
+        );
         setGradientEndColor(color);
       } else {
-        dispatch(updateChartColor({ ...chartColors, line: { ...chartColors.line, stroke: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            line: {...chartColors.line, stroke: color},
+          }),
+        );
         setStroke(color);
       }
     } else if (chartName === 'bar') {
       if (switchValue === 1) {
-        dispatch(updateChartColor({ ...chartColors, bar: { ...chartColors.bar, gradientStart: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            bar: {...chartColors.bar, gradientStart: color},
+          }),
+        );
         setGradientStartColor(color);
       } else if (switchValue === 2) {
-        dispatch(updateChartColor({ ...chartColors, bar: { ...chartColors.bar, gradientEnd: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            bar: {...chartColors.bar, gradientEnd: color},
+          }),
+        );
         setGradientEndColor(color);
       } else {
-        dispatch(updateChartColor({ ...chartColors, bar: { ...chartColors.bar, stroke: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            bar: {...chartColors.bar, stroke: color},
+          }),
+        );
         setStroke(color);
       }
     } else {
       if (switchValue === 1) {
-        dispatch(updateChartColor({ ...chartColors, contribution: { ...chartColors.contribution, gradientStart: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            contribution: {...chartColors.contribution, gradientStart: color},
+          }),
+        );
         setGradientStartColor(color);
       } else if (switchValue === 2) {
-        dispatch(updateChartColor({ ...chartColors, contribution: { ...chartColors.contribution, gradientEnd: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            contribution: {...chartColors.contribution, gradientEnd: color},
+          }),
+        );
         setGradientEndColor(color);
       } else {
-        dispatch(updateChartColor({ ...chartColors, contribution: { ...chartColors.contribution, stroke: color } }))
+        dispatch(
+          updateChartColor({
+            ...chartColors,
+            contribution: {...chartColors.contribution, stroke: color},
+          }),
+        );
         setStroke(color);
       }
     }
-  }
+  };
 
   const btrColorHandler = color => {
     if (color === '#ffffff') {
@@ -292,17 +354,17 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const commitsDat = [
-    { date: '2017-01-02', count: 1 },
-    { date: '2017-01-03', count: 2 },
-    { date: '2017-01-04', count: 3 },
-    { date: '2017-01-05', count: 4 },
-    { date: '2017-01-06', count: 5 },
-    { date: '2017-01-30', count: 2 },
-    { date: '2017-01-31', count: 3 },
-    { date: '2017-03-01', count: 2 },
-    { date: '2017-04-02', count: 4 },
-    { date: '2017-03-05', count: 2 },
-    { date: '2017-02-30', count: 4 },
+    {date: '2017-01-02', count: 1},
+    {date: '2017-01-03', count: 2},
+    {date: '2017-01-04', count: 3},
+    {date: '2017-01-05', count: 4},
+    {date: '2017-01-06', count: 5},
+    {date: '2017-01-30', count: 2},
+    {date: '2017-01-31', count: 3},
+    {date: '2017-03-01', count: 2},
+    {date: '2017-04-02', count: 4},
+    {date: '2017-03-05', count: 2},
+    {date: '2017-02-30', count: 4},
   ];
   const p = new Array();
   const c = new Array();
@@ -330,7 +392,7 @@ const HomeScreen = ({ navigation }) => {
   // console.log(pieChart);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <Appbar.Header>
         <Appbar.Action
           icon={'menu'}
@@ -346,7 +408,7 @@ const HomeScreen = ({ navigation }) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <ActivityIndicator style={{ alignSelf: 'center' }} />
+          <ActivityIndicator style={{alignSelf: 'center'}} />
         </View>
       ) : (
         <View style={styles.contentContainer}>
@@ -367,7 +429,7 @@ const HomeScreen = ({ navigation }) => {
               <Card
                 style={styles.cardStyle}
                 onPress={() =>
-                  navigation.navigate('Visitor Log', { vData: todayVisitor })
+                  navigation.navigate('Visitor Log', {vData: todayVisitor})
                 }>
                 <Card.Content>
                   <Title>{todayVisitor.length}</Title>
@@ -380,7 +442,7 @@ const HomeScreen = ({ navigation }) => {
               <Card
                 style={styles.cardStyle}
                 onPress={() =>
-                  navigation.navigate('Visitor Log', { vData: monthVisitor })
+                  navigation.navigate('Visitor Log', {vData: monthVisitor})
                 }>
                 <Card.Content>
                   <Title>{monthVisitor.length}</Title>
@@ -390,7 +452,7 @@ const HomeScreen = ({ navigation }) => {
               <Card
                 style={styles.cardStyle}
                 onPress={() =>
-                  navigation.navigate('Visitor Log', { vData: visitorData })
+                  navigation.navigate('Visitor Log', {vData: visitorData})
                 }>
                 <Card.Content>
                   <Title>{visitorData.length}</Title>
@@ -401,7 +463,7 @@ const HomeScreen = ({ navigation }) => {
 
             <View style={styles.chartButtonContainer}>
               <Button
-                icon={({ size, color }) => (
+                icon={({size, color}) => (
                   <Icon color={color} size={24} name={'menu-down'} />
                 )}
                 contentStyle={styles.b}
@@ -416,8 +478,8 @@ const HomeScreen = ({ navigation }) => {
                 style={{
                   marginRight: 20,
                   transform: colorChangeVisible
-                    ? [{ rotateX: '180deg' }]
-                    : [{ rotateX: '0deg' }],
+                    ? [{rotateX: '180deg'}]
+                    : [{rotateX: '0deg'}],
                 }}
                 name={'colours'}
                 onPress={() =>
@@ -427,7 +489,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
             {colorChangeVisible && (
               <View>
-                <View style={{ alignItems: 'center' }}>
+                <View style={{alignItems: 'center'}}>
                   <CustomSwitch
                     selectionMode={switchValue}
                     roundCorner={true}
@@ -495,7 +557,7 @@ const HomeScreen = ({ navigation }) => {
             </Portal>
             <Portal>
               <Modal
-                style={{ flex: 1 }}
+                style={{flex: 1}}
                 visible={pickerVisible}
                 onDismiss={hideColorModal}
                 contentContainerStyle={{
@@ -505,12 +567,12 @@ const HomeScreen = ({ navigation }) => {
                 }}>
                 <ColorPicker
                   onColorSelected={color => colorHandler(color)}
-                  style={{ flex: 1 }}
+                  style={{flex: 1}}
                 />
               </Modal>
             </Portal>
             <View
-              style={{ ...styles.graphContainer, shadowColor: chartShadowColor }}>
+              style={{...styles.graphContainer, shadowColor: chartShadowColor}}>
               {(chartName === 'line' || chartName === 'bezier') && (
                 <LineChart
                   bezier={chartName === 'bezier' && true}
@@ -549,7 +611,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
 
             <View
-              style={{ ...styles.graphContainer, shadowColor: chartShadowColor }}>
+              style={{...styles.graphContainer, shadowColor: chartShadowColor}}>
               <PieChart
                 style={styles.pieChart}
                 data={pieChart}
@@ -564,7 +626,7 @@ const HomeScreen = ({ navigation }) => {
               />
             </View>
             <View
-              style={{ ...styles.graphContainer, shadowColor: chartShadowColor }}>
+              style={{...styles.graphContainer, shadowColor: chartShadowColor}}>
               <StackedBarChart
                 style={styles.chartStyle}
                 data={data}
@@ -577,12 +639,12 @@ const HomeScreen = ({ navigation }) => {
         </View>
       )}
       <View style={styles.screen}>
-        <View style={{ ...styles.bottomView, backgroundColor: Colors.primary }}>
+        <View style={{...styles.bottomView, backgroundColor: Colors.primary}}>
           <Button
             style={styles.bottomButton}
             color={Colors.text}
             onPress={() =>
-              navigation.navigate('CheckInNav', { Screen: 'CheckOut' })
+              navigation.navigate('CheckInNav', {Screen: 'CheckOut'})
             }>
             Go Back
           </Button>
@@ -628,7 +690,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#664b4b',
-    shadowOffset: { height: 1, width: 1 },
+    shadowOffset: {height: 1, width: 1},
     shadowOpacity: 0.5,
     shadowRadius: 4,
   },
@@ -645,7 +707,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#c6c0c0',
-    shadowOffset: { height: 1.5, width: 1.5 },
+    shadowOffset: {height: 1.5, width: 1.5},
     shadowOpacity: 3,
     shadowRadius: 8,
     elevation: 3,
@@ -671,7 +733,7 @@ const styles = StyleSheet.create({
   },
   pieChart: {
     shadowColor: '#a4a4a4',
-    shadowOffset: { height: 2, width: 2 },
+    shadowOffset: {height: 2, width: 2},
     shadowOpacity: 2,
     shadowRadius: 3,
   },

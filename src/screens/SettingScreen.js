@@ -6,6 +6,7 @@ import {
   Keyboard,
   TouchableOpacity,
   Alert,
+  Platform,
 } from 'react-native';
 import {
   Appbar,
@@ -104,10 +105,20 @@ const SettingScreen = ({navigation}) => {
   const passButtonHandler = async () => {
     try {
       if (currPass === '' || currPass === undefined) {
-        Alert.alert(Alert, 'Please enter current password.', {
-          text: 'OK',
-          onPress: () => console.log('OK Pressed'),
-        });
+        Alert.alert(
+          Alert,
+          'Please enter current password.',
+          [
+            {
+              text: 'Ok',
+              onPress: () => console.log('OK Pressed'),
+              style: 'Ok',
+            },
+          ],
+          {
+            cancelable: true,
+          },
+        );
         return;
       }
       setLoadingModal(true);
@@ -119,10 +130,20 @@ const SettingScreen = ({navigation}) => {
     } catch (e) {
       setCurrPass('');
       setLoadingModal(false);
-      Alert.alert(e.message, 'Please enter correct password.', {
-        text: 'OK',
-        onPress: () => console.log('OK Pressed'),
-      });
+      Alert.alert(
+        e.message,
+        'Please enter correct password.',
+        [
+          {
+            text: 'Ok',
+            onPress: () => console.log('OK Pressed'),
+            style: 'Ok',
+          },
+        ],
+        {
+          cancelable: true,
+        },
+      );
     }
   };
 
@@ -208,6 +229,7 @@ const SettingScreen = ({navigation}) => {
                 alignItems: 'center',
               }}>
               <TextInput
+                allowFontScaling={true}
                 keyboardType={'numeric'}
                 mode={'outlined'}
                 style={{...styles.inputField, width: 40, height: 40}}
@@ -228,7 +250,7 @@ const SettingScreen = ({navigation}) => {
               onDismiss={hideModal}
               contentContainerStyle={styles.containerStyle}>
               {uPassModal ? (
-                <>
+                <View>
                   <Title>Update Password</Title>
                   <View>
                     <TextInput
@@ -242,18 +264,15 @@ const SettingScreen = ({navigation}) => {
                       }}
                     />
                     <Button
+                      loading={loadingModal}
                       style={{...styles.inputField, width: 100}}
                       mode={'contained'}
                       color={Colors.primary}
                       onPress={passButtonHandler}>
-                      {loadingModal ? (
-                        <ActivityIndicator size={18} color={'white'} />
-                      ) : (
-                        'Next'
-                      )}
+                      Next
                     </Button>
                   </View>
-                </>
+                </View>
               ) : (
                 <>
                   <Title>Purposes</Title>
@@ -290,7 +309,9 @@ const SettingScreen = ({navigation}) => {
                       color={Colors.primary}
                       onPress={addPurposeHandler}>
                       {loadingModal ? (
-                        <ActivityIndicator color={'white'} />
+                        <View>
+                          <ActivityIndicator color={'white'} />
+                        </View>
                       ) : (
                         <Icon size={24} name={'plus'} />
                       )}

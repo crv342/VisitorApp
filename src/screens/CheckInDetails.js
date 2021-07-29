@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import ItemPicker from '../components/ItemPicker';
 
-import {Button, TextInput, HelperText} from 'react-native-paper';
+import {Button, TextInput, HelperText, Appbar} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import {checkin} from '../store/actions/visitor';
 import Colors from '../constants/Colors';
@@ -28,6 +28,7 @@ const CheckInDetails = props => {
   const [purposeValue, setPurposeValue] = useState();
   const [visibleHost, setVisibleHost] = useState(false);
   const [visiblePurpose, setVisiblePurpose] = useState(false);
+  const Colors = useSelector(state => state.theme.colors);
   const adminData = useSelector(state => state.auth.adminData);
   const purposeData = useSelector(state => state.host.purposes);
   const hostData = useSelector(state =>
@@ -139,84 +140,98 @@ const CheckInDetails = props => {
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      {/*<ScrollView contentContainerStyle={styles.screen}>*/}
-      {/*<View style={{height: '20%'}} />*/}
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.inputField}
-          label={'Name*'}
-          value={visitorName}
-          onChangeText={t => {
-            setVisitorName(t);
-          }}
-          onFocus={() => setError(false)}
-        />
-        {visitorAddress && (
-          <TextInput
-            style={{...styles.inputField}}
-            label={'Address'}
-            value={visitorAddress}
-            editable={false}
-            disabled={true}
-            numberOfLines={3}
-            multiline={true}
+      <View style={{flex: 1}}>
+        <Appbar.Header style={{backgroundColor: 'white'}}>
+          <Appbar.BackAction
+            color={Colors.primary}
+            onPress={() => props.navigation.goBack()}
           />
-        )}
+          <Appbar.Content
+            title={'CheckIn Details'}
+            color={Colors.primary}
+            style={{alignItems: 'center'}}
+          />
+          <Appbar.Action />
+        </Appbar.Header>
+        {/*<ScrollView contentContainerStyle={styles.screen}>*/}
+        {/*<View style={{height: '20%'}} />*/}
+        <View style={styles.formContainer}>
+          <TextInput
+            style={styles.inputField}
+            label={'Name*'}
+            value={visitorName}
+            onChangeText={t => {
+              setVisitorName(t);
+            }}
+            onFocus={() => setError(false)}
+          />
+          {visitorAddress && (
+            <TextInput
+              style={{...styles.inputField}}
+              label={'Address'}
+              value={visitorAddress}
+              editable={false}
+              disabled={true}
+              numberOfLines={3}
+              multiline={true}
+            />
+          )}
 
-        <TextInput
-          textContentType={'telephoneNumber'}
-          keyboardType={'number-pad'}
-          style={{...styles.inputField}}
-          label={'Mobile*'}
-          value={visitorPhone}
-          onChangeText={t => {
-            setVisitorPhone(t);
-          }}
-          maxLength={10}
-          left={<TextInput.Affix text={'+91 '} />}
-        />
-        <ItemPicker
-          itemData={hostData}
-          onFocus={() => {
-            setError(false);
-            setVisibleHost(true);
-          }}
-          value={hostValue}
-          setValue={setHostValue}
-          setId={setHostId}
-          visible={visibleHost}
-          onDismiss={closeMenu}
-          lable={'Select a Host*'}
-        />
-        <ItemPicker
-          itemData={purposeData}
-          onFocus={() => {
-            setError(false);
-            setVisiblePurpose(true);
-          }}
-          value={purposeValue}
-          setValue={setPurposeValue}
-          visible={visiblePurpose}
-          onDismiss={closeMenu}
-          lable={'Select Purpose*'}
-        />
+          <TextInput
+            textContentType={'telephoneNumber'}
+            keyboardType={'number-pad'}
+            style={{...styles.inputField}}
+            label={'Mobile*'}
+            value={visitorPhone}
+            onChangeText={t => {
+              setVisitorPhone(t);
+            }}
+            maxLength={10}
+            left={<TextInput.Affix text={'+91 '} />}
+          />
+          <ItemPicker
+            itemData={hostData}
+            onFocus={() => {
+              setError(false);
+              setVisibleHost(true);
+            }}
+            value={hostValue}
+            setValue={setHostValue}
+            setId={setHostId}
+            visible={visibleHost}
+            onDismiss={closeMenu}
+            lable={'Select a Host*'}
+          />
+          <ItemPicker
+            itemData={purposeData}
+            onFocus={() => {
+              setError(false);
+              setVisiblePurpose(true);
+            }}
+            value={purposeValue}
+            setValue={setPurposeValue}
+            visible={visiblePurpose}
+            onDismiss={closeMenu}
+            lable={'Select Purpose*'}
+          />
 
-        <View style={{alignItems: 'center', marginTop: 30}}>
-          <HelperText
-            style={styles.errorText}
-            type="error"
-            visible={error ? true : false}>
-            {error}
-          </HelperText>
-          <Button
-            mode={'contained'}
-            style={styles.button}
-            onPress={submitHandler}>
-            Next
-          </Button>
+          <View style={{alignItems: 'center', marginTop: 30}}>
+            <HelperText
+              style={styles.errorText}
+              type="error"
+              visible={error ? true : false}>
+              {error}
+            </HelperText>
+            <Button
+              mode={'contained'}
+              style={styles.button}
+              onPress={submitHandler}>
+              Next
+            </Button>
+          </View>
         </View>
+        {/*</ScrollView>*/}
       </View>
-      {/*</ScrollView>*/}
     </TouchableWithoutFeedback>
   );
 };

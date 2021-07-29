@@ -40,7 +40,7 @@ const AuthNavigator = ({navigation}) => {
         component={AuthScreen}
         options={{
           title: 'Admin Login',
-          headerShown:false,
+          headerShown: false,
           headerLeft: () => (
             <Icon
               name={Platform.OS === 'ios' ? 'arrow-back-ios' : 'arrow-back'}
@@ -87,13 +87,21 @@ const CheckInNavigator = () => {
             CardStyleInterpolators.forFadeFromBottomAndroid,
         }}
       />
-      <Stack.Screen name={'CheckOut'} component={CheckOutScreen} />
+      <Stack.Screen
+        name={'CheckOut'}
+        component={CheckOutScreen}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name={'IdScanner'}
         component={IdScanner}
         options={{headerShown: false}}
       />
-      <Stack.Screen name={'CheckInDetails'} component={CheckInDetails} />
+      <Stack.Screen
+        name={'CheckInDetails'}
+        component={CheckInDetails}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name={'CheckInSuccess'}
         component={CheckInSuccess}
@@ -120,16 +128,6 @@ const DrawerNavigator = ({navigation}) => {
   const [username, setUsername] = useState('');
   const userName = useSelector(state => state.auth.adminData.username);
   const Colors = useSelector(state => state.theme.colors);
-
-  // useEffect(() => {
-  //   let c = Colors.primary.slice().substring(1); // strip #
-  //   let rgb = parseInt(c, 16); // convert rrggbb to decimal
-  //   let r = (rgb >> 16) & 0xff; // extract red
-  //   let g = (rgb >> 8) & 0xff; // extract green
-  //   let b = (rgb >> 0) & 0xff; // extract blue
-  //
-  //   luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-  // }, [Colors]);
 
   useEffect(() => {
     setUsername(userName);
@@ -175,9 +173,7 @@ const DrawerNavigator = ({navigation}) => {
                   dispatch(logout());
                   navigation.reset({
                     index: 1,
-                    routes: [
-                      { name: 'CheckInNav'}
-                    ],
+                    routes: [{name: 'CheckInNav'}],
                   });
                 }}>
                 Logout <Icon name={'logout'} />

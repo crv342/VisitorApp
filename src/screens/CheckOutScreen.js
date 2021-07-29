@@ -1,23 +1,52 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Text, Image, ScrollView} from 'react-native';
-import {List, IconButton, Title} from 'react-native-paper';
+import {List, IconButton, Title, Appbar} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import Colors from '../constants/Colors';
 import {checkout} from '../store/actions/visitor';
 import PushNotification from 'react-native-push-notification';
 
-const CheckOutScreen = () => {
+const CheckOutScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const visitorList = useSelector(state => state.visitor.checkedInVisitors);
-  // const [visitors, setVisitors] = useState(visitorList);
 
-  // useEffect(() => {
-  //   setVisitors(visitorList);
-  // }, [visitorList, dispatch]);
   const checkOutHandler = (id, checkin) => {
     dispatch(checkout(id));
     PushNotification.cancelLocalNotifications({id: checkin});
+  };
+
+  const calculateTime = checkIn => {
+    let diffInMilliSeconds = Math.abs(new Date() - new Date(checkIn)) / 1000;
+
+    // calculate days
+    const days = Math.floor(diffInMilliSeconds / 86400);
+    diffInMilliSeconds -= days * 86400;
+
+    // calculate hours
+    const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
+    diffInMilliSeconds -= hours * 3600;
+
+    // calculate minutes
+    const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
+    diffInMilliSeconds -= minutes * 60;
+
+    let difference = '';
+    if (days > 0) {
+      difference += days === 1 ? `${days} day, ` : `${days} days, `;
+    }
+
+    difference +=
+      hours === 0 || hours === 1 ? `${hours} hour, ` : `${hours} hours, `;
+
+    difference +=
+      minutes === 0 || hours === 1
+        ? `${minutes} minutes`
+        : `${minutes} minutes`;
+    // const time = Math.round(
+    //   (((new Date() - new Date(checkIn)) % 86400000) % 3600000) / 60000,
+    // );
+    return difference;
   };
   if (visitorList.length === 0) {
     return (
@@ -29,6 +58,20 @@ const CheckOutScreen = () => {
 
   return (
     <View style={styles.screen}>
+      <View>
+        <Appbar.Header style={{backgroundColor: 'white'}}>
+          <Appbar.BackAction
+            color={Colors.primary}
+            onPress={() => navigation.goBack()}
+          />
+          <Appbar.Content
+            title={'Check Out'}
+            color={Colors.primary}
+            style={{alignItems: 'center'}}
+          />
+          <Appbar.Action />
+        </Appbar.Header>
+      </View>
       <ScrollView>
         <View style={styles.listContainer}>
           {visitorList &&
@@ -38,13 +81,7 @@ const CheckOutScreen = () => {
                 titleStyle={{...styles.itemTitle, color: Colors.primary}}
                 title={item.name}
                 description={
-                  'Checked In ' +
-                  Math.round(
-                    (((new Date() - new Date(item.checkIn)) % 86400000) %
-                      3600000) /
-                      60000,
-                  ) +
-                  ' minitues ago.'
+                  'Checked In ' + calculateTime(item.checkIn) + ' ago.'
                 }
                 left={props => (
                   <List.Icon
@@ -60,7 +97,7 @@ const CheckOutScreen = () => {
                     color={Colors.primary}
                     size={24}
                     icon="logout"
-                    onPress={() => checkOutHandler(item.id,item.checkIn)}
+                    onPress={() => checkOutHandler(item.id, item.checkIn)}
                   />
                 )}
               />

@@ -9,7 +9,7 @@ import {
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {RNCamera} from 'react-native-camera';
-import {Button, Text, Divider} from 'react-native-paper';
+import {Button, Text, Divider, Appbar} from 'react-native-paper';
 import Colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -28,13 +28,16 @@ const IdScanner = ({navigation}) => {
 
   return (
     <QRCodeScanner
+      // cameraStyle={styles.cameraStyle}
+      showMarker={true}
       onRead={onSuccess}
       // flashMode={RNCamera.Constants.FlashMode.torch}
       topContent={
-        <>
-          <View style={styles.topContainer}>
-            <View>
-              <Button onPress={() => navigation.goBack()}>
+        <View style={styles.topContainer}>
+          <View>
+            <Button
+              onPress={() => navigation.goBack()}
+              icon={() => (
                 <View style={styles.buttonContainer}>
                   <Icons
                     size={24}
@@ -43,10 +46,13 @@ const IdScanner = ({navigation}) => {
                   />
                   <Text style={{color: Colors.primary}}> Back</Text>
                 </View>
-              </Button>
-            </View>
-            <View>
-              <Button onPress={() => navigation.navigate('CheckInDetails')}>
+              )}
+            />
+          </View>
+          <View>
+            <Button
+              onPress={() => navigation.navigate('CheckInDetails')}
+              icon={() => (
                 <View style={styles.buttonContainer}>
                   <Text style={{color: Colors.primary}}>Skip </Text>
                   <Icons
@@ -55,11 +61,10 @@ const IdScanner = ({navigation}) => {
                     color={Colors.primary}
                   />
                 </View>
-              </Button>
-            </View>
+              )}
+            />
           </View>
-          <Divider />
-        </>
+        </View>
       }
       bottomContent={
         <View style={styles.bottomContainer}>
@@ -69,7 +74,9 @@ const IdScanner = ({navigation}) => {
           {/*  </Button>*/}
           {/*</View>*/}
           <View style={styles.bottomText}>
-            <Text style={styles.buttonText}>Scan Id Card</Text>
+            <Text style={{...styles.buttonText, color: Colors.primary}}>
+              Scan Id Card
+            </Text>
           </View>
           {/*<View style={styles.bottomButtomRight}>*/}
           {/*  <Button onPress={() => navigation.navigate('CheckInDetails')}>*/}
@@ -135,6 +142,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  cameraStyle: {
+    height: '80%',
+    aspectRatio: 1,
+    alignSelf: 'center',
   },
 });
 

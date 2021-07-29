@@ -67,7 +67,21 @@ const UpdatePassword = ({navigation}) => {
   const submitHandler = async () => {
     try {
       if (newPassword !== confirmPassword) {
-        throw new Error('Password does not match');
+        Alert.alert(
+          'Password does not match!',
+          'Please enter same input in both field.',
+          [
+            {
+              text: 'Ok',
+              onPress: () => console.log('OK Pressed'),
+              style: 'Ok',
+            },
+          ],
+          {
+            cancelable: true,
+          },
+        );
+        return;
       }
 
       setIsLoading(true);
@@ -76,6 +90,7 @@ const UpdatePassword = ({navigation}) => {
       setIsLoading(false);
       navigation.goBack();
     } catch (e) {
+      setIsLoading(false);
       Alert.alert(e.message);
     }
   };
@@ -119,7 +134,6 @@ const UpdatePassword = ({navigation}) => {
             autoCorrect={false}
             autoCapitalize={'none'}
             allowFontScaling={true}
-            underlineColorAndroid={'black'}
             style={styles.inputField}
             placeholder={'Confirm Password'}
             value={confirmPassword}
@@ -143,11 +157,12 @@ const styles = StyleSheet.create({
   inputField: {
     alignSelf: 'center',
     width: '90%',
-    height: 35,
+    height: 40,
     margin: '3%',
     borderBottomColor: '#000000',
     borderBottomWidth: 0.5,
     fontSize: 15,
+    paddingLeft: 6,
     // borderWidth: 1,
   },
 });

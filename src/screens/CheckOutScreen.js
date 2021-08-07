@@ -51,6 +51,20 @@ const CheckOutScreen = ({navigation}) => {
   if (visitorList.length === 0) {
     return (
       <View style={styles.screen}>
+        <View>
+          <Appbar.Header style={{backgroundColor: 'white'}}>
+            <Appbar.BackAction
+              color={Colors.primary}
+              onPress={() => navigation.goBack()}
+            />
+            <Appbar.Content
+              title={'Check Out'}
+              color={Colors.primary}
+              style={{alignItems: 'center'}}
+            />
+            <Appbar.Action />
+          </Appbar.Header>
+        </View>
         <Title style={{alignSelf: 'center'}}>No Visitors to Check Out!</Title>
       </View>
     );

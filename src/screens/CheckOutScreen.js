@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {View, StyleSheet, Text, Image, ScrollView} from 'react-native';
 import {List, IconButton, Title, Appbar} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
@@ -7,6 +8,7 @@ import {checkout} from '../store/actions/visitor';
 import PushNotification from 'react-native-push-notification';
 
 const CheckOutScreen = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const visitorList = useSelector(state => state.visitor.checkedInVisitors);

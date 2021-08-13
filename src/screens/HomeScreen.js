@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {View, StyleSheet, Dimensions, Platform, ScrollView} from 'react-native';
 import {
   Text,
@@ -49,6 +50,7 @@ weekdays[6] = 'Sat';
 let k = new Date().getDay();
 
 const HomeScreen = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const visitorData = useSelector(state => state.visitor.visitor);
@@ -398,7 +400,7 @@ const HomeScreen = ({navigation}) => {
           icon={'menu'}
           onPress={() => navigation.toggleDrawer()}
         />
-        <Appbar.Content title={'Dashboard'} />
+        <Appbar.Content title={t('Dashboard')} />
       </Appbar.Header>
 
       {isLoading ? (
@@ -423,7 +425,7 @@ const HomeScreen = ({navigation}) => {
                 }>
                 <Card.Content>
                   <Title>{checkedInData.length}</Title>
-                  <Text>Visitors Checked In</Text>
+                  <Text>{t("Visitors Checked In")}</Text>
                 </Card.Content>
               </Card>
               <Card
@@ -433,7 +435,7 @@ const HomeScreen = ({navigation}) => {
                 }>
                 <Card.Content>
                   <Title>{todayVisitor.length}</Title>
-                  <Text>Today's visitors</Text>
+                  <Text>{t("Today's Visitors")}</Text>
                 </Card.Content>
               </Card>
             </View>
@@ -446,7 +448,7 @@ const HomeScreen = ({navigation}) => {
                 }>
                 <Card.Content>
                   <Title>{monthVisitor.length}</Title>
-                  <Text>This month visitors</Text>
+                  <Text>{t("This Month Visitors")}</Text>
                 </Card.Content>
               </Card>
               <Card
@@ -456,7 +458,7 @@ const HomeScreen = ({navigation}) => {
                 }>
                 <Card.Content>
                   <Title>{visitorData.length}</Title>
-                  <Text>Total visitors</Text>
+                  <Text>{t("Total Visitors")}</Text>
                 </Card.Content>
               </Card>
             </View>
@@ -469,7 +471,7 @@ const HomeScreen = ({navigation}) => {
                 contentStyle={styles.b}
                 style={styles.dialogShowButton}
                 onPress={showDialog}>
-                Select Chart
+                {t("Select Chart")}
                 {/*<Icon size={20} name={'menu-down'} />*/}
               </Button>
               <Entypo
@@ -531,7 +533,7 @@ const HomeScreen = ({navigation}) => {
 
             <Portal>
               <Dialog visible={visible} onDismiss={hideDialog}>
-                <Dialog.Title>Select Chart</Dialog.Title>
+                <Dialog.Title>{t("Select Chart")}</Dialog.Title>
                 <Divider />
                 <Dialog.Content>
                   <RadioButton.Group
@@ -646,7 +648,7 @@ const HomeScreen = ({navigation}) => {
             onPress={() =>
               navigation.navigate('CheckInNav', {Screen: 'CheckOut'})
             }>
-            Go Back
+            {t("Go Back")}
           </Button>
         </View>
       </View>

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   View,
@@ -29,6 +30,7 @@ const formSchema = yup.object({
 });
 
 const AuthScreen = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const [showPassword, setShowPassword] = useState(false);

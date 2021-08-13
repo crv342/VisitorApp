@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect} from 'react';
+import {useTranslation} from 'react-i18next';
 import {View, StyleSheet, Image, Text as text} from 'react-native';
 import {Text} from 'react-native-paper';
 import * as authActions from '../store/actions/auth';
@@ -9,8 +10,10 @@ import * as visitorActions from '../store/actions/visitor';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchDetails} from '../store/actions/host';
 import {updateChartColor, updateTheme} from '../store/actions/theme';
+import i18next from 'i18next';
 
 const SplashScreen = props => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
 
@@ -69,6 +72,19 @@ const SplashScreen = props => {
     };
     getChartColor();
   }, [dispatch]);
+
+  useEffect(() => {
+    const getLang = async () => {
+      const langData = await AsyncStorage.getItem('language');
+      const langDataJson = JSON.parse(langData);
+
+      if (!langData) {
+        return;
+      }
+      i18next.changeLanguage(langDataJson.lang)
+    };
+    getLang();
+  }, []);
 
   // useEffect(() => {
   //   dispatch(visitorActions.fetchCheckedIn()).catch(e => console.log(e));

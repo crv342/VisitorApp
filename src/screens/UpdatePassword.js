@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   View,
   StyleSheet,
@@ -22,6 +23,7 @@ import {UPDATEPASSWORD, updatePassword} from '../store/actions/auth';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const UpdatePassword = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');

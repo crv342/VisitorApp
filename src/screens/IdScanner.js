@@ -1,4 +1,5 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   AppRegistry,
   StyleSheet,
@@ -16,6 +17,7 @@ import Icons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector} from 'react-redux';
 
 const IdScanner = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const Colors = useSelector(state => state.theme.colors);
   const onSuccess = e => {
     navigation.navigate('CheckInDetails', {data: e.data});
@@ -44,7 +46,7 @@ const IdScanner = ({navigation}) => {
                     name={'chevron-left-circle-outline'}
                     color={Colors.primary}
                   />
-                  <Text style={{color: Colors.primary}}> Back</Text>
+                  <Text style={{color: Colors.primary}}> { t('Back') }</Text>
                 </View>
               )}
             />
@@ -54,7 +56,7 @@ const IdScanner = ({navigation}) => {
               onPress={() => navigation.navigate('CheckInDetails')}
               icon={() => (
                 <View style={styles.buttonContainer}>
-                  <Text style={{color: Colors.primary}}>Skip </Text>
+                  <Text style={{color: Colors.primary}}> { t('Skip') } </Text>
                   <Icons
                     size={24}
                     name={'skip-next-circle-outline'}
@@ -75,7 +77,7 @@ const IdScanner = ({navigation}) => {
           {/*</View>*/}
           <View style={styles.bottomText}>
             <Text style={{...styles.buttonText, color: Colors.primary}}>
-              Scan Id Card
+              { t('Scan Id Card') }
             </Text>
           </View>
           {/*<View style={styles.bottomButtomRight}>*/}

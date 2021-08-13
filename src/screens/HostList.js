@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {View, StyleSheet, Dimensions, ScrollView} from 'react-native';
 import {
   Appbar,
@@ -20,6 +21,7 @@ import * as hostActions from '../store/actions/host';
 import Colors from '../constants/Colors';
 
 const HostList = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const [visible, setVisible] = useState(false);

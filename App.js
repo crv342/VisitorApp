@@ -4,6 +4,7 @@ import type {Node} from 'react';
 import {Provider as StoreProvider} from 'react-redux';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import ThemeProvider from './src/ThemeProvider';
+import './src/i18n';
 
 import store from './src/store/store';
 import AppNavigator from './src/navigation/AppNavigator';

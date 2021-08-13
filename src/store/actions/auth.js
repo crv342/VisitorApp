@@ -75,6 +75,7 @@ export const updateAdmin = updateData => {
         id: resData._id,
         username: resData.username,
         email: resData.email,
+        notifytime: resData.notifytime
       };
 
       AsyncStorage.mergeItem(

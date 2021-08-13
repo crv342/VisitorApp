@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   View,
   StyleSheet,
@@ -9,7 +10,7 @@ import {
   Platform,
   Animated,
 } from 'react-native';
-import {Text, Button, Divider, Title} from 'react-native-paper';
+import {Text, Button, Divider, Title, IconButton} from 'react-native-paper';
 
 import Colors from '../constants/Colors';
 import {useDispatch, useSelector} from 'react-redux';
@@ -18,6 +19,7 @@ import * as visitorActions from '../store/actions/visitor';
 const width = Dimensions.get('window').width;
 
 const CheckInScreen = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const token = useSelector(state => state.auth.token);
@@ -65,9 +67,12 @@ const CheckInScreen = ({navigation}) => {
   }, [dispatch]);
 
   return (
-    <View style={{...styles.screen, backgroundColor: Colors.primary}}>
+    <View style={{...styles.screen, backgroundColor: 'white'}}>
       {/* <StatusBar translucent={true} /> */}
-      <View style={styles.upperContainer}>
+      {/* <View style={{alignSelf:'flex-start',zIndex: 10000, marginTop: 35}}>
+          <Button>Ln</Button>
+      </View> */}
+      <View style={{...styles.upperContainer, marginTop: -35}}>
         <View style={styles.logoContainer}>
           <View
             style={
@@ -87,7 +92,7 @@ const CheckInScreen = ({navigation}) => {
           {/*<Title>VISITOR</Title>*/}
         </View>
       </View>
-      <View style={{...styles.bottomContainer, shadowColor: Colors.text}}>
+      <View style={{...styles.bottomContainer, shadowColor: Colors.text, backgroundColor: Colors.primary}}>
         <View style={styles.buttonContainer}>
           {/*<TouchableOpacity*/}
           {/*  style={styles.checkinButton}*/}
@@ -137,34 +142,39 @@ const CheckInScreen = ({navigation}) => {
             onPress={() => {
               navigation.navigate('IdScanner');
             }}>
-            <View style={styles.halfUpperCircle}>
+            <View style={{
+              ...styles.halfUpperCircle,
+            backgroundColor: Colors.primary,
+            borderColor: Colors.primary
+            }}>
               <Text
                 style={{
-                  color: Colors.primary,
+                  color: 'white',
                   fontSize: Platform.OS === 'ios' ? 20 : 18,
                   fontWeight: '700',
                 }}>
                 TAP
               </Text>
-              <Text style={{...styles.upperText, color: Colors.primary}}>
+              <Text style={{...styles.upperText, color: 'white'}}>
                 TO
               </Text>
             </View>
             <View
               style={{
                 ...styles.halfLowerCircle,
-                backgroundColor: Colors.primary,
-                borderColor: Colors.primary,
+                backgroundColor: 'white',
+                borderColor: 'white',
               }}>
-              <Text style={{...styles.lowerText, borderColor: Colors.primary}}>
+              <Text style={{...styles.lowerText, borderColor: 'white', color: Colors.primary}}>
                 TO
               </Text>
               <Text
                 style={{
-                  color: '#fff',
+                  color: Colors.primary,
                   fontSize: Platform.OS === 'ios' ? 19 : 17,
                   fontWeight: '700',
                 }}>
+        
                 CHECK IN
               </Text>
             </View>
@@ -188,16 +198,18 @@ const CheckInScreen = ({navigation}) => {
         </View>
         <View style={styles.bottomButtonContainer}>
           <Button
+            color='#fff'
             style={styles.bottomButtons}
             mode="text"
             icon={'logout'}
             onPress={() => navigation.navigate('CheckOut')}>
-            Check Out
+            { t("Check Out") }
           </Button>
           <Divider
             style={{width: 1, height: '100%', backgroundColor: Colors.accent}}
           />
           <Button
+          color='#fff'
             style={styles.bottomButtons}
             mode="text"
             onPress={() => {
@@ -210,7 +222,7 @@ const CheckInScreen = ({navigation}) => {
                 navigation.navigate('AuthNav', {Screen: 'Auth'});
               }
             }}>
-            {token ? 'Dashboard' : 'Log In'}
+            {token ? t('Dashboard') : t('Log In')}
           </Button>
         </View>
       </View>

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   View,
   StyleSheet,
@@ -17,6 +18,7 @@ import PushNotification from 'react-native-push-notification';
 let vData;
 
 const CheckInDetails = props => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const [visitorName, setVisitorName] = useState('');
   const [visitorPhone, setVisitorPhone] = useState();
@@ -105,7 +107,7 @@ const CheckInDetails = props => {
       return;
     }
     let checkIn = new Date();
-    let nTime = adminData.notifytime || 3;
+    let nTime =  1;
     dispatch(
       checkin(
         visitorName,
@@ -120,12 +122,12 @@ const CheckInDetails = props => {
         hostId,
       ),
     );
-    console.log(adminData.notifytime, typeof adminData.notifytime);
+    // console.log(adminData.notifytime, typeof adminData.notifytime);
     PushNotification.localNotificationSchedule({
       id: checkIn,
       channelId: 'id1',
       message: `It's been ${nTime} hours.\n${visitorName} is not Checked Out yet`, // (required)
-      date: new Date(Date.now() + 60 * 1000 * 60 * adminData.notifytime), // in 60 secs
+      date: new Date(Date.now() + 60 * 1000 * 60 * 1), // in 60 secs
       allowWhileIdle: false, // (optional) set notification to work while on doze, default: false
       /* Android Only Properties */
       repeatTime: 1, // (optional) Increment of configured repeatType. Check 'Repeating Notifications' section for more info.
@@ -147,7 +149,7 @@ const CheckInDetails = props => {
             onPress={() => props.navigation.goBack()}
           />
           <Appbar.Content
-            title={'CheckIn Details'}
+            title={t('Check In Details')}
             color={Colors.primary}
             style={{alignItems: 'center'}}
           />
@@ -158,7 +160,7 @@ const CheckInDetails = props => {
         <View style={styles.formContainer}>
           <TextInput
             style={styles.inputField}
-            label={'Name*'}
+            label={`${t('Name')}*`}
             value={visitorName}
             onChangeText={t => {
               setVisitorName(t);
@@ -168,7 +170,7 @@ const CheckInDetails = props => {
           {visitorAddress && (
             <TextInput
               style={{...styles.inputField}}
-              label={'Address'}
+              label={`${t('Address')}*`}
               value={visitorAddress}
               editable={false}
               disabled={true}
@@ -181,7 +183,7 @@ const CheckInDetails = props => {
             textContentType={'telephoneNumber'}
             keyboardType={'number-pad'}
             style={{...styles.inputField}}
-            label={'Mobile*'}
+            label={`${t('Mobile')}*`}
             value={visitorPhone}
             onChangeText={t => {
               setVisitorPhone(t);
@@ -200,7 +202,7 @@ const CheckInDetails = props => {
             setId={setHostId}
             visible={visibleHost}
             onDismiss={closeMenu}
-            lable={'Select a Host*'}
+            lable={`${t('Host')}*`}
           />
           <ItemPicker
             itemData={purposeData}
@@ -212,7 +214,7 @@ const CheckInDetails = props => {
             setValue={setPurposeValue}
             visible={visiblePurpose}
             onDismiss={closeMenu}
-            lable={'Select Purpose*'}
+            lable={`${t('Purpose')}*`}
           />
 
           <View style={{alignItems: 'center', marginTop: 30}}>
@@ -226,7 +228,7 @@ const CheckInDetails = props => {
               mode={'contained'}
               style={styles.button}
               onPress={submitHandler}>
-              Next
+              {`${t('Next')}`}
             </Button>
           </View>
         </View>

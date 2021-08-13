@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {View, StyleSheet, ScrollView, Dimensions} from 'react-native';
 import {
   Appbar,
@@ -30,6 +31,7 @@ const capitalize = input => {
 };
 
 const VisitorLogScreen = ({navigation, route}) => {
+  const {t, i18n} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   let tableRow = 'even';

@@ -1,4 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState, useRef} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
   View,
   StyleSheet,
@@ -30,12 +32,87 @@ import {
 } from '../store/actions/host';
 import * as authActions from '../store/actions/auth';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Micon from 'react-native-vector-icons/MaterialIcons';
 import {ColorPicker, fromHsv} from 'react-native-color-picker';
 import Colors, {changeColors} from '../constants/Colors';
 import {updateTheme} from '../store/actions/theme';
 import CustomSwitch from '../components/CustomSwitch';
+import SmoothPicker from 'react-native-smooth-picker';
+
+// const dataLang = [
+//   {shortForm: 'en', longForm: 'English'},
+//   {shortForm: 'gu', longForm: 'Gujarati'},
+//   {shortForm: 'hi', longForm: 'Hindi'},
+//   {shortForm: 'fr', longForm: 'French'},
+// ];
+const dataLang = [
+  'English',
+  'Gujarati',
+  'Hindi',
+  'French'
+]
+const dataLangKey = [
+  'en',
+  'gu',
+  'hi',
+  'fr'
+]
+
+const opacities = {
+  0: 1,
+  1: 1,
+  2: 0.6,
+  3: 0.3,
+  4: 0.1,
+};
+const sizeText = {
+  0: 20,
+  1: 15,
+  2: 10,
+};
+
+const Item = React.memo(({opacity, selected, vertical, fontSize, name}) => {
+  return (
+    <View
+      style={[
+        styles.OptionWrapper,
+        {
+          opacity,
+          borderColor: selected ? '#ABC9AF' : 'transparent',
+          width: vertical ? 190 : 'auto',
+        },
+      ]}>
+      <Text style={{fontSize}}>{name}</Text>
+    </View>
+  );
+});
+
+const ItemToRender = ({item, index}, indexSelected, vertical) => {
+  const selected = index === indexSelected;
+  const gap = Math.abs(index - indexSelected);
+
+  let opacity = opacities[gap];
+  if (gap > 3) {
+    opacity = opacities[4];
+  }
+  let fontSize = sizeText[gap];
+  if (gap > 1) {
+    fontSize = sizeText[2];
+  }
+
+  return (
+    <Item
+      opacity={opacity}
+      selected={selected}
+      vertical={vertical}
+      fontSize={fontSize}
+      name={item}
+    />
+  );
+};
 
 const SettingScreen = ({navigation}) => {
+  const {t, i18n} = useTranslation();
   const adminData = useSelector(state => state.auth.adminData);
   const Colors = useSelector(state => state.theme.colors);
   const setPass = useSelector(state => state.auth.setPass);
@@ -43,7 +120,7 @@ const SettingScreen = ({navigation}) => {
   const [username, setUsername] = useState(adminData.username);
   const [email, setEmail] = useState(adminData.email);
   // const [phone, setPhone] = useState(adminData.phone);
-  const [notifyTime, setNotifyTime] = useState(adminData.notifytime.toString());
+  const [notifyTime, setNotifyTime] = useState(adminData?.notifytime?.toString());
   const [purpose, setPurpose] = useState('');
   const [currPass, setCurrPass] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,13 +131,14 @@ const SettingScreen = ({navigation}) => {
   const [themeAccentColor, setThemeAccentColor] = useState(Colors.accent);
   const [colorModal, setColorModal] = useState(false);
   const [switchValue, setSwitchValue] = useState(1);
+  const [langModal, setLangModal] = useState(false);
   const [value, onChange] = useState('10:00');
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
-  const handleChange = (value: {hours: number, minutes: number}) => {
-    setHours(value.hours);
-    setMinutes(value.minutes);
-  };
+  // const handleChange = (value: {hours: number, minutes: number}) => {
+  //   setHours(value.hours);
+  //   setMinutes(value.minutes);
+  // };
 
   useEffect(() => {
     dispatch(fetchDetails());
@@ -82,6 +160,44 @@ const SettingScreen = ({navigation}) => {
     setSwitchValue(1);
     setColorModal(false);
   };
+
+  const showLangModal = () => {
+    setLangModal(true);
+  };
+  const hideLangModal = () => {
+    AsyncStorage.setItem(
+      'language',
+      JSON.stringify({
+        lang: dataLangKey[selected],
+      }),
+    );
+    i18n.changeLanguage(dataLangKey[selected]);
+    setLangModal(false)
+  };
+
+  const onLangChange = index => {
+    setSelected(index);
+    // i18n.changeLanguage(dataLang[index].shortForm);
+    refPicker?.current?.scrollToIndex({
+      animated: false,
+      index: index,
+      viewOffset: -30,
+    });
+  };
+  const refPicker = useRef(null);
+  const [selected, setSelected] = useState(1);
+  useEffect(() => {
+    const getLang = async () => {
+      const langData = await AsyncStorage.getItem('language');
+      const langDataJson = JSON.parse(langData);
+
+      if (!langData) {
+        return;
+      }
+      setSelected(dataLangKey.findIndex(item => item === langDataJson.lang))
+    };
+    getLang();
+  },[])
 
   const submitHandler = async () => {
     setLoading(true);
@@ -184,7 +300,7 @@ const SettingScreen = ({navigation}) => {
         </Appbar.Header>
 
         <View style={styles.screen}>
-          <Title>Admin Details</Title>
+          <Title>{t('admin')} Details</Title>
           <TextInput
             autoCapitalize={'none'}
             mode={'outlined'}
@@ -350,6 +466,45 @@ const SettingScreen = ({navigation}) => {
               </View>
             </Modal>
           </Portal>
+          <Portal>
+            <Modal
+              style={{flex: 1}}
+              visible={langModal}
+              onDismiss={hideLangModal}
+              contentContainerStyle={{
+                ...styles.langContainerStyle,
+                height: '50%',
+              }}>
+              <View style={styles.container}>
+                {/* <View style={styles.wrapperHorizontal}>
+                  <SmoothPicker
+                    initialScrollToIndex={lang}
+                    refFlatList={refPicker}
+                    keyExtractor={(_, index) => index.toString()}
+                    horizontal={true}
+                    scrollAnimation
+                    showsHorizontalScrollIndicator={false}
+                    data={dataCity}
+                    renderItem={option => ItemToRender(option, lang, false)}
+                  />
+                </View> */}
+                <View style={styles.wrapperVertical}>
+                  <SmoothPicker
+                    refFlatList={refPicker}
+                    initialScrollToIndex={selected}
+                    onScrollToIndexFailed={() => {}}
+                    keyExtractor={(_, index) => index.toString()}
+                    showsVerticalScrollIndicator={false}
+                    data={dataLang}
+                    scrollAnimation
+                    onSelected={({item, index}) => onLangChange(index)}
+                    renderItem={option => ItemToRender(option, selected, true)}
+                    magnet
+                  />
+                </View>
+              </View>
+            </Modal>
+          </Portal>
 
           <Button
             // color={Colors.primary}
@@ -384,6 +539,16 @@ const SettingScreen = ({navigation}) => {
               color={Colors.primary}
             />
           </View>
+          <View style={{...styles.updateThemeContainer, marginTop: -30}}>
+            <Text style={{fontSize: 16}}>Language</Text>
+            <IconButton
+              icon={({size, color}) => (
+                <Micon name={'language'} size={size} color={color} />
+              )}
+              onPress={showLangModal}
+              color={Colors.primary}
+            />
+          </View>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -407,6 +572,12 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 5,
   },
+  langContainerStyle: {
+    backgroundColor: 'white',
+    padding: 20,
+    margin: 10,
+    borderRadius: 5,
+  },
   addButton: {
     margin: 7,
     justifyContent: 'center',
@@ -416,6 +587,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  container: {
+    paddingTop: 60,
+    paddingBottom: 30,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  wrapperVertical: {
+    width: 250,
+    height: 350,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 'auto',
+    color: 'black',
+  },
+  OptionWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
+    height: 50,
+    borderWidth: 3,
+    borderRadius: 10,
   },
 });
 

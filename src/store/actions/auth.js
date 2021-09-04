@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {UPDATEHOST} from './host';
 
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
@@ -75,7 +74,7 @@ export const updateAdmin = updateData => {
         id: resData._id,
         username: resData.username,
         email: resData.email,
-        notifytime: resData.notifytime
+        notifytime: resData.notifytime,
       };
 
       AsyncStorage.mergeItem(

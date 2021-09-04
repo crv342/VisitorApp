@@ -2,12 +2,6 @@ import React from 'react';
 import {FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-// export type ColorPickerProps = {
-//   colors?: string[];
-//   onSelect?: (item: string) => void;
-//   selectedColor?: string;
-// };
-
 const CustomColorPicker = ({colors, onSelect, selectedColor}) => {
   return (
     <FlatList

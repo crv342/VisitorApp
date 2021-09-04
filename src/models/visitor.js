@@ -1,5 +1,3 @@
-// import moment from 'moment';
-
 class Visitor {
   constructor(
     id,
@@ -24,16 +22,6 @@ class Visitor {
     this.host = host;
     this.purpose = purpose;
   }
-
-  // get readableCheckInDate() {
-  //   return moment(this.checkIn).format('MMMM Do YYYY, hh:mm');
-  // }
-  // get readableCheckOutDate() {
-  //   if (!this.checkOut) {
-  //     return this.checkOut;
-  //   }
-  //   return moment(this.checkOut).format('MMMM Do YYYY, hh:mm');
-  // }
 }
 
 export default Visitor;

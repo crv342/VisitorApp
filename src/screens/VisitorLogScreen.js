@@ -8,19 +8,14 @@ import {
   ActivityIndicator,
   Portal,
   Modal,
-  Button,
-  Provider,
   Title,
   Searchbar,
   Divider,
 } from 'react-native-paper';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchvisitor} from '../store/actions/visitor';
+import {useSelector} from 'react-redux';
 import moment from 'moment';
-import Colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const optionsPerPage = [2, 3, 4];
 const widthScreen = Dimensions.get('screen').width;
 const capitalize = input => {
   return input
@@ -31,15 +26,12 @@ const capitalize = input => {
 };
 
 const VisitorLogScreen = ({navigation, route}) => {
-  const {t, i18n} = useTranslation();
-  const dispatch = useDispatch();
+  const {t} = useTranslation();
   const Colors = useSelector(state => state.theme.colors);
   let tableRow = 'even';
   const [asc, setAsc] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(0);
+  const [isLoading] = useState(false);
   const [visitor, setVisitor] = useState('');
-  const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
   const [visible, setVisible] = useState(false);
   const [showSearchBar, setShowSearchBar] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,11 +44,6 @@ const VisitorLogScreen = ({navigation, route}) => {
   };
   const hideModal = () => setVisible(false);
 
-  useEffect(() => {
-    // setIsLoading(true);
-    // dispatch(fetchvisitor());
-    setIsLoading(false);
-  }, []);
   const visitorsData = useSelector(state => state.visitor.visitor);
   // if (!visitorsData) {
   //   return (
@@ -95,10 +82,6 @@ const VisitorLogScreen = ({navigation, route}) => {
     }
   }, [route, searchQuery, visitorsData, navigation]);
 
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
-
   return (
     <View style={styles.screen}>
       <Appbar.Header>
@@ -129,14 +112,7 @@ const VisitorLogScreen = ({navigation, route}) => {
             />
             <Appbar.Content title={'History'} />
             <Appbar.Action
-              icon={({size, color}) => (
-                <Icon
-                  color={'white'}
-                  size={24}
-                  name={'search'}
-                  // style={{width: size, height: size, tintColor: color}}
-                />
-              )}
+              icon={() => <Icon color={'white'} size={24} name={'search'} />}
               onPress={() => setShowSearchBar(true)}
             />
           </>
@@ -212,13 +188,13 @@ const VisitorLogScreen = ({navigation, route}) => {
                             <View>
                               <Text style={styles.checkINText}>
                                 {moment(item.checkIn).format(
-                                  'MMMM Do YYYY, hh:mm',
+                                  'MMM Do YYYY, hh:mm',
                                 )}
                               </Text>
                               <Text style={styles.checkOutText}>
                                 {item.checkOut !== undefined
                                   ? moment(item.checkOut).format(
-                                      'MMMM Do YYYY, hh:mm',
+                                      'MMM Do YYYY, hh:mm',
                                     )
                                   : ''}
                               </Text>
@@ -228,22 +204,10 @@ const VisitorLogScreen = ({navigation, route}) => {
                       );
                     }
                   })}
-                {/*<DataTable.Pagination*/}
-                {/*  page={page}*/}
-                {/*  numberOfPages={3}*/}
-                {/*  onPageChange={page => setPage(page)}*/}
-                {/*  label="1-2 of 6"*/}
-                {/*  optionsPerPage={optionsPerPage}*/}
-                {/*  itemsPerPage={itemsPerPage}*/}
-                {/*  setItemsPerPage={setItemsPerPage}*/}
-                {/*  showFastPagination*/}
-                {/*  optionsLabel={'Rows per page'}*/}
-                {/*/>*/}
               </DataTable>
             )}
           </View>
         </View>
-        {/*<Provider>*/}
         <Portal>
           <Modal
             visible={visible}
@@ -260,7 +224,7 @@ const VisitorLogScreen = ({navigation, route}) => {
               </View>
               <Divider />
               <DataTable>
-                {Object.keys(visitor).map((keyName, keyIndex) => {
+                {Object.keys(visitor).map(keyName => {
                   if (keyName === 'id') {
                     return;
                   }
@@ -275,7 +239,7 @@ const VisitorLogScreen = ({navigation, route}) => {
                           visitor[keyName] !== undefined) ? (
                           <DataTable.Cell>
                             {moment(visitor[keyName]).format(
-                              'MMMM Do YYYY, hh:mm',
+                              'MMM Do YYYY, hh:mm',
                             )}
                           </DataTable.Cell>
                         ) : (
@@ -286,11 +250,9 @@ const VisitorLogScreen = ({navigation, route}) => {
                   );
                 })}
               </DataTable>
-              {/*</ScrollView>*/}
             </View>
           </Modal>
         </Portal>
-        {/*</Provider>*/}
       </ScrollView>
     </View>
   );
@@ -324,20 +286,14 @@ const styles = StyleSheet.create({
     flex: 1,
     borderColor: '#d0d0d0',
     borderRadius: 10,
-    // shadowColor: '#d0d0d0',
-    // shadowOpacity: 1,
-    // shadowRadius: 10,
-    // elevation: 4,
   },
 
   rowOdd: {
     ...rowTable,
     shadowColor: '#885b5b',
-    // elevation: 1.5,
   },
   rowEven: {
     ...rowTable,
-    // backgroundColor: 'rgb(226,226,226)',
     backgroundColor: 'rgb(255,255,255)',
     shadowColor: 'rgba(54,66,109,0.91)',
     elevation: 1.5,

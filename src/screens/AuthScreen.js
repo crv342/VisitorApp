@@ -14,7 +14,6 @@ import {
   TextInput,
   Button,
   Appbar,
-  ActivityIndicator,
   HelperText,
   IconButton,
 } from 'react-native-paper';
@@ -30,7 +29,7 @@ const formSchema = yup.object({
 });
 
 const AuthScreen = ({navigation}) => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const [showPassword, setShowPassword] = useState(false);
@@ -125,7 +124,6 @@ const AuthScreen = ({navigation}) => {
                   onBlur={() => {
                     setUserIconColor('black');
                     setFieldTouched('username');
-                    // handleBlur('username');
                   }}
                 />
                 {touched.username && errors.username && (
@@ -172,7 +170,6 @@ const AuthScreen = ({navigation}) => {
                   onPress={handleSubmit}>
                   Log In
                 </Button>
-                {/*)}*/}
               </View>
             )}
           </Formik>
@@ -195,7 +192,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   errorText: {
-    // backgroundColor: '#fff',
     alignSelf: 'center',
     fontSize: 13,
     alignItems: 'center',
@@ -205,7 +201,6 @@ const styles = StyleSheet.create({
   errorCloseButton: {
     marginRight: 0,
     right: 0,
-    // width:13,
   },
   errorContainer: {
     height: 40,

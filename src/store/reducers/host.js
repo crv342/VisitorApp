@@ -39,12 +39,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         hosts: [
-          ...state.hosts.slice(0, index), // everything before current post
+          ...state.hosts.slice(0, index),
           {
             ...state.hosts[index],
             ...action.hostData,
           },
-          ...state.hosts.slice(index + 1), // everything after current post
+          ...state.hosts.slice(index + 1),
         ],
       };
     case UPDATEPURPOSE:

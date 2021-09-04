@@ -8,7 +8,6 @@ import {
   Keyboard,
   TouchableOpacity,
   Alert,
-  Platform,
 } from 'react-native';
 import {
   Appbar,
@@ -16,7 +15,6 @@ import {
   Portal,
   Text,
   Button,
-  Provider,
   TextInput,
   Title,
   List,
@@ -32,31 +30,15 @@ import {
 } from '../store/actions/host';
 import * as authActions from '../store/actions/auth';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Micon from 'react-native-vector-icons/MaterialIcons';
-import {ColorPicker, fromHsv} from 'react-native-color-picker';
-import Colors, {changeColors} from '../constants/Colors';
+import {ColorPicker} from 'react-native-color-picker';
+import Colors from '../constants/Colors';
 import {updateTheme} from '../store/actions/theme';
 import CustomSwitch from '../components/CustomSwitch';
 import SmoothPicker from 'react-native-smooth-picker';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-// const dataLang = [
-//   {shortForm: 'en', longForm: 'English'},
-//   {shortForm: 'gu', longForm: 'Gujarati'},
-//   {shortForm: 'hi', longForm: 'Hindi'},
-//   {shortForm: 'fr', longForm: 'French'},
-// ];
-const dataLang = [
-  'English',
-  'Gujarati',
-  'Hindi',
-  'French'
-]
-const dataLangKey = [
-  'en',
-  'gu',
-  'hi',
-  'fr'
-]
+const dataLang = ['English', 'Gujarati', 'Hindi', 'French'];
+const dataLangKey = ['en', 'gu', 'hi', 'fr'];
 
 const opacities = {
   0: 1,
@@ -120,7 +102,9 @@ const SettingScreen = ({navigation}) => {
   const [username, setUsername] = useState(adminData.username);
   const [email, setEmail] = useState(adminData.email);
   // const [phone, setPhone] = useState(adminData.phone);
-  const [notifyTime, setNotifyTime] = useState(adminData?.notifytime?.toString());
+  const [notifyTime, setNotifyTime] = useState(
+    adminData?.notifytime?.toString(),
+  );
   const [purpose, setPurpose] = useState('');
   const [currPass, setCurrPass] = useState('');
   const [loading, setLoading] = useState(false);
@@ -172,12 +156,11 @@ const SettingScreen = ({navigation}) => {
       }),
     );
     i18n.changeLanguage(dataLangKey[selected]);
-    setLangModal(false)
+    setLangModal(false);
   };
 
   const onLangChange = index => {
     setSelected(index);
-    // i18n.changeLanguage(dataLang[index].shortForm);
     refPicker?.current?.scrollToIndex({
       animated: false,
       index: index,
@@ -194,10 +177,10 @@ const SettingScreen = ({navigation}) => {
       if (!langData) {
         return;
       }
-      setSelected(dataLangKey.findIndex(item => item === langDataJson.lang))
+      setSelected(dataLangKey.findIndex(item => item === langDataJson.lang));
     };
     getLang();
-  },[])
+  }, []);
 
   const submitHandler = async () => {
     setLoading(true);
@@ -279,14 +262,10 @@ const SettingScreen = ({navigation}) => {
   const themeColorHandler = async color => {
     if (switchValue === 1) {
       await dispatch(updateTheme(color, Colors.accent));
-      // setThemePrimaryColor(color);
     }
     if (switchValue === 2) {
       await dispatch(updateTheme(Colors.primary, color));
-      // setThemeAccentColor(color);
     }
-
-    // hideColorModal();
   };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -321,15 +300,6 @@ const SettingScreen = ({navigation}) => {
               setEmail(t);
             }}
           />
-          {/*<TextInput*/}
-          {/*  mode={'outlined'}*/}
-          {/*  style={styles.inputField}*/}
-          {/*  label={'phone'}*/}
-          {/*  value={phone}*/}
-          {/*  onChangeText={t => {*/}
-          {/*    setPhone(t);*/}
-          {/*  }}*/}
-          {/*/>*/}
           <View
             style={{
               flexDirection: 'row',
@@ -349,7 +319,6 @@ const SettingScreen = ({navigation}) => {
                 keyboardType={'numeric'}
                 mode={'outlined'}
                 style={{...styles.inputField, width: 40, height: 40}}
-                // label={'phone'}
                 value={notifyTime}
                 onChangeText={t => {
                   setNotifyTime(t);
@@ -476,18 +445,6 @@ const SettingScreen = ({navigation}) => {
                 height: '50%',
               }}>
               <View style={styles.container}>
-                {/* <View style={styles.wrapperHorizontal}>
-                  <SmoothPicker
-                    initialScrollToIndex={lang}
-                    refFlatList={refPicker}
-                    keyExtractor={(_, index) => index.toString()}
-                    horizontal={true}
-                    scrollAnimation
-                    showsHorizontalScrollIndicator={false}
-                    data={dataCity}
-                    renderItem={option => ItemToRender(option, lang, false)}
-                  />
-                </View> */}
                 <View style={styles.wrapperVertical}>
                   <SmoothPicker
                     refFlatList={refPicker}
@@ -507,14 +464,12 @@ const SettingScreen = ({navigation}) => {
           </Portal>
 
           <Button
-            // color={Colors.primary}
             mode={'contained'}
             style={styles.inputField}
             onPress={submitHandler}>
             Save
           </Button>
           <Button
-            // color={Colors.primary}
             mode={'outlined'}
             style={styles.inputField}
             onPress={() => {
@@ -543,7 +498,7 @@ const SettingScreen = ({navigation}) => {
             <Text style={{fontSize: 16}}>Language</Text>
             <IconButton
               icon={({size, color}) => (
-                <Micon name={'language'} size={size} color={color} />
+                <MaterialIcons name={'language'} size={size} color={color} />
               )}
               onPress={showLangModal}
               color={Colors.primary}

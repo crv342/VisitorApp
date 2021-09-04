@@ -10,24 +10,24 @@ const initialState = {
     bezier: {
       gradientStart: '#e26a00',
       gradientEnd: '#fb8c00',
-      stroke: '#ffa726', 
+      stroke: '#ffa726',
     },
     line: {
       gradientStart: '#69e200',
       gradientEnd: '#698c00',
-      stroke: '#69a726', 
+      stroke: '#69a726',
     },
     bar: {
       gradientStart: '#0066e2',
       gradientEnd: '#0066e2',
-      stroke: '#0066e2', 
+      stroke: '#0066e2',
     },
     contribution: {
       gradientStart: '#a600e2',
       gradientEnd: '#a600e2',
-      stroke: '#a600e2', 
-    }
-  }
+      stroke: '#a600e2',
+    },
+  },
 };
 
 export default (state = initialState, action) => {
@@ -45,7 +45,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         chartColors: action.chartColors,
-      };  
+      };
     default:
       return state;
   }

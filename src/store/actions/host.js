@@ -18,14 +18,13 @@ export const fetchDetails = () => {
         },
       });
       if (!response.ok) {
-        const resData = await response.json();
         throw new Error('Fetching details failed..');
       }
       const resData = await response.json();
       const purposeData = resData.purpose;
       const hData = resData.host;
       const hostData = [];
-      for (var key = 0; key < hData.length; key++) {
+      for (let key = 0; key < hData.length; key++) {
         hostData.push(
           new Host(
             hData[key]._id,
@@ -74,7 +73,7 @@ export const addHost = (name, phone, email, sendemail, sendsms, status) => {
       const responseData = await response.json();
       const resData = responseData.host;
       const hostData = [];
-      for (var key = 0; key < resData.length; key++) {
+      for (let key = 0; key < resData.length; key++) {
         hostData.push(
           new Host(
             resData[key]._id,
@@ -164,7 +163,6 @@ export const updatePurpose = purpose => {
       const resData = await response.json();
       const purposeData = resData.purpose;
 
-      // const resData = await response.json();
       dispatch({type: UPDATEPURPOSE, purposeData});
     } catch (e) {
       throw new Error(e.message);
@@ -189,7 +187,6 @@ export const removePurpose = id => {
       }
       const resData = await response.json();
 
-      // const resData = await response.json();
       dispatch({type: REMOVEPURPOSE, id: resData._id});
     } catch (e) {
       throw new Error(e.message);

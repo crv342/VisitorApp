@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {View, SafeAreaView, Platform} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {Button, Divider} from 'react-native-paper';
-import Colors from '../constants/Colors';
 import {NavigationContainer} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -111,18 +110,6 @@ const CheckInNavigator = () => {
   );
 };
 
-// const VisitorLogNavigator = ({navigation}) => {
-//   return (
-//     <Stack.Navigator>
-//       <Stack.Screen
-//         name={'VisitorLog'}
-//         component={VisitorLogScreen}
-//         options={{headerShown: false}}
-//       />
-//     </Stack.Navigator>
-//   );
-// };
-let luma;
 const DrawerNavigator = ({navigation}) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
@@ -141,7 +128,6 @@ const DrawerNavigator = ({navigation}) => {
           <View>
             <View
               style={{
-                // flex: 1,
                 height: 50,
                 backgroundColor: Colors.primary,
               }}
@@ -168,7 +154,6 @@ const DrawerNavigator = ({navigation}) => {
               <Divider />
               <Button
                 title="Logout"
-                // color={'black'}
                 onPress={() => {
                   dispatch(logout());
                   navigation.reset({
@@ -212,7 +197,6 @@ const DrawerNavigator = ({navigation}) => {
               color={focused ? Colors.primary : '#ccc'}
             />
           ),
-          // unmountOnBlur: true,
         }}
       />
       <Drawer.Screen
@@ -248,7 +232,6 @@ const DrawerNavigator = ({navigation}) => {
 };
 
 const AppNavigator = () => {
-  const token = useSelector(state => state.auth.token);
   const isLoading = useSelector(state => state.auth.isLoading);
 
   if (isLoading) {

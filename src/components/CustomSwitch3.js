@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
 
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Text, View, TouchableOpacity} from 'react-native';
 
 const CustomSwitch = ({
-  navigation,
   selectionMode,
   roundCorner,
   option1,
@@ -13,7 +12,7 @@ const CustomSwitch = ({
   selectionColor,
 }) => {
   const [getSelectionMode, setSelectionMode] = useState(selectionMode);
-  const [getRoundCorner, setRoundCorner] = useState(roundCorner);
+  const [getRoundCorner] = useState(roundCorner);
 
   const updatedSwitchData = val => {
     setSelectionMode(val);
@@ -28,11 +27,9 @@ const CustomSwitch = ({
           width: '95%',
           backgroundColor: 'white',
           borderRadius: getRoundCorner ? 25 : 0,
-          // borderWidth: 1,
           borderColor: selectionColor,
           flexDirection: 'row',
           justifyContent: 'center',
-          // padding: 2,
         }}>
         <TouchableOpacity
           activeOpacity={1}
@@ -71,24 +68,24 @@ const CustomSwitch = ({
         </TouchableOpacity>
         {option3 && (
           <TouchableOpacity
-          TouchableOpacity
-          activeOpacity={1}
-          onPress={() => updatedSwitchData(3)}
-          style={{
-            flex: 1,
-            backgroundColor: getSelectionMode == 3 ? selectionColor : 'white',
-            borderRadius: getRoundCorner ? 25 : 0,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text
+            TouchableOpacity
+            activeOpacity={1}
+            onPress={() => updatedSwitchData(3)}
             style={{
-              color: getSelectionMode == 3 ? 'white' : selectionColor,
+              flex: 1,
+              backgroundColor: getSelectionMode == 3 ? selectionColor : 'white',
+              borderRadius: getRoundCorner ? 25 : 0,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            {option3}
-          </Text>
-        </TouchableOpacity>
-        )} 
+            <Text
+              style={{
+                color: getSelectionMode == 3 ? 'white' : selectionColor,
+              }}>
+              {option3}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

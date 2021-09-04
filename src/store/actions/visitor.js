@@ -17,13 +17,12 @@ export const fetchCheckedIn = () => {
       });
 
       if (!response.ok) {
-        const resData = await response.json();
         throw new Error('Fetching Visitors failed..');
       }
       const resData = await response.json();
 
       const checkedInData = [];
-      for (var key = 0; key < resData.length; key++) {
+      for (let key = 0; key < resData.length; key++) {
         if (!resData[key].checkOut) {
           checkedInData.push(
             new Visitor(
@@ -62,13 +61,12 @@ export const fetchvisitor = () => {
       });
 
       if (!response.ok) {
-        const resData = await response.json();
         throw new Error('Fetching Visitors failed..');
       }
       const resData = await response.json();
 
       const visitorData = [];
-      for (var key = 0; key < resData.length; key++) {
+      for (let key = 0; key < resData.length; key++) {
         visitorData.push(
           new Visitor(
             resData[key]._id,
@@ -127,7 +125,6 @@ export const checkin = (
       });
 
       if (!response.ok) {
-        const resData = await response.json();
         let message = 'Something went wrong!';
         throw new Error(message);
       }
@@ -165,8 +162,6 @@ export const checkout = id => {
       if (!response.ok) {
         throw new Error('something went wrong');
       }
-
-      // const resData = await response.json();
       dispatch({type: CHECKOUT, id});
     } catch (e) {
       throw new Error(e);

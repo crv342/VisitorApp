@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
-  ScrollView,
 } from 'react-native';
 import ItemPicker from '../components/ItemPicker';
 
@@ -18,7 +17,7 @@ import PushNotification from 'react-native-push-notification';
 let vData;
 
 const CheckInDetails = props => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [visitorName, setVisitorName] = useState('');
   const [visitorPhone, setVisitorPhone] = useState();
@@ -31,17 +30,15 @@ const CheckInDetails = props => {
   const [visibleHost, setVisibleHost] = useState(false);
   const [visiblePurpose, setVisiblePurpose] = useState(false);
   const Colors = useSelector(state => state.theme.colors);
-  const adminData = useSelector(state => state.auth.adminData);
   const purposeData = useSelector(state => state.host.purposes);
   const hostData = useSelector(state =>
     state.host.hosts.filter(h => h.status === true),
   );
   const [error, setError] = useState(false);
 
-  if (props.route.params) {
-    vData = props.route.params.data;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
+  useEffect(() => {
+    if (props.route.params) {
+      vData = props.route.params.data;
       if (typeof vData === 'string' && vData.startsWith('<')) {
         if (vData.startsWith('<?xml')) {
           vData = vData.slice(63, vData.length - 2).trim();
@@ -89,8 +86,8 @@ const CheckInDetails = props => {
         );
         setVisitorDOB('dob' in vData ? vData.dob : vData.d);
       }
-    }, []);
-  }
+    }
+  }, [props.route.params]);
 
   const submitHandler = async () => {
     if (
@@ -107,7 +104,7 @@ const CheckInDetails = props => {
       return;
     }
     let checkIn = new Date();
-    let nTime =  1;
+    let nTime = 1;
     dispatch(
       checkin(
         visitorName,

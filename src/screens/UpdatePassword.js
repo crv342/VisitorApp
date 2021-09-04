@@ -5,31 +5,20 @@ import {
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
-  Platform,
   TextInput,
   Alert,
 } from 'react-native';
-
-import Colors from '../constants/Colors';
 import {useDispatch} from 'react-redux';
-import {
-  ActivityIndicator,
-  Appbar,
-  Button,
-  IconButton,
-  Text,
-} from 'react-native-paper';
-import {UPDATEPASSWORD, updatePassword} from '../store/actions/auth';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ActivityIndicator, Appbar, Text} from 'react-native-paper';
+import {updatePassword} from '../store/actions/auth';
 
 const UpdatePassword = ({navigation}) => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [changedPass, setChangedPass] = useState(false);
-  // const hasUnsavedChanges = Boolean(text);
 
   useEffect(
     () =>
@@ -37,9 +26,7 @@ const UpdatePassword = ({navigation}) => {
         if (changedPass) {
           return;
         }
-
         e.preventDefault();
-
         Alert.alert(
           'Are You Sure?',
           'You are leaving screen without updating password. Are you sure to leave the screen?',
@@ -55,16 +42,6 @@ const UpdatePassword = ({navigation}) => {
       }),
     [navigation, changedPass],
   );
-  useEffect(() => {
-    const blur = navigation.addListener('blur', () => {
-      dispatch({
-        type: UPDATEPASSWORD,
-        setPassword: false,
-        resToken: null,
-      });
-    });
-  });
-  // useEffect(() => {});
 
   const submitHandler = async () => {
     try {
@@ -85,7 +62,6 @@ const UpdatePassword = ({navigation}) => {
         );
         return;
       }
-
       setIsLoading(true);
       await dispatch(updatePassword(newPassword));
       setChangedPass(true);
@@ -101,10 +77,7 @@ const UpdatePassword = ({navigation}) => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{flex: 1}}>
         <Appbar.Header>
-          <Appbar.BackAction
-            // icon={Platform.OS === 'ios' ? 'chevron-left' : 'arrow-left'}
-            onPress={() => navigation.goBack()}
-          />
+          <Appbar.BackAction onPress={() => navigation.goBack()} />
           <Appbar.Content title={'Update Password'} />
           {isLoading ? (
             <ActivityIndicator
@@ -153,8 +126,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     padding: '3%',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   inputField: {
     alignSelf: 'center',
@@ -165,7 +136,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     fontSize: 15,
     paddingLeft: 6,
-    // borderWidth: 1,
   },
 });
 

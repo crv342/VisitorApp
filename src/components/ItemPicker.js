@@ -22,7 +22,6 @@ const ItemPicker = ({
         anchor={
           <TextInput
             style={styles.inputShow}
-            // keyboardAppearance={false}
             showSoftInputOnFocus={false}
             label={lable}
             value={value}
@@ -54,9 +53,7 @@ const ItemPicker = ({
 
 const styles = StyleSheet.create({
   inputShow: {
-    // marginTop: 30,
     width: 300,
-    // margin: 20,
   },
   menuSelect: {
     width: 300,

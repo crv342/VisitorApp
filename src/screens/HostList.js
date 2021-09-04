@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {View, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {
   Appbar,
   Text,
@@ -12,16 +12,14 @@ import {
   Portal,
   TextInput,
   Button,
-  ActivityIndicator,
   Switch,
   HelperText,
 } from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import * as hostActions from '../store/actions/host';
-import Colors from '../constants/Colors';
 
 const HostList = ({navigation}) => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const [visible, setVisible] = useState(false);
@@ -302,14 +300,12 @@ const styles = StyleSheet.create({
   textStyle: {
     alignItems: 'flex-start',
     marginLeft: '5%',
-    // fontSize: Dimensions.get('window').width * 0.04,
   },
   buttonStyle: {},
   inputField: {
     width: '90%',
     alignSelf: 'center',
     marginVertical: 4,
-    // color: Colors.primary,
   },
   buttonContainer: {
     marginTop: 10,
@@ -323,7 +319,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-between',
     padding: 4,
   },
 });

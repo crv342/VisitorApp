@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useTranslation} from 'react-i18next';
-import {View, StyleSheet, Text, Image, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {List, IconButton, Title, Appbar} from 'react-native-paper';
 import {useDispatch, useSelector} from 'react-redux';
 import Colors from '../constants/Colors';
@@ -8,7 +8,7 @@ import {checkout} from '../store/actions/visitor';
 import PushNotification from 'react-native-push-notification';
 
 const CheckOutScreen = ({navigation}) => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const Colors = useSelector(state => state.theme.colors);
   const visitorList = useSelector(state => state.visitor.checkedInVisitors);
@@ -21,17 +21,13 @@ const CheckOutScreen = ({navigation}) => {
   const calculateTime = checkIn => {
     let diffInMilliSeconds = Math.abs(new Date() - new Date(checkIn)) / 1000;
 
-    // calculate days
     const days = Math.floor(diffInMilliSeconds / 86400);
     diffInMilliSeconds -= days * 86400;
 
-    // calculate hours
     const hours = Math.floor(diffInMilliSeconds / 3600) % 24;
     diffInMilliSeconds -= hours * 3600;
 
-    // calculate minutes
     const minutes = Math.floor(diffInMilliSeconds / 60) % 60;
-    diffInMilliSeconds -= minutes * 60;
 
     let difference = '';
     if (days > 0) {
@@ -45,9 +41,7 @@ const CheckOutScreen = ({navigation}) => {
       minutes === 0 || hours === 1
         ? `${minutes} minutes`
         : `${minutes} minutes`;
-    // const time = Math.round(
-    //   (((new Date() - new Date(checkIn)) % 86400000) % 3600000) / 60000,
-    // );
+
     return difference;
   };
   if (visitorList.length === 0) {
@@ -127,8 +121,6 @@ const CheckOutScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
     backgroundColor: 'white',
   },
   itemTitle: {

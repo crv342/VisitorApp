@@ -14,7 +14,6 @@ import {
   Divider,
   Modal,
 } from 'react-native-paper';
-import Colors from '../constants/Colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   LineChart,
@@ -29,7 +28,6 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import CustomSwitch from '../components/CustomSwitch3';
 import {ColorPicker} from 'react-native-color-picker';
-import {ColorPicker as ColorPickerBtr} from 'react-native-btr';
 import CustomColorPicker from '../components/CustomColorPicker';
 import {updateChartColor} from '../store/actions/theme';
 
@@ -39,7 +37,7 @@ h = h * 0.4 - 16;
 let lable = new Array(7);
 
 let compareDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-var weekdays = new Array(7);
+let weekdays = new Array(7);
 weekdays[0] = 'Sun';
 weekdays[1] = 'Mon';
 weekdays[2] = 'Tue';
@@ -50,7 +48,7 @@ weekdays[6] = 'Sat';
 let k = new Date().getDay();
 
 const HomeScreen = ({navigation}) => {
-  const {t, i18n} = useTranslation();
+  const {t} = useTranslation();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const visitorData = useSelector(state => state.visitor.visitor);
@@ -70,28 +68,12 @@ const HomeScreen = ({navigation}) => {
     chartColors.bezier.gradientEnd,
   );
   const [stroke, setStroke] = useState(chartColors.bezier.stroke);
-  const [chartShadowColor, setChartShadowColor] = useState(Colors.accent);
+  const [chartShadowColor] = useState(Colors.accent);
   const [switchValue, setSwitchValue] = useState(1);
   const [selectedColor, setSelectedColor] = useState('');
   const colorArray = [
     '#e26a00',
     '#69e200',
-    '#0066e2',
-    '#a600e2',
-    '#e2002d',
-    '#00c8e2',
-  ];
-  const gradientArray = [
-    '#fb8c00',
-    '#698c00',
-    '#0066e2',
-    '#a600e2',
-    '#e2002d',
-    '#00c8e2',
-  ];
-  const strokeArray = [
-    '#ffa726',
-    '#69a726',
     '#0066e2',
     '#a600e2',
     '#e2002d',
@@ -136,11 +118,6 @@ const HomeScreen = ({navigation}) => {
   const hideColorModal = () => setPickerVisible(false);
 
   const radioButtonHandler = value => {
-    let randomNumber =
-      Math.floor(Math.random() * (colorArray.length - 1 - 0 + 1)) + 0;
-    // setGradientStartColor(colorArray[randomNumber]);
-    // setGradientEndColor(gradientArray[randomNumber]);
-    // setStroke(strokeArray[randomNumber]);
     setSwitchValue(1);
     setSelectedColor(chartColors[value].gradientStart);
     setGradientStartColor(chartColors[value].gradientStart);
@@ -288,7 +265,6 @@ const HomeScreen = ({navigation}) => {
     backgroundGradientTo: gradientEndColor,
     decimalPlaces: 0, // optional, defaults to 2dp
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     style: {
       borderRadius: 16,
     },
@@ -328,23 +304,14 @@ const HomeScreen = ({navigation}) => {
   let stackData = new Array(hostLable.length).fill(
     new Array(purposeLable.length).fill(0),
   );
-  // console.log(stackData);
   for (let d of visitorData) {
     let hIndex = hostLable.indexOf(d.host);
     let pIndex = purposeLable.indexOf(d.purpose);
-    // console.log(hIndex, pIndex);
     if (hIndex !== -1 && pIndex !== -1) {
       stackData[hIndex][pIndex]++;
     }
-    // console.log(stackData);
   }
-  // console.log('this---', hostLable, purposeLable, stackData, '----!');
-  // const data = {
-  //   labels: hostLable,
-  //   legend: purposeLable,
-  //   data: stackData,
-  //   barColors: ['#ced6e0', '#a4b0be'],
-  // };
+
   const data = {
     labels: ['Test1', 'Test2'],
     legend: ['L1', 'L2', 'L3'],
@@ -380,7 +347,6 @@ const HomeScreen = ({navigation}) => {
       c[i] += 1;
     }
   }
-  // console.log(p, c);
   const pieChart = new Array();
   for (let i in p) {
     pieChart.push({
@@ -391,7 +357,6 @@ const HomeScreen = ({navigation}) => {
       legendFontSize: 15,
     });
   }
-  // console.log(pieChart);
 
   return (
     <View style={{flex: 1}}>
@@ -425,7 +390,7 @@ const HomeScreen = ({navigation}) => {
                 }>
                 <Card.Content>
                   <Title>{checkedInData.length}</Title>
-                  <Text>{t("Visitors Checked In")}</Text>
+                  <Text>{t('Visitors Checked In')}</Text>
                 </Card.Content>
               </Card>
               <Card
@@ -448,7 +413,7 @@ const HomeScreen = ({navigation}) => {
                 }>
                 <Card.Content>
                   <Title>{monthVisitor.length}</Title>
-                  <Text>{t("This Month Visitors")}</Text>
+                  <Text>{t('This Month Visitors')}</Text>
                 </Card.Content>
               </Card>
               <Card
@@ -458,21 +423,20 @@ const HomeScreen = ({navigation}) => {
                 }>
                 <Card.Content>
                   <Title>{visitorData.length}</Title>
-                  <Text>{t("Total Visitors")}</Text>
+                  <Text>{t('Total Visitors')}</Text>
                 </Card.Content>
               </Card>
             </View>
 
             <View style={styles.chartButtonContainer}>
               <Button
-                icon={({size, color}) => (
+                icon={({color}) => (
                   <Icon color={color} size={24} name={'menu-down'} />
                 )}
                 contentStyle={styles.b}
                 style={styles.dialogShowButton}
                 onPress={showDialog}>
-                {t("Select Chart")}
-                {/*<Icon size={20} name={'menu-down'} />*/}
+                {t('Select Chart')}
               </Button>
               <Entypo
                 size={21}
@@ -533,7 +497,7 @@ const HomeScreen = ({navigation}) => {
 
             <Portal>
               <Dialog visible={visible} onDismiss={hideDialog}>
-                <Dialog.Title>{t("Select Chart")}</Dialog.Title>
+                <Dialog.Title>{t('Select Chart')}</Dialog.Title>
                 <Divider />
                 <Dialog.Content>
                   <RadioButton.Group
@@ -550,11 +514,6 @@ const HomeScreen = ({navigation}) => {
                     />
                   </RadioButton.Group>
                 </Dialog.Content>
-                {/*<Divider />*/}
-                {/*<Dialog.Actions>*/}
-                {/*  <Button onPress={hideDialog}>Cancel</Button>*/}
-                {/*  <Button onPress={hideDialog}>Ok</Button>*/}
-                {/*</Dialog.Actions>*/}
               </Dialog>
             </Portal>
             <Portal>
@@ -579,9 +538,9 @@ const HomeScreen = ({navigation}) => {
                 <LineChart
                   bezier={chartName === 'bezier' && true}
                   data={chartData}
-                  width={chartWidth} // from react-native
+                  width={chartWidth}
                   height={h}
-                  yAxisInterval={1} // optional, defaults to 1
+                  yAxisInterval={1}
                   chartConfig={chartConfig}
                   style={styles.chartStyle}
                 />
@@ -594,7 +553,6 @@ const HomeScreen = ({navigation}) => {
                   width={chartWidth}
                   height={h}
                   withVerticalLabels={true}
-                  // yAxisLabel=" visitors"
                   chartConfig={chartConfig}
                   verticalLabelRotation={30}
                 />
@@ -621,9 +579,7 @@ const HomeScreen = ({navigation}) => {
                 height={220}
                 chartConfig={chartConfig}
                 accessor={'visitors'}
-                // backgroundColor={'#ccc'}
                 paddingLeft={'15'}
-                // center={[10, 50]}
                 absolute
               />
             </View>
@@ -648,7 +604,7 @@ const HomeScreen = ({navigation}) => {
             onPress={() =>
               navigation.navigate('CheckInNav', {Screen: 'CheckOut'})
             }>
-            {t("Go Back")}
+            {t('Go Back')}
           </Button>
         </View>
       </View>
@@ -658,7 +614,6 @@ const HomeScreen = ({navigation}) => {
 
 const styles = StyleSheet.create({
   screen: {
-    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: Platform.OS === 'ios' ? 20 : 0,
@@ -688,7 +643,6 @@ const styles = StyleSheet.create({
   },
   cardStyle: {
     width: '48%',
-    // aspectRatio: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#664b4b',
@@ -704,7 +658,6 @@ const styles = StyleSheet.create({
   },
   graphContainer: {
     flex: 2,
-    // padding: 4,
     height: h,
     justifyContent: 'center',
     alignItems: 'center',
@@ -731,7 +684,6 @@ const styles = StyleSheet.create({
   },
   b: {
     flexDirection: 'row-reverse',
-    // backgroundColor: 'white',
   },
   pieChart: {
     shadowColor: '#a4a4a4',
